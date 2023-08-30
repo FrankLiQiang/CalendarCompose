@@ -115,24 +115,27 @@ fun MainUI(event: () -> Unit, modifier: Modifier = Modifier) {
     Column(Modifier.background(Black), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = time,
-            fontSize = 160.sp,   //130.sp,
-            color = DarkGray,
+            fontSize = 130.sp,   //160.sp,
+            //color = DarkGray,
+            color = Color(0xFF018786),
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.weight(1f, true)
         )
         Text(
             text = leftDate,
-            fontSize = 50.sp,       //40.sp,
-            color = DarkGray,
+            fontSize = 40.sp,       //50.sp,
+            //color = DarkGray,
+            color = Color(0xFF018786),
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.clickable { event() }
         )
         Text(
             text = date,
-            fontSize = 60.sp,       //50.sp,
-            color = if (isRed) Red else DarkGray,
+            fontSize = 50.sp,       //60.sp,
+            //color = if (isRed) Red else DarkGray,
+            color = if (isRed) Color(0xFFBB86FC) else Color(0xFF018786),
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             modifier = modifier
