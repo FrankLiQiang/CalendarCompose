@@ -112,7 +112,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainUI(event: () -> Unit, modifier: Modifier = Modifier) {
-    Column(Modifier.background(Black), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = time,
             fontSize = 130.sp,   //160.sp,
