@@ -23,7 +23,7 @@ fun getNongLiDate(): String {
     }
 }
 
-fun getNongLi(dayNum:Int) :String{
+fun getNongLi(dayNum: Int): String {
     val calendar: Calendar = Calendar.getInstance()
     nongli_Date = getLunarText2(
         calendar.get(Calendar.YEAR),

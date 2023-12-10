@@ -3,7 +3,9 @@ package com.frank.calendar
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,6 +14,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -28,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frank.calendar.ui.theme.CalendarTheme
 import java.time.LocalDate
@@ -35,32 +39,40 @@ import java.time.temporal.TemporalAdjusters
 import java.util.Calendar
 import java.util.Timer
 import java.util.TimerTask
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 
 lateinit var firstDay: LocalDate
+var is_Pad = false
 var firstDayOfWeek: Int = 0
 var minTextSize = 12.sp
-var maxTextSize = 312.sp
+var maxTextSize1 = 312.sp
 var maxTextSize2 = 112.sp
 var maxTextSize3 = 112.sp
+var maxTextSize4 = 112.sp
 var weeksMonth: Int = 5
 private var thisTimer: Timer = Timer()
 private var thisTask: TimerTask? = null
 var textColor by mutableStateOf(DarkGray)
 var time by mutableStateOf("09:35:23")
-var titleSize by mutableStateOf(20.sp)
-var isMeasured by mutableStateOf(false)
 var leftDate by mutableStateOf("农历十月廿六")
 var date by mutableStateOf("2023年12月08日")
 var isRed by mutableStateOf(false)
 var isClock by mutableStateOf(true)
 var dateArray = Array(42) { -1 }
+var nongliArray = Array(31) { "" }
+var minDateSize = Array(31) { 2.sp }
+var minDateSize2 = Array(31) { 2.sp }
+var maxTextSizeDate = Array(31) { 132.sp }
+var maxTextSizeDate2 = Array(31) { 132.sp }
 var isRedraw by mutableStateOf(1)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        WindowCompat.setDecorFitsSystemWindows(window, false)
+        is_Pad = isPad(this)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         setContent {
@@ -88,11 +100,13 @@ class MainActivity : ComponentActivity() {
                         .background(Color.Black),
                 ) {
                     if (isClock) {
-//                        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+                        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
                         ClockUI(::leftTimeClicked)
                     } else {
                         weeksMonth = getWeeksOfMonth()
-//                        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+                        if (!is_Pad) {
+                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+                        }
                         CalendarView()
                     }
                 }
@@ -139,7 +153,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun ClockUI(event: () -> Unit, modifier: Modifier = Modifier) {
 
-    var textSize by remember("") { mutableStateOf(maxTextSize) }
+    var textSize by remember("") { mutableStateOf(maxTextSize1) }
     var textSize2 by remember("") { mutableStateOf(maxTextSize2) }
     var textSize3 by remember("") { mutableStateOf(maxTextSize3) }
     Column(Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
@@ -151,7 +165,7 @@ fun ClockUI(event: () -> Unit, modifier: Modifier = Modifier) {
                 if (it.hasVisualOverflow && textSize > minTextSize) {
                     textSize = (textSize.value - 1.0F).sp
                 } else {
-                    maxTextSize = textSize
+                    maxTextSize1 = textSize
                 }
             },
             fontSize = textSize,
@@ -212,11 +226,10 @@ fun ClockUI(event: () -> Unit, modifier: Modifier = Modifier) {
 
 @Composable
 fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
-    val maxTextSizeDate = 23.sp
-    var minTextSize = 52.sp
-    var nongLi = if (dateVal == -1) "" else getNongLi(dateVal)
-    var textSize by remember("") { mutableStateOf(maxTextSizeDate) }
-    var weight = 1f
+    var nongLi = if (dateVal == -1) "" else nongliArray[dateVal - 1]
+    val index = if (dateVal == -1) 0 else dateVal - 1
+    var textSize1 by remember("") { mutableStateOf(maxTextSizeDate[index]) }
+    var textSize by remember("") { mutableStateOf(maxTextSizeDate2[index]) }
     var theColor1 = Color(0xFF018786)
     var theColor2 = Color(0xFF018786)
     if (weekId == 0 || weekId == 6) theColor1 = Color.Blue
@@ -233,48 +246,47 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
         nongLi = nongLi.substring(1)
         theColor2 = Color.Yellow
     }
+    val padding = if (is_Pad) 0.dp else 5.dp
     Row(
-        modifier = modifier,
+        modifier = modifier.padding(padding),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (!isMeasured) {
-            Row(Modifier.weight(weight)) {}
-        }
         Column(Modifier.weight(1.0f), horizontalAlignment = Alignment.CenterHorizontally) {
             if (dateVal != -1) {
                 Text(
                     text = "$dateVal",
                     maxLines = 1,
-                    fontSize = textSize * (if (weeksMonth == 6) 2.2f else if (weeksMonth == 5) 2.5f else 3f),
+                    onTextLayout = {
+                        if (it.hasVisualOverflow && textSize1 > minDateSize[dateVal - 1]) {
+                            textSize1 = (textSize1.value - 1.0F).sp
+                        } else {
+                            maxTextSizeDate[dateVal - 1] = textSize1
+                        }
+                    },
+                    fontSize = textSize1,
                     color = theColor1,
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(2f, true)
+                    modifier = Modifier.weight(3f, false)
                 )
                 Text(
                     text = nongLi,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     onTextLayout = {
-                        if (!isMeasured && nongLi.length == 2) {
-                            if (it.hasVisualOverflow && textSize > minTextSize) {
-                                textSize = (textSize.value - 1.0F).sp
-                            } else {
-                                isMeasured = true
-                                titleSize = textSize * 2.5f
-                            }
+                        if (it.hasVisualOverflow && textSize > minDateSize2[dateVal - 1]) {
+                            textSize = (textSize.value - 1.0F).sp
+                        } else {
+                            maxTextSizeDate2[dateVal - 1] = textSize
                         }
                     },
                     fontSize = textSize,
                     color = theColor2,
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(1.2f, true)
+                    modifier = Modifier.weight(1f, false)
                 )
             }
-        }
-        if (!isMeasured) {
-            Row(Modifier.weight(weight)) {}
         }
     }
 }
@@ -291,6 +303,7 @@ fun getWeeksOfMonth(): Int {
     var d = firstDayOfWeek
     for (i in 1..lengthOfMonth) {
         dateArray[d++] = i
+        nongliArray[i - 1] = getNongLi(i)
     }
     for (i in d until 42) {
         dateArray[i] = -1
@@ -301,18 +314,30 @@ fun getWeeksOfMonth(): Int {
 @Composable
 fun CalendarView() {
     if (isRedraw > 100) return
+    var textSize1 by remember("") { mutableStateOf(maxTextSize4) }
     Column(Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Row(Modifier.weight(1.0f), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            Modifier
+                .weight(1.0f)
+                .padding(start = 10.dp, end = 10.dp), verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
-                text = "$date   $time",
-//                text = nowDate(),
+                text = if (is_Pad) "$date   $time" else nowDate(),
                 maxLines = 1,
-                fontSize = titleSize,
-//                fontSize = 22.sp,
+                fontSize = textSize1,
+                onTextLayout = {
+                    if (it.hasVisualOverflow && textSize1 > minTextSize) {
+                        textSize1 = (textSize1.value - 1.0F).sp
+                    } else {
+                        maxTextSize4 = textSize1
+                    }
+                },
                 color = Color(0xFF018786),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.clickable { isClock = !isClock }
+                modifier = Modifier
+                    .padding(6.dp)
+                    .clickable { isClock = !isClock }
             )
         }
         var d = 0
@@ -345,3 +370,15 @@ fun CalendarPreview() {
     }
 }
 
+fun isPad(context: Context): Boolean {
+    val isPad: Boolean = (context.resources.configuration.screenLayout
+            and Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE
+    val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    val display = wm.defaultDisplay
+    val dm = DisplayMetrics()
+    display.getMetrics(dm)
+    val x = (dm.widthPixels / dm.xdpi).toDouble().pow(2.0)
+    val y = (dm.heightPixels / dm.ydpi).toDouble().pow(2.0)
+    val screenInches = sqrt(x + y) // 屏幕尺寸
+    return isPad || screenInches >= 7.0
+}
