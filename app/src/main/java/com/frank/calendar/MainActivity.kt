@@ -9,12 +9,15 @@ import android.util.DisplayMetrics
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -27,6 +30,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -45,6 +50,7 @@ import kotlin.math.sqrt
 
 lateinit var firstDay: LocalDate
 var is_Pad = false
+var dayOfMonth = 1
 var firstDayOfWeek: Int = 0
 var minTextSize = 12.sp
 var maxTextSize1 = 312.sp
@@ -247,53 +253,64 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
         theColor2 = Color.Yellow
     }
     val padding = if (is_Pad) 0.dp else 5.dp
-    Row(
-        modifier = modifier.padding(padding),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column(Modifier.weight(1.0f), horizontalAlignment = Alignment.CenterHorizontally) {
-            if (dateVal != -1) {
-                Text(
-                    text = "$dateVal",
-                    maxLines = 1,
-                    onTextLayout = {
-                        if (it.hasVisualOverflow && textSize1 > minDateSize[dateVal - 1]) {
-                            textSize1 = (textSize1.value - 1.0F).sp
-                        } else {
-                            maxTextSizeDate[dateVal - 1] = textSize1
-                        }
-                    },
-                    fontSize = textSize1,
-                    color = theColor1,
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(3f, false)
-                )
-                Text(
-                    text = nongLi,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    onTextLayout = {
-                        if (it.hasVisualOverflow && textSize > minDateSize2[dateVal - 1]) {
-                            textSize = (textSize.value - 1.0F).sp
-                        } else {
-                            maxTextSizeDate2[dateVal - 1] = textSize
-                        }
-                    },
-                    fontSize = textSize,
-                    color = theColor2,
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(1f, false)
-                )
+    Box(modifier = modifier.padding(padding)) {
+        Row(
+            Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(Modifier.weight(1.0f), horizontalAlignment = Alignment.CenterHorizontally) {
+                if (dateVal != -1) {
+                    Text(
+                        text = "$dateVal",
+                        maxLines = 1,
+                        onTextLayout = {
+                            if (it.hasVisualOverflow && textSize1 > minDateSize[dateVal - 1]) {
+                                textSize1 = (textSize1.value - 1.0F).sp
+                            } else {
+                                maxTextSizeDate[dateVal - 1] = textSize1
+                            }
+                        },
+                        fontSize = textSize1,
+                        color = theColor1,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.weight(2.3f, true)
+                    )
+                    Text(
+                        text = nongLi,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        onTextLayout = {
+                            if (it.hasVisualOverflow && textSize > minDateSize2[dateVal - 1]) {
+                                textSize = (textSize.value - 1.0F).sp
+                            } else {
+                                maxTextSizeDate2[dateVal - 1] = textSize
+                            }
+                        },
+                        fontSize = textSize,
+                        color = theColor2,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.weight(1f, false)
+                    )
+                }
             }
+        }
+        if (dayOfMonth == dateVal) {
+            Image(
+                painter = painterResource(id = R.drawable.round),
+                modifier = Modifier.fillMaxSize(),
+                contentDescription = stringResource(id = R.string.app_name),
+            )
         }
     }
 }
 
+
 fun getWeeksOfMonth(): Int {
     val now = LocalDate.now()
     val lengthOfMonth = now.lengthOfMonth()
+    dayOfMonth = now.dayOfMonth
     firstDay = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth())
     firstDayOfWeek = firstDay.dayOfWeek.value % 7
     var ret = lengthOfMonth - (7 - firstDayOfWeek)
@@ -342,6 +359,9 @@ fun CalendarView() {
         }
         var d = 0
         for (i in 0 until weeksMonth) {
+            if (!is_Pad) {
+                Row(Modifier.weight(0.5f)) {}
+            }
             Row(Modifier.weight(1.0f), verticalAlignment = Alignment.CenterVertically) {
                 for (i in 0..6) {
                     Date(i, Modifier.weight(1.0f), dateArray[d])
