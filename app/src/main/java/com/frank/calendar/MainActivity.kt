@@ -2,6 +2,7 @@ package com.frank.calendar
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
@@ -9,6 +10,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -28,21 +30,38 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.frank.calendar.ui.theme.CalendarTheme
+import java.time.LocalDate
+import java.time.temporal.TemporalAdjusters
 import java.util.Calendar
 import java.util.Timer
 import java.util.TimerTask
 
+
+lateinit var firstDay: LocalDate
+var firstDayOfWeek: Int = 0
+var minTextSize = 12.sp
+var maxTextSize = 312.sp
+var maxTextSize2 = 112.sp
+var maxTextSize3 = 112.sp
+var weeksMonth: Int = 5
 private var thisTimer: Timer = Timer()
 private var thisTask: TimerTask? = null
 var textColor by mutableStateOf(DarkGray)
 var time by mutableStateOf("09:35:23")
+var titleSize by mutableStateOf(20.sp)
+var isMeasured by mutableStateOf(false)
 var leftDate by mutableStateOf("农历十月廿六")
 var date by mutableStateOf("2023年12月08日")
 var isRed by mutableStateOf(false)
+var isClock by mutableStateOf(true)
+var dateArray = Array(42) { -1 }
+var isRedraw by mutableStateOf(1)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+//        WindowCompat.setDecorFitsSystemWindows(window, false)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         setContent {
             LunarCalendar.init(this)
@@ -68,7 +87,14 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .background(Color.Black),
                 ) {
-                    MainUI(::leftTimeClicked)
+                    if (isClock) {
+//                        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+                        ClockUI(::leftTimeClicked)
+                    } else {
+                        weeksMonth = getWeeksOfMonth()
+//                        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+                        CalendarView()
+                    }
                 }
             }
         }
@@ -111,13 +137,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainUI(event: () -> Unit, modifier: Modifier = Modifier) {
+fun ClockUI(event: () -> Unit, modifier: Modifier = Modifier) {
 
-    val minTextSize = 12.sp
-    val maxTextSize = 212.sp
     var textSize by remember("") { mutableStateOf(maxTextSize) }
-    var textSize2 by remember("") { mutableStateOf(maxTextSize) }
-    var textSize3 by remember("") { mutableStateOf(maxTextSize) }
+    var textSize2 by remember("") { mutableStateOf(maxTextSize2) }
+    var textSize3 by remember("") { mutableStateOf(maxTextSize3) }
     Column(Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = time,
@@ -126,6 +150,8 @@ fun MainUI(event: () -> Unit, modifier: Modifier = Modifier) {
             onTextLayout = {
                 if (it.hasVisualOverflow && textSize > minTextSize) {
                     textSize = (textSize.value - 1.0F).sp
+                } else {
+                    maxTextSize = textSize
                 }
             },
             fontSize = textSize,
@@ -149,6 +175,8 @@ fun MainUI(event: () -> Unit, modifier: Modifier = Modifier) {
             onTextLayout = {
                 if (it.hasVisualOverflow && textSize2 > minTextSize) {
                     textSize2 = (textSize2.value - 1.0F).sp
+                } else {
+                    maxTextSize2 = textSize2
                 }
             },
             fontSize = textSize2,
@@ -166,14 +194,136 @@ fun MainUI(event: () -> Unit, modifier: Modifier = Modifier) {
             onTextLayout = {
                 if (it.hasVisualOverflow && textSize3 > minTextSize) {
                     textSize3 = (textSize3.value - 1.0F).sp
+                } else {
+                    maxTextSize3 = textSize3
                 }
             },
             fontSize = textSize3,
             color = if (isRed) Color(0xFFBB86FC) else textColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
-            modifier = modifier.weight(0.5f, true)
+            modifier = modifier
+                .weight(0.5f, true)
+                .clickable { isClock = !isClock }
+
         )
+    }
+}
+
+@Composable
+fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
+    val maxTextSizeDate = 23.sp
+    var minTextSize = 52.sp
+    var nongLi = if (dateVal == -1) "" else getNongLi(dateVal)
+    var textSize by remember("") { mutableStateOf(maxTextSizeDate) }
+    var weight = 1f
+    var theColor1 = Color(0xFF018786)
+    var theColor2 = Color(0xFF018786)
+    if (weekId == 0 || weekId == 6) theColor1 = Color.Blue
+    if (weekId == 0 || weekId == 6) theColor2 = Color.Blue
+    if (nongLi.startsWith("*")) {
+        nongLi = nongLi.substring(1)
+        theColor2 = Color.Red
+    }
+    if (nongLi.startsWith("%")) {
+        nongLi = nongLi.substring(1)
+        theColor1 = Color.Red
+    }
+    if (nongLi.startsWith("@")) {
+        nongLi = nongLi.substring(1)
+        theColor2 = Color.Yellow
+    }
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (!isMeasured) {
+            Row(Modifier.weight(weight)) {}
+        }
+        Column(Modifier.weight(1.0f), horizontalAlignment = Alignment.CenterHorizontally) {
+            if (dateVal != -1) {
+                Text(
+                    text = "$dateVal",
+                    maxLines = 1,
+                    fontSize = textSize * (if (weeksMonth == 6) 2.2f else if (weeksMonth == 5) 2.5f else 3f),
+                    color = theColor1,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(2f, true)
+                )
+                Text(
+                    text = nongLi,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    onTextLayout = {
+                        if (!isMeasured && nongLi.length == 2) {
+                            if (it.hasVisualOverflow && textSize > minTextSize) {
+                                textSize = (textSize.value - 1.0F).sp
+                            } else {
+                                isMeasured = true
+                                titleSize = textSize * 2.5f
+                            }
+                        }
+                    },
+                    fontSize = textSize,
+                    color = theColor2,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(1.2f, true)
+                )
+            }
+        }
+        if (!isMeasured) {
+            Row(Modifier.weight(weight)) {}
+        }
+    }
+}
+
+fun getWeeksOfMonth(): Int {
+    val now = LocalDate.now()
+    val lengthOfMonth = now.lengthOfMonth()
+    firstDay = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth())
+    firstDayOfWeek = firstDay.dayOfWeek.value % 7
+    var ret = lengthOfMonth - (7 - firstDayOfWeek)
+    for (i in 0 until firstDayOfWeek) {
+        dateArray[i] = -1
+    }
+    var d = firstDayOfWeek
+    for (i in 1..lengthOfMonth) {
+        dateArray[d++] = i
+    }
+    for (i in d until 42) {
+        dateArray[i] = -1
+    }
+    return ret / 7 + if (ret % 7 == 0) 1 else 2
+}
+
+@Composable
+fun CalendarView() {
+    if (isRedraw > 100) return
+    Column(Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        Row(Modifier.weight(1.0f), verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = "$date   $time",
+//                text = nowDate(),
+                maxLines = 1,
+                fontSize = titleSize,
+//                fontSize = 22.sp,
+                color = Color(0xFF018786),
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.clickable { isClock = !isClock }
+            )
+        }
+        var d = 0
+        for (i in 0 until weeksMonth) {
+            Row(Modifier.weight(1.0f), verticalAlignment = Alignment.CenterVertically) {
+                for (i in 0..6) {
+                    Date(i, Modifier.weight(1.0f), dateArray[d])
+                    d++
+                }
+            }
+        }
     }
 }
 
@@ -189,7 +339,8 @@ fun CalendarPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            MainUI({ isRed = true })
+//            ClockUI({ isRed = true })
+            CalendarView()
         }
     }
 }

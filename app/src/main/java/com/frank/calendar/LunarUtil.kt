@@ -15,6 +15,8 @@
  */
 package com.frank.calendar
 
+import android.annotation.SuppressLint
+
 /**
  * 农历计算方法
  */
@@ -505,6 +507,12 @@ object LunarUtil {
     }
 
     /**
+     * 保存每年24节气
+     */
+    @SuppressLint("UseSparseArrays")
+    private val SOLAR_TERMS: Map<Int, Array<String>> = HashMap()
+
+    /**
      * 公历转农历 Solar To Lunar
      *
      * @param year  公历年
@@ -586,3 +594,4 @@ object LunarUtil {
         return solarFromInt(solarToInt(y, m, d) + offset - 1)
     }
 }
+

@@ -15,6 +15,7 @@
  */
 package com.frank.calendar
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.text.TextUtils
 
@@ -26,12 +27,21 @@ object LunarCalendar {
         if (MONTH_STR != null) {
             return
         }
+        SolarTermUtil.init(context)
         MONTH_STR = context.resources.getStringArray(R.array.lunar_first_of_month)
         TRADITION_FESTIVAL_STR = context.resources.getStringArray(R.array.tradition_festival)
         DAY_STR = context.resources.getStringArray(R.array.lunar_str)
         SPECIAL_FESTIVAL_STR = context.resources.getStringArray(R.array.special_festivals)
         SOLAR_CALENDAR = context.resources.getStringArray(R.array.solar_festival)
     }
+
+    /**
+     * 保存每年24节气
+     */
+//    @SuppressLint("UseSparseArrays")
+//    private val SOLAR_TERMS: Map<Int, Array<String>> = HashMap()
+
+    private val SOLAR_TERMS = mutableMapOf<Int, Array<String>>()
 
     /**
      * 农历月份第一天转写
@@ -371,5 +381,53 @@ object LunarCalendar {
         val festival = getTraditionFestival(lunar[0], lunar[1], lunar[2])
         if (!TextUtils.isEmpty(festival)) return festival
         return numToChinese(lunar[1], lunar[2],lunar[3])
+    }
+
+    /**
+     * 获取农历节日(日历用)
+     *
+     * @param year  年
+     * @param month 月
+     * @param day   日
+     * @return 农历节日
+     */
+    fun getLunarText2(year: Int, month: Int, day: Int): String {
+        val termText: String? = getSolarTerm(year, month, day)
+
+        val solar = gregorianFestival(month, day)
+        if (!TextUtils.isEmpty(solar)) return "%$solar"
+
+        val lunar = LunarUtil.solarToLunar(year, month, day)
+        val festival = getTraditionFestival(lunar[0], lunar[1], lunar[2])
+        if (!TextUtils.isEmpty(festival)) return "*$festival"
+
+        if (lunar[2] == 1) return numToChineseMonth(lunar[1], lunar[0])
+        if (!TextUtils.isEmpty(termText)) return "@" + termText!!
+        return DAY_STR!![lunar[2] - 1]
+    }
+
+    /**
+     * 返回24节气
+     *
+     * @param year  年
+     * @param month 月
+     * @param day   日
+     * @return 返回24节气
+     */
+    private fun getSolarTerm(year: Int, month: Int, day: Int): String? {
+        if (!SOLAR_TERMS.containsKey(year)) {
+            SOLAR_TERMS[year] = SolarTermUtil.getSolarTerms(year)
+        }
+        val solarTerm: Array<String> = SOLAR_TERMS[year]!!
+        val text = year.toString() + getString(month, day)
+        var solar = ""
+        assert(solarTerm != null)
+        for (solarTermName in solarTerm) {
+            if (solarTermName.contains(text)) {
+                solar = solarTermName.replace(text, "")
+                break
+            }
+        }
+        return solar
     }
 }

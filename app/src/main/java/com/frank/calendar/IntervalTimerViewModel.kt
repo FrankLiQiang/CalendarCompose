@@ -1,5 +1,6 @@
 package com.frank.calendar
 
+import com.frank.calendar.LunarCalendar.getLunarText2
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
@@ -7,6 +8,7 @@ import java.util.concurrent.TimeUnit
 
 var gongliDate = ""
 var nongliDate = ""
+var nongli_Date = ""
 var newCurrentDate = -1
 var currentDateNum = -2
 var dateColor = true
@@ -21,10 +23,21 @@ fun getNongLiDate(): String {
     }
 }
 
+fun getNongLi(dayNum:Int) :String{
+    val calendar: Calendar = Calendar.getInstance()
+    nongli_Date = getLunarText2(
+        calendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH) + 1,
+        dayNum
+    )
+    return nongli_Date
+}
+
 fun getCurrentTime(): String {
     val localDateTime = LocalDateTime.now()
     newCurrentDate = localDateTime.dayOfMonth
-    val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+//    val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+    val formatter = DateTimeFormatter.ofPattern("HH:mm")
     return localDateTime.format(formatter)
 }
 
@@ -32,6 +45,8 @@ fun getCurrentDate(): String {
     return if (currentDateNum == newCurrentDate) {
         gongliDate
     } else {
+        isRedraw = 1 - isRedraw
+        weeksMonth = getWeeksOfMonth()
         val wk = nowWeek()
         dateColor = !wk.startsWith("星期")
         gongliDate = "${nowDate()}  $wk"
