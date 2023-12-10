@@ -45,8 +45,8 @@ fun getCurrentDate(): String {
     return if (currentDateNum == newCurrentDate) {
         gongliDate
     } else {
-        isRedraw = 1 - isRedraw
         weeksMonth = getWeeksOfMonth()
+        isRedraw = 1 - isRedraw
         val wk = nowWeek()
         dateColor = !wk.startsWith("星期")
         gongliDate = "${nowDate()}  $wk"

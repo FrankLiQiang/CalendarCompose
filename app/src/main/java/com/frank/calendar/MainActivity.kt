@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -68,10 +67,6 @@ var isRed by mutableStateOf(false)
 var isClock by mutableStateOf(true)
 var dateArray = Array(42) { -1 }
 var nongliArray = Array(31) { "" }
-var minDateSize = Array(31) { 2.sp }
-var minDateSize2 = Array(31) { 2.sp }
-var maxTextSizeDate = Array(31) { 132.sp }
-var maxTextSizeDate2 = Array(31) { 132.sp }
 var isRedraw by mutableStateOf(1)
 
 class MainActivity : ComponentActivity() {
@@ -232,10 +227,11 @@ fun ClockUI(event: () -> Unit, modifier: Modifier = Modifier) {
 
 @Composable
 fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
+    if (isRedraw > 100) return
     var nongLi = if (dateVal == -1) "" else nongliArray[dateVal - 1]
-    val index = if (dateVal == -1) 0 else dateVal - 1
-    var textSize1 by remember("") { mutableStateOf(maxTextSizeDate[index]) }
-    var textSize by remember("") { mutableStateOf(maxTextSizeDate2[index]) }
+    val maxTextSizeDate00 = 132.sp
+    var textSize1 by remember("") { mutableStateOf(maxTextSizeDate00) }
+    var textSize2 by remember("") { mutableStateOf(maxTextSizeDate00) }
     var theColor1 = Color(0xFF018786)
     var theColor2 = Color(0xFF018786)
     if (weekId == 0 || weekId == 6) theColor1 = Color.Blue
@@ -271,10 +267,8 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
                         text = "$dateVal",
                         maxLines = 1,
                         onTextLayout = {
-                            if (it.hasVisualOverflow && textSize1 > minDateSize[dateVal - 1]) {
+                            if (it.hasVisualOverflow && textSize1 > minTextSize) {
                                 textSize1 = (textSize1.value - 1.0F).sp
-                            } else {
-                                maxTextSizeDate[dateVal - 1] = textSize1
                             }
                         },
                         fontSize = textSize1,
@@ -288,13 +282,11 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         onTextLayout = {
-                            if (it.hasVisualOverflow && textSize > minDateSize2[dateVal - 1]) {
-                                textSize = (textSize.value - 1.0F).sp
-                            } else {
-                                maxTextSizeDate2[dateVal - 1] = textSize
+                            if (it.hasVisualOverflow && textSize2 > minTextSize) {
+                                textSize2 = (textSize2.value - 1.0F).sp
                             }
                         },
-                        fontSize = textSize,
+                        fontSize = textSize2,
                         color = theColor2,
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.Bold,
