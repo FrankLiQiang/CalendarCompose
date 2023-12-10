@@ -359,9 +359,7 @@ fun CalendarView() {
         }
         var d = 0
         for (i in 0 until weeksMonth) {
-            if (!is_Pad) {
-                Row(Modifier.weight(0.5f)) {}
-            }
+            Row(Modifier.weight(if (is_Pad) 0.2f else 0.5f)) {}
             Row(Modifier.weight(1.0f), verticalAlignment = Alignment.CenterVertically) {
                 for (i in 0..6) {
                     Date(i, Modifier.weight(1.0f), dateArray[d])
