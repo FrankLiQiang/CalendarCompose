@@ -254,6 +254,13 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
     }
     val padding = if (is_Pad) 0.dp else 5.dp
     Box(modifier = modifier.padding(padding)) {
+        if (dayOfMonth == dateVal) {
+            Image(
+                painter = painterResource(id = R.drawable.round),
+                modifier = Modifier.fillMaxSize(),
+                contentDescription = stringResource(id = R.string.app_name),
+            )
+        }
         Row(
             Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
@@ -295,13 +302,6 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
                     )
                 }
             }
-        }
-        if (dayOfMonth == dateVal) {
-            Image(
-                painter = painterResource(id = R.drawable.round),
-                modifier = Modifier.fillMaxSize(),
-                contentDescription = stringResource(id = R.string.app_name),
-            )
         }
     }
 }
