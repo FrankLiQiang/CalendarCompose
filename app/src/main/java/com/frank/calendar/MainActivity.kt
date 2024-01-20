@@ -51,7 +51,7 @@ lateinit var firstDay: LocalDate
 var is_Pad = false
 var dayOfMonth = 1
 var firstDayOfWeek: Int = 0
-var minTextSize = 12.sp
+var minTextSize = 8.sp
 var maxTextSize1 = 312.sp
 var maxTextSize2 = 112.sp
 var maxTextSize3 = 112.sp
@@ -67,6 +67,7 @@ var isRed by mutableStateOf(false)
 var isClock by mutableStateOf(true)
 var dateArray = Array(42) { -1 }
 var nongliArray = Array(31) { "" }
+var sixDaysArray = Array(31) { "" }
 var isRedraw by mutableStateOf(1)
 
 class MainActivity : ComponentActivity() {
@@ -121,16 +122,12 @@ class MainActivity : ComponentActivity() {
         val day = toDate.get(Calendar.DAY_OF_MONTH)
 
         val dpd = DatePickerDialog(
-            this,
-            { _, year2, monthOfYear, dayOfMonth ->
+            this, { _, year2, monthOfYear, dayOfMonth ->
                 toDate.set(year2, monthOfYear, dayOfMonth, 0, 0, 0)
                 toDate.set(Calendar.MILLISECOND, 0)
                 saveTimePerSet()
                 currentDateNum = -1
-            },
-            year,
-            month,
-            day
+            }, year, month, day
         )
         dpd.show()
     }
@@ -158,8 +155,7 @@ fun ClockUI(event: () -> Unit, modifier: Modifier = Modifier) {
     var textSize2 by remember("") { mutableStateOf(maxTextSize2) }
     var textSize3 by remember("") { mutableStateOf(maxTextSize3) }
     Column(Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = time,
+        Text(text = time,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             onTextLayout = {
@@ -181,10 +177,8 @@ fun ClockUI(event: () -> Unit, modifier: Modifier = Modifier) {
                     } else {
                         DarkGray
                     }
-                }
-        )
-        Text(
-            text = leftDate,
+                })
+        Text(text = leftDate,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             onTextLayout = {
@@ -200,10 +194,8 @@ fun ClockUI(event: () -> Unit, modifier: Modifier = Modifier) {
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .clickable { event() }
-                .weight(0.3f, true)
-        )
-        Text(
-            text = date,
+                .weight(0.3f, true))
+        Text(text = date,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             onTextLayout = {
@@ -229,9 +221,11 @@ fun ClockUI(event: () -> Unit, modifier: Modifier = Modifier) {
 fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
     if (isRedraw > 100) return
     var nongLi = if (dateVal == -1) "" else nongliArray[dateVal - 1]
+    val sixDays = if (dateVal == -1) "" else sixDaysArray[dateVal - 1]
     val maxTextSizeDate00 = 132.sp
     var textSize1 by remember("") { mutableStateOf(maxTextSizeDate00) }
     var textSize2 by remember("") { mutableStateOf(maxTextSizeDate00) }
+    var textSize3 by remember("") { mutableStateOf(maxTextSizeDate00) }
     var theColor1 = Color(0xFF018786)
     var theColor2 = Color(0xFF018786)
     if (weekId == 0 || weekId == 6) theColor1 = Color.Blue
@@ -250,33 +244,36 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
     }
     val padding = if (is_Pad) 0.dp else 5.dp
     Box(modifier = modifier.padding(padding)) {
-        if (dayOfMonth == dateVal) {
-            Image(
-                painter = painterResource(id = R.drawable.round),
-                modifier = Modifier.fillMaxSize(),
-                contentDescription = stringResource(id = R.string.app_name),
-            )
-        }
         Row(
-            Modifier.fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically
+            Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically
         ) {
             Column(Modifier.weight(1.0f), horizontalAlignment = Alignment.CenterHorizontally) {
                 if (dateVal != -1) {
-                    Text(
-                        text = "$dateVal",
-                        maxLines = 1,
-                        onTextLayout = {
-                            if (it.hasVisualOverflow && textSize1 > minTextSize) {
-                                textSize1 = (textSize1.value - 1.0F).sp
-                            }
-                        },
-                        fontSize = textSize1,
-                        color = theColor1,
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Bold,
+                    Box(
                         modifier = Modifier.weight(2.3f, true)
-                    )
+                    ) {
+                        if (dayOfMonth == dateVal) {
+                            Image(
+                                painter = painterResource(id = R.drawable.round),
+                                modifier = Modifier.fillMaxSize(),
+                                contentDescription = stringResource(id = R.string.app_name),
+                            )
+                        }
+                        Text(
+                            text = "$dateVal",
+                            maxLines = 1,
+                            onTextLayout = {
+                                if (it.hasVisualOverflow && textSize1 > minTextSize) {
+                                    textSize1 = (textSize1.value - 1.0F).sp
+                                }
+                            },
+                            fontSize = textSize1,
+                            color = theColor1,
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Bold,
+//                        modifier = Modifier.weight(2.3f, true)
+                        )
+                    }
                     Text(
                         text = nongLi,
                         maxLines = 1,
@@ -287,6 +284,21 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
                             }
                         },
                         fontSize = textSize2,
+                        color = theColor2,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.weight(1f, false)
+                    )
+                    Text(
+                        text = sixDays,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        onTextLayout = {
+                            if (it.hasVisualOverflow && textSize3 > minTextSize) {
+                                textSize3 = (textSize3.value - 1.0F).sp
+                            }
+                        },
+                        fontSize = textSize3,
                         color = theColor2,
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.Bold,
@@ -305,7 +317,7 @@ fun getWeeksOfMonth(): Int {
     dayOfMonth = now.dayOfMonth
     firstDay = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth())
     firstDayOfWeek = firstDay.dayOfWeek.value % 7
-    var ret = lengthOfMonth - (7 - firstDayOfWeek)
+    val ret = lengthOfMonth - (7 - firstDayOfWeek)
     for (i in 0 until firstDayOfWeek) {
         dateArray[i] = -1
     }
@@ -313,6 +325,7 @@ fun getWeeksOfMonth(): Int {
     for (i in 1..lengthOfMonth) {
         dateArray[d++] = i
         nongliArray[i - 1] = getNongLi(i)
+        sixDaysArray[i - 1] = getSixDay(i)
     }
     for (i in d until 42) {
         dateArray[i] = -1
@@ -328,10 +341,10 @@ fun CalendarView() {
         Row(
             Modifier
                 .weight(1.0f)
-                .padding(start = 10.dp, end = 10.dp), verticalAlignment = Alignment.CenterVertically
+                .padding(start = 10.dp, end = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = if (is_Pad) "$date   $time" else nowDate(),
+            Text(text = if (is_Pad) "$date   $time" else nowDate(),
                 maxLines = 1,
                 fontSize = textSize1,
                 onTextLayout = {
@@ -346,15 +359,14 @@ fun CalendarView() {
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .padding(6.dp)
-                    .clickable { isClock = !isClock }
-            )
+                    .clickable { isClock = !isClock })
         }
         var d = 0
         for (i in 0 until weeksMonth) {
             Row(Modifier.weight(if (is_Pad) 0.2f else 0.5f)) {}
             Row(Modifier.weight(1.0f), verticalAlignment = Alignment.CenterVertically) {
-                for (i in 0..6) {
-                    Date(i, Modifier.weight(1.0f), dateArray[d])
+                for (j in 0..6) {
+                    Date(j, Modifier.weight(1.0f), dateArray[d])
                     d++
                 }
             }
@@ -371,8 +383,7 @@ fun CalendarView() {
 fun CalendarPreview() {
     CalendarTheme {
         Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+            modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
         ) {
 //            ClockUI({ isRed = true })
             CalendarView()

@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit
 
 var gongliDate = ""
 var nongliDate = ""
-var nongli_Date = ""
 var newCurrentDate = -1
 var currentDateNum = -2
 var dateColor = true
@@ -25,12 +24,20 @@ fun getNongLiDate(): String {
 
 fun getNongLi(dayNum: Int): String {
     val calendar: Calendar = Calendar.getInstance()
-    nongli_Date = getLunarText2(
+    return getLunarText2(
         calendar.get(Calendar.YEAR),
         calendar.get(Calendar.MONTH) + 1,
         dayNum
     )
-    return nongli_Date
+}
+
+fun getSixDay(dayNum: Int): String {
+    val calendar: Calendar = Calendar.getInstance()
+    return LunarCalendar.getSixDay(
+        calendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH) + 1,
+        dayNum
+    )
 }
 
 fun getCurrentTime(): String {
@@ -59,6 +66,11 @@ val nongli: () -> String = {
     val calendar: Calendar = Calendar.getInstance()
     "农历 ${
         LunarCalendar.getLunarText(
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH) + 1,
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+    }  ${LunarCalendar.getSixDay(
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH) + 1,
             calendar.get(Calendar.DAY_OF_MONTH)
