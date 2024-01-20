@@ -38,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frank.calendar.ui.theme.CalendarTheme
+import com.frank.calendar.ui.theme.HorizontalPagerSample
 import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
 import java.util.Calendar
@@ -109,7 +110,7 @@ class MainActivity : ComponentActivity() {
                         if (!is_Pad) {
                             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
                         }
-                        CalendarView()
+                        HorizontalPagerSample()
                     }
                 }
             }
@@ -242,7 +243,6 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
         nongLi = nongLi.substring(1)
         theColor2 = Color.Yellow
     }
-    val padding = if (is_Pad) 0.dp else 5.dp
     Box(modifier = modifier.padding(0.dp)) {
         Row(
             Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically
