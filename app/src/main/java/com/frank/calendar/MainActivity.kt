@@ -243,14 +243,14 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
         theColor2 = Color.Yellow
     }
     val padding = if (is_Pad) 0.dp else 5.dp
-    Box(modifier = modifier.padding(padding)) {
+    Box(modifier = modifier.padding(0.dp)) {
         Row(
             Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically
         ) {
             Column(Modifier.weight(1.0f), horizontalAlignment = Alignment.CenterHorizontally) {
                 if (dateVal != -1) {
                     Box(
-                        modifier = Modifier.weight(2.3f, true)
+                        modifier = Modifier.weight(1.6f, true)
                     ) {
                         if (dayOfMonth == dateVal) {
                             Image(
@@ -271,7 +271,7 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
                             color = theColor1,
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight.Bold,
-//                        modifier = Modifier.weight(2.3f, true)
+                            modifier = Modifier.fillMaxSize()
                         )
                     }
                     Text(
@@ -337,11 +337,11 @@ fun getWeeksOfMonth(): Int {
 fun CalendarView() {
     if (isRedraw > 100) return
     var textSize1 by remember("") { mutableStateOf(maxTextSize4) }
-    Column(Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(Modifier.padding(bottom = 20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         Row(
             Modifier
-                .weight(1.0f)
-                .padding(start = 10.dp, end = 10.dp),
+                .weight(1.0f),
+//                .padding(start = 10.dp, end = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = if (is_Pad) "$date   $time" else nowDate(),
