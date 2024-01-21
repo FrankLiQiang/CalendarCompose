@@ -2,6 +2,7 @@ package com.frank.calendar
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.WindowManager
@@ -35,6 +36,8 @@ var maxTextSize1 = 312.sp
 var maxTextSize2 = 112.sp
 var maxTextSize3 = 112.sp
 var maxTextSize4 = 112.sp
+var maxTextSizeGongli = 132.sp
+var maxTextSizeNongli = 132.sp
 var weeksMonth: Int = 5
 private var thisTimer: Timer = Timer()
 private var thisTask: TimerTask? = null
@@ -49,6 +52,7 @@ var nongliArray = Array(31) { "" }
 var sixDaysArray = Array(31) { "" }
 var isRedraw by mutableStateOf(1)
 var now: LocalDateTime = LocalDateTime.now()
+lateinit var sharedPreferences: SharedPreferences
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,6 +61,7 @@ class MainActivity : ComponentActivity() {
         is_Pad = isPad(this)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        sharedPreferences = getPreferences(Context.MODE_PRIVATE)
         setContent {
             LunarCalendar.init(this)
             readToDate()
@@ -108,18 +113,24 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun saveTimePerSet() {
-        val sharedPref = getPreferences(Context.MODE_PRIVATE)
-        with(sharedPref.edit()) {
+        with(sharedPreferences.edit()) {
             val df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-            putString(getString(R.string.prefs_timePerWorkSet), df.format(toDate))
+            putString("SHARED_PREFS_TIME_PER_WORKSET", df.format(toDate))
             commit()
         }
     }
 
     private fun readToDate() {
-        val sharedPref = getPreferences(Context.MODE_PRIVATE)
+        maxTextSize4 = sharedPreferences.getFloat("SHARED_PREFS_CALENDAR_TITLE", 112.0f).sp
+        maxTextSizeNongli = sharedPreferences.getFloat("SHARED_PREFS_NONG_LI", 132.0f).sp
+        maxTextSizeGongli = sharedPreferences.getFloat("SHARED_PREFS_GONG_LI", 132.0f).sp
+        maxTextSize1 = sharedPreferences.getFloat("SHARED_PREFS_TIME", 312.0f).sp
+        maxTextSize2 = sharedPreferences.getFloat("SHARED_PREFS_LEFT", 112.0f).sp
+        maxTextSize3 = sharedPreferences.getFloat("SHARED_PREFS_WEEK", 112.0f).sp
+
         val df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        val highScore = sharedPref.getString(getString(R.string.prefs_timePerWorkSet), df.format(LocalDateTime.now()))
+        var defaultDate = df.format(LocalDateTime.now())
+        var highScore = sharedPreferences.getString("SHARED_PREFS_TIME_PER_WORKSET", defaultDate)
         toDate = LocalDateTime.parse(highScore, df)
     }
 }

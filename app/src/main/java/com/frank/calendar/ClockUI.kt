@@ -33,6 +33,10 @@ fun ClockUI(event: () -> Unit, modifier: Modifier = Modifier) {
                     textSize = (textSize.value - 1.0F).sp
                 } else {
                     maxTextSize1 = textSize
+                    with(sharedPreferences.edit()) {
+                        putFloat("SHARED_PREFS_TIME", maxTextSize1.value)
+                        commit()
+                    }
                 }
             },
             fontSize = textSize,
@@ -56,6 +60,10 @@ fun ClockUI(event: () -> Unit, modifier: Modifier = Modifier) {
                     textSize2 = (textSize2.value - 1.0F).sp
                 } else {
                     maxTextSize2 = textSize2
+                    with(sharedPreferences.edit()) {
+                        putFloat("SHARED_PREFS_LEFT", maxTextSize2.value)
+                        commit()
+                    }
                 }
             },
             fontSize = textSize2,
@@ -73,6 +81,10 @@ fun ClockUI(event: () -> Unit, modifier: Modifier = Modifier) {
                     textSize3 = (textSize3.value - 1.0F).sp
                 } else {
                     maxTextSize3 = textSize3
+                    with(sharedPreferences.edit()) {
+                        putFloat("SHARED_PREFS_WEEK", maxTextSize3.value)
+                        commit()
+                    }
                 }
             },
             fontSize = textSize3,

@@ -48,10 +48,8 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
     val context = LocalContext.current
     var nongLi = if (dateVal == -1) "" else nongliArray[dateVal - 1]
     val sixDays = if (dateVal == -1) "" else sixDaysArray[dateVal - 1]
-    val maxTextSizeDate00 = 132.sp
-    var textSize1 by remember("") { mutableStateOf(maxTextSizeDate00) }
-    var textSize2 by remember("") { mutableStateOf(maxTextSizeDate00) }
-    var textSize3 by remember("") { mutableStateOf(maxTextSizeDate00) }
+    var textSize1 by remember("") { mutableStateOf(maxTextSizeGongli) }
+    var textSize2 by remember("") { mutableStateOf(maxTextSizeNongli) }
     var theColor1 = Color(0xFF018786)
     var theColor2 = Color(0xFF018786)
     if (weekId == 0 || weekId == 6) theColor1 = Color.Blue
@@ -68,22 +66,33 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
         nongLi = nongLi.substring(1)
         theColor2 = Color.Yellow
     }
-    Box(modifier = modifier.padding(0.dp).clickable {
-        if (dateVal == -1) {
-            val dpd = DatePickerDialog(
-                context, { _, year, month, day ->
-                    wantDate = LocalDateTime.of(year, month + 1, 1, 0, 0, 0, 0)
-                    val currentDay = LocalDateTime.of(LocalDateTime.now().year, LocalDateTime.now().month, 1, 0, 0, 0, 0)
-                    monthOffset = ChronoUnit.MONTHS.between(currentDay, wantDate).toInt()
-                    currentDateNum = -1
-                    weeksMonth = getWeeksOfMonth()
-                    jumpToPage(monthOffset + Int.MAX_VALUE / 2 + 2)
-//                    isRedraw = 1 - isRedraw
-                }, wantDate.year, wantDate.monthValue - 1, wantDate.dayOfMonth
-            )
-            dpd.show()
-        }
-    }) {
+    Box(modifier = modifier
+        .padding(0.dp)
+        .clickable {
+            if (dateVal == -1) {
+                val dpd = DatePickerDialog(
+                    context, { _, year, month, day ->
+                        wantDate = LocalDateTime.of(year, month + 1, 1, 0, 0, 0, 0)
+                        val currentDay = LocalDateTime.of(
+                            LocalDateTime.now().year,
+                            LocalDateTime.now().month,
+                            1,
+                            0,
+                            0,
+                            0,
+                            0
+                        )
+                        monthOffset = ChronoUnit.MONTHS
+                            .between(currentDay, wantDate)
+                            .toInt()
+                        currentDateNum = -1
+                        weeksMonth = getWeeksOfMonth()
+                        jumpToPage(monthOffset + Int.MAX_VALUE / 2 + 2)
+                    }, wantDate.year, wantDate.monthValue - 1, wantDate.dayOfMonth
+                )
+                dpd.show()
+            }
+        }) {
         Row(
             Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically
         ) {
@@ -102,13 +111,18 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
                         Text(
                             text = "$dateVal",
                             maxLines = 1,
-//                            onTextLayout = {
-//                                if (it.hasVisualOverflow && textSize1 > minTextSize) {
-//                                    textSize1 = (textSize1.value - 1.0F).sp
-//                                }
-//                            },
-//                            fontSize = textSize1,
-                            fontSize = 15.sp,
+                            onTextLayout = {
+                                if (it.hasVisualOverflow && textSize1 > minTextSize) {
+                                    textSize1 = (textSize1.value - 1.0F).sp
+                                } else {
+                                    maxTextSizeGongli = textSize1
+                                    with(sharedPreferences.edit()) {
+                                        putFloat("SHARED_PREFS_GONG_LI", maxTextSizeGongli.value)
+                                        commit()
+                                    }
+                                }
+                            },
+                            fontSize = textSize1,
                             color = theColor1,
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight.Bold,
@@ -119,13 +133,12 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
                         text = nongLi,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-//                        onTextLayout = {
-//                            if (it.hasVisualOverflow && textSize2 > minTextSize) {
-//                                textSize2 = (textSize2.value - 1.0F).sp
-//                            }
-//                        },
-//                        fontSize = textSize2,
-                        fontSize = 15.sp,
+                        onTextLayout = {
+                            if (it.hasVisualOverflow && textSize2 > minTextSize) {
+                                textSize2 = (textSize2.value - 1.0F).sp
+                            }
+                        },
+                        fontSize = textSize2,
                         color = theColor2,
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.Bold,
@@ -135,13 +148,18 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
                         text = sixDays,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-//                        onTextLayout = {
-//                            if (it.hasVisualOverflow && textSize3 > minTextSize) {
-//                                textSize3 = (textSize3.value - 1.0F).sp
-//                            }
-//                        },
-//                        fontSize = textSize3,
-                        fontSize = 15.sp,
+                        onTextLayout = {
+                            if (it.hasVisualOverflow && textSize2 > minTextSize) {
+                                textSize2 = (textSize2.value - 1.0F).sp
+                            } else {
+                                maxTextSizeNongli = textSize2
+                                with(sharedPreferences.edit()) {
+                                    putFloat("SHARED_PREFS_NONG_LI", maxTextSizeNongli.value + 3.0f)
+                                    commit()
+                                }
+                            }
+                        },
+                        fontSize = textSize2,
                         color = theColor2,
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.Bold,
@@ -189,15 +207,18 @@ fun CalendarView() {
         ) {
             Text(text = if (is_Pad) "$date   $time" else nowDate(),
                 maxLines = 1,
-//                fontSize = textSize1,
-                fontSize = 23.sp,
-//                onTextLayout = {
-//                    if (it.hasVisualOverflow && textSize1 > minTextSize) {
-//                        textSize1 = (textSize1.value - 1.0F).sp
-//                    } else {
-//                        maxTextSize4 = textSize1
-//                    }
-//                },
+                fontSize = textSize1,
+                onTextLayout = {
+                    if (it.hasVisualOverflow && textSize1 > minTextSize) {
+                        textSize1 = (textSize1.value - 1.0F).sp
+                    } else {
+                        maxTextSize4 = textSize1
+                        with(sharedPreferences.edit()) {
+                            putFloat("SHARED_PREFS_CALENDAR_TITLE", maxTextSize4.value)
+                            commit()
+                        }
+                    }
+                },
                 color = Color(0xFF018786),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
