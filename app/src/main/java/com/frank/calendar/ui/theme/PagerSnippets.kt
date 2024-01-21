@@ -8,6 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import com.frank.calendar.CalendarView
 import com.frank.calendar.currentDateNum
+import com.frank.calendar.getWeeksOfMonth
+import com.frank.calendar.weeksMonth
 
 var monthOffset = 0
 
@@ -22,6 +24,7 @@ fun HorizontalPagerSample() {
         if (page != 0) {
             monthOffset = page - Int.MAX_VALUE / 2 - 2
             currentDateNum = -1
+            weeksMonth = getWeeksOfMonth()
             Log.i("ABC", "monthOffset = " + monthOffset)
 //        Text(
 //            text = "$monthOffset",
