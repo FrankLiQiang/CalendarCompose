@@ -31,7 +31,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frank.calendar.ui.theme.CalendarTheme
-import java.time.LocalDate
+import com.frank.calendar.ui.theme.monthOffset
+import java.time.LocalDateTime
 import java.time.temporal.TemporalAdjusters
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -81,12 +82,13 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
                         Text(
                             text = "$dateVal",
                             maxLines = 1,
-                            onTextLayout = {
-                                if (it.hasVisualOverflow && textSize1 > minTextSize) {
-                                    textSize1 = (textSize1.value - 1.0F).sp
-                                }
-                            },
-                            fontSize = textSize1,
+//                            onTextLayout = {
+//                                if (it.hasVisualOverflow && textSize1 > minTextSize) {
+//                                    textSize1 = (textSize1.value - 1.0F).sp
+//                                }
+//                            },
+//                            fontSize = textSize1,
+                            fontSize = 15.sp,
                             color = theColor1,
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight.Bold,
@@ -97,12 +99,13 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
                         text = nongLi,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        onTextLayout = {
-                            if (it.hasVisualOverflow && textSize2 > minTextSize) {
-                                textSize2 = (textSize2.value - 1.0F).sp
-                            }
-                        },
-                        fontSize = textSize2,
+//                        onTextLayout = {
+//                            if (it.hasVisualOverflow && textSize2 > minTextSize) {
+//                                textSize2 = (textSize2.value - 1.0F).sp
+//                            }
+//                        },
+//                        fontSize = textSize2,
+                        fontSize = 15.sp,
                         color = theColor2,
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.Bold,
@@ -112,12 +115,13 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
                         text = sixDays,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        onTextLayout = {
-                            if (it.hasVisualOverflow && textSize3 > minTextSize) {
-                                textSize3 = (textSize3.value - 1.0F).sp
-                            }
-                        },
-                        fontSize = textSize3,
+//                        onTextLayout = {
+//                            if (it.hasVisualOverflow && textSize3 > minTextSize) {
+//                                textSize3 = (textSize3.value - 1.0F).sp
+//                            }
+//                        },
+//                        fontSize = textSize3,
+                        fontSize = 15.sp,
                         color = theColor2,
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.Bold,
@@ -131,10 +135,10 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
 
 
 fun getWeeksOfMonth(): Int {
-    val now = LocalDate.now()
-    val lengthOfMonth = now.lengthOfMonth()
+    now = LocalDateTime.now().plusMonths(monthOffset.toLong())
+    val lengthOfMonth = now.toLocalDate().lengthOfMonth()
     dayOfMonth = now.dayOfMonth
-    firstDay = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth())
+    firstDay = now.toLocalDate().with(TemporalAdjusters.firstDayOfMonth())
     firstDayOfWeek = firstDay.dayOfWeek.value % 7
     val ret = lengthOfMonth - (7 - firstDayOfWeek)
     for (i in 0 until firstDayOfWeek) {
@@ -153,32 +157,38 @@ fun getWeeksOfMonth(): Int {
 }
 
 @Composable
-fun CalendarView(dif: Int) {
+fun CalendarView() {
     if (isRedraw > 100) return
     var textSize1 by remember("") { mutableStateOf(maxTextSize4) }
     Column(Modifier.padding(bottom = 20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         Row(
             Modifier
-                .weight(1.0f),
-//                .padding(start = 10.dp, end = 10.dp),
+                .weight(1.0f)
+                .padding(start = 10.dp, end = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = if (is_Pad) "$date   $time" else nowDate(),
                 maxLines = 1,
-                fontSize = textSize1,
-                onTextLayout = {
-                    if (it.hasVisualOverflow && textSize1 > minTextSize) {
-                        textSize1 = (textSize1.value - 1.0F).sp
-                    } else {
-                        maxTextSize4 = textSize1
-                    }
-                },
+//                fontSize = textSize1,
+                fontSize = 23.sp,
+//                onTextLayout = {
+//                    if (it.hasVisualOverflow && textSize1 > minTextSize) {
+//                        textSize1 = (textSize1.value - 1.0F).sp
+//                    } else {
+//                        maxTextSize4 = textSize1
+//                    }
+//                },
                 color = Color(0xFF018786),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .padding(6.dp)
-                    .clickable { isClock = !isClock })
+                    .clickable {
+                        monthOffset = 0
+                        currentDateNum = -1
+                        now = LocalDateTime.now()
+                        isClock = !isClock
+                    })
         }
         var d = 0
         for (i in 0 until weeksMonth) {
@@ -205,7 +215,7 @@ fun CalendarPreview() {
             modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
         ) {
 //            ClockUI({ isRed = true })
-            CalendarView(0)
+            CalendarView()
         }
     }
 }

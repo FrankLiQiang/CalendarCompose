@@ -20,7 +20,8 @@ import androidx.compose.ui.unit.sp
 import com.frank.calendar.ui.theme.CalendarTheme
 import com.frank.calendar.ui.theme.HorizontalPagerSample
 import java.time.LocalDate
-import java.util.Calendar
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Timer
 import java.util.TimerTask
 
@@ -47,6 +48,7 @@ var dateArray = Array(42) { -1 }
 var nongliArray = Array(31) { "" }
 var sixDaysArray = Array(31) { "" }
 var isRedraw by mutableStateOf(1)
+var now: LocalDateTime = LocalDateTime.now()
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,17 +97,12 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun leftTimeClicked() {
-        val year = toDate.get(Calendar.YEAR)
-        val month = toDate.get(Calendar.MONTH)
-        val day = toDate.get(Calendar.DAY_OF_MONTH)
-
         val dpd = DatePickerDialog(
-            this, { _, year2, monthOfYear, dayOfMonth ->
-                toDate.set(year2, monthOfYear, dayOfMonth, 0, 0, 0)
-                toDate.set(Calendar.MILLISECOND, 0)
+            this, { _, year, month, day ->
+                toDate = LocalDateTime.of(year, month + 1 , day, 0, 0, 0, 0)
                 saveTimePerSet()
                 currentDateNum = -1
-            }, year, month, day
+            }, toDate.year, toDate.monthValue - 1, toDate.dayOfMonth
         )
         dpd.show()
     }
@@ -113,15 +110,16 @@ class MainActivity : ComponentActivity() {
     private fun saveTimePerSet() {
         val sharedPref = getPreferences(Context.MODE_PRIVATE)
         with(sharedPref.edit()) {
-            putLong(getString(R.string.prefs_timePerWorkSet), toDate.timeInMillis)
+            val df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            putString(getString(R.string.prefs_timePerWorkSet), df.format(toDate))
             commit()
         }
     }
 
     private fun readToDate() {
         val sharedPref = getPreferences(Context.MODE_PRIVATE)
-        val defaultValue = Calendar.getInstance().timeInMillis
-        val highScore = sharedPref.getLong(getString(R.string.prefs_timePerWorkSet), defaultValue)
-        toDate.timeInMillis = highScore
+        val df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val highScore = sharedPref.getString(getString(R.string.prefs_timePerWorkSet), df.format(LocalDateTime.now()))
+        toDate = LocalDateTime.parse(highScore, df)
     }
 }

@@ -1,17 +1,17 @@
 package com.frank.calendar
 
 import com.frank.calendar.LunarCalendar.getLunarText2
+import com.frank.calendar.ui.theme.monthOffset
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.Calendar
-import java.util.concurrent.TimeUnit
+import java.time.temporal.ChronoUnit
 
 var gongliDate = ""
 var nongliDate = ""
 var newCurrentDate = -1
 var currentDateNum = -2
 var dateColor = true
-var toDate: Calendar = Calendar.getInstance()
+var toDate: LocalDateTime = now
 
 fun getNongLiDate(): String {
     return if (currentDateNum == newCurrentDate) {
@@ -23,29 +23,19 @@ fun getNongLiDate(): String {
 }
 
 fun getNongLi(dayNum: Int): String {
-    val calendar: Calendar = Calendar.getInstance()
-    return getLunarText2(
-        calendar.get(Calendar.YEAR),
-        calendar.get(Calendar.MONTH) + 1,
-        dayNum
-    )
+    return getLunarText2(now.year, now.monthValue, dayNum)
 }
 
 fun getSixDay(dayNum: Int): String {
-    val calendar: Calendar = Calendar.getInstance()
-    return LunarCalendar.getSixDay(
-        calendar.get(Calendar.YEAR),
-        calendar.get(Calendar.MONTH) + 1,
-        dayNum
-    )
+    return LunarCalendar.getSixDay(now.year, now.monthValue, dayNum)
 }
 
 fun getCurrentTime(): String {
-    val localDateTime = LocalDateTime.now()
-    newCurrentDate = localDateTime.dayOfMonth
+    now = LocalDateTime.now()
+    newCurrentDate = now.dayOfMonth
 //    val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
     val formatter = DateTimeFormatter.ofPattern("HH:mm")
-    return localDateTime.format(formatter)
+    return now.format(formatter)
 }
 
 fun getCurrentDate(): String {
@@ -53,58 +43,39 @@ fun getCurrentDate(): String {
         gongliDate
     } else {
         weeksMonth = getWeeksOfMonth()
-        isRedraw = 1 - isRedraw
         val wk = nowWeek()
         dateColor = !wk.startsWith("星期")
         gongliDate = "${nowDate()}  $wk"
         currentDateNum = newCurrentDate
-        gongliDate
+        return gongliDate
     }
 }
 
 val nongli: () -> String = {
-    val calendar: Calendar = Calendar.getInstance()
     "农历 ${
-        LunarCalendar.getLunarText(
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH) + 1,
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-    }  ${LunarCalendar.getSixDay(
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH) + 1,
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
+        LunarCalendar.getLunarText(now.year, now.monthValue, now.dayOfMonth)
+    }  ${
+        LunarCalendar.getSixDay(now.year, now.monthValue, now.dayOfMonth)
     }"
 }
 
 val leftDays: () -> String = {
-    val cNow = Calendar.getInstance()
-    cNow.set(Calendar.HOUR_OF_DAY, 0)
-    cNow.set(Calendar.MINUTE, 0)
-    cNow.set(Calendar.SECOND, 0)
-    cNow.set(Calendar.MILLISECOND, 0)
-    val diff = toDate.timeInMillis - cNow.timeInMillis
-    val leftDays = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toInt()
+    val cNow = LocalDateTime.of(now.year, now.monthValue, now.dayOfMonth, 0, 0, 0, 0)
+    val leftDays = ChronoUnit.DAYS.between(cNow, toDate)
     if (leftDays > 0) "  还剩 $leftDays 天" else ""
 }
 
 val nowDate: () -> String = {
-    val localDateTime = LocalDateTime.now()
+    now = LocalDateTime.now().plusMonths(monthOffset.toLong())
     val formatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日")
-    localDateTime.format(formatter)
+    now.format(formatter)
 }
 
 val nowWeek: () -> String = {
-    val calendar: Calendar = Calendar.getInstance()
-
-    val solar = LunarCalendar.gregorianFestival(
-        calendar.get(Calendar.MONTH) + 1,
-        calendar.get(Calendar.DAY_OF_MONTH)
-    )
+    val solar = LunarCalendar.gregorianFestival(now.monthValue, now.dayOfMonth)
     solar.ifEmpty {
-        val day: Int = calendar.get(Calendar.DAY_OF_WEEK)
-        val weekString = "日一二三四五六"
+        val day: Int = now.dayOfWeek.value
+        val weekString = "一二三四五六日"
         "星期${weekString.substring(day - 1, day)}"
     }
 }

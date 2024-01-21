@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
+import com.frank.calendar.ui.theme.monthOffset
 
 @Composable
 fun ClockUI(event: () -> Unit, modifier: Modifier = Modifier) {
@@ -80,8 +81,10 @@ fun ClockUI(event: () -> Unit, modifier: Modifier = Modifier) {
             fontWeight = FontWeight.Bold,
             modifier = modifier
                 .weight(0.5f, true)
-                .clickable { isClock = !isClock }
-
+                .clickable {
+                    monthOffset = 0
+                    isClock = !isClock
+                }
         )
     }
 }
