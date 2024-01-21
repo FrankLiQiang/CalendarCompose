@@ -1,5 +1,6 @@
 package com.frank.calendar
 
+import android.app.DatePickerDialog
 import android.content.Context
 import android.content.res.Configuration
 import android.util.DisplayMetrics
@@ -22,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -31,8 +33,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frank.calendar.ui.theme.CalendarTheme
+import com.frank.calendar.ui.theme.jumpToPage
 import com.frank.calendar.ui.theme.monthOffset
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalAdjusters
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -41,6 +45,7 @@ import kotlin.math.sqrt
 @Composable
 fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
     if (isRedraw > 100) return
+    val context = LocalContext.current
     var nongLi = if (dateVal == -1) "" else nongliArray[dateVal - 1]
     val sixDays = if (dateVal == -1) "" else sixDaysArray[dateVal - 1]
     val maxTextSizeDate00 = 132.sp
@@ -63,7 +68,22 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
         nongLi = nongLi.substring(1)
         theColor2 = Color.Yellow
     }
-    Box(modifier = modifier.padding(0.dp)) {
+    Box(modifier = modifier.padding(0.dp).clickable {
+        if (dateVal == -1) {
+            val dpd = DatePickerDialog(
+                context, { _, year, month, day ->
+                    wantDate = LocalDateTime.of(year, month + 1, 1, 0, 0, 0, 0)
+                    val currentDay = LocalDateTime.of(LocalDateTime.now().year, LocalDateTime.now().month, 1, 0, 0, 0, 0)
+                    monthOffset = ChronoUnit.MONTHS.between(currentDay, wantDate).toInt()
+                    currentDateNum = -1
+                    weeksMonth = getWeeksOfMonth()
+                    jumpToPage(monthOffset + Int.MAX_VALUE / 2 + 2)
+//                    isRedraw = 1 - isRedraw
+                }, wantDate.year, wantDate.monthValue - 1, wantDate.dayOfMonth
+            )
+            dpd.show()
+        }
+    }) {
         Row(
             Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically
         ) {

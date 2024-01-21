@@ -12,6 +12,7 @@ var newCurrentDate = -1
 var currentDateNum = -2
 var dateColor = true
 var toDate: LocalDateTime = now
+var wantDate: LocalDateTime = now
 
 fun getNongLiDate(): String {
     return if (currentDateNum == newCurrentDate) {

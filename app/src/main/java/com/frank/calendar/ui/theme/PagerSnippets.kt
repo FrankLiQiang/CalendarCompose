@@ -6,12 +6,15 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import com.frank.calendar.CalendarView
 import com.frank.calendar.currentDateNum
 import com.frank.calendar.getWeeksOfMonth
 import com.frank.calendar.weeksMonth
+import kotlinx.coroutines.launch
 
 var monthOffset = 0
+lateinit var jumpToPage: (Int) -> Unit
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -20,6 +23,17 @@ fun HorizontalPagerSample() {
     val pagerState = rememberPagerState(pageCount = {
         Int.MAX_VALUE
     })
+
+    val coroutineScope = rememberCoroutineScope()
+
+    jumpToPage = { page ->
+        coroutineScope.launch {
+            // Call scroll to on pagerState
+            pagerState.scrollToPage(page)
+        }
+    }
+
+
     HorizontalPager(state = pagerState) { page ->
         if (page != 0) {
             monthOffset = page - Int.MAX_VALUE / 2 - 2
