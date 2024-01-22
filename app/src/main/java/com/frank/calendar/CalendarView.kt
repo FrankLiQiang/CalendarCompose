@@ -41,13 +41,112 @@ import java.time.temporal.TemporalAdjusters
 import kotlin.math.pow
 import kotlin.math.sqrt
 
+fun getNongLi(dayNum: Int): String {
+    return LunarCalendar.getLunarText2(now.year, now.monthValue, dayNum)
+}
+
+fun getSixDay(dayNum: Int): String {
+    return LunarCalendar.getSixDay(now.year, now.monthValue, dayNum)
+}
+
+fun getWeeksOfMonth(): Int {
+    val lengthOfMonth = now.toLocalDate().lengthOfMonth()
+    dayOfMonth = now.dayOfMonth
+    firstDay = now.toLocalDate().with(TemporalAdjusters.firstDayOfMonth())
+    firstDayOfWeek = firstDay.dayOfWeek.value % 7
+    val ret = lengthOfMonth - (7 - firstDayOfWeek)
+    for (i in 0 until firstDayOfWeek) {
+        dateArray[i] = -1
+        nongliArray[i] = ""
+        sixDaysArray[i] = ""
+    }
+    var d = firstDayOfWeek
+    for (i in 1..lengthOfMonth) {
+        dateArray[d] = i
+        nongliArray[d] = getNongLi(i)
+        sixDaysArray[d] = getSixDay(i)
+        d++
+    }
+    for (i in d until 42) {
+        dateArray[i] = -1
+        nongliArray[i] = ""
+        sixDaysArray[i] = ""
+    }
+    return ret / 7 + if (ret % 7 == 0) 1 else 2
+}
 
 @Composable
-fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
+fun CalendarView() {
+    if (isRedraw > 100) return
+    var textSize1 by remember("") { mutableStateOf(maxTextSize4) }
+    Column(Modifier.padding(bottom = 20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Row(
+            Modifier
+                .weight(1.0f)
+                .padding(start = 10.dp, end = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = if (is_Pad) "$date   $time" else nowDate(),
+                maxLines = 1,
+                fontSize = textSize1,
+                onTextLayout = {
+                    if (it.hasVisualOverflow && textSize1 > minTextSize) {
+                        textSize1 = (textSize1.value - 1.0F).sp
+                    } else {
+                        maxTextSize4 = textSize1
+                        with(sharedPreferences.edit()) {
+                            putFloat("SHARED_PREFS_CALENDAR_TITLE", maxTextSize4.value)
+                            commit()
+                        }
+                    }
+                },
+                color = Color(0xFF018786),
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(6.dp)
+                    .clickable {
+                        monthOffset = 0
+                        now = LocalDateTime.now()
+                        isClock = !isClock
+                    })
+        }
+        weeksMonth = getWeeksOfMonth()
+        var d = 0
+        for (i in 0 until weeksMonth) {
+            Row(Modifier.weight(if (is_Pad) 0.2f else 0.5f)) {}
+            Row(Modifier.weight(1.0f), verticalAlignment = Alignment.CenterVertically) {
+                for (j in 0..6) {
+                    Date(j, Modifier.weight(1.0f), dateArray[d], nongliArray[d], sixDaysArray[d])
+                    d++
+                }
+            }
+        }
+    }
+}
+
+@Preview(
+    showBackground = true,
+    widthDp = 2000,
+    heightDp = 900,
+)
+@Composable
+fun CalendarPreview() {
+    CalendarTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
+        ) {
+//            ClockUI({ isRed = true })
+            CalendarView()
+        }
+    }
+}
+
+@Composable
+fun Date(weekId: Int, modifier: Modifier, dateVal: Int, nongLi0: String, sixDays: String) {
     if (isRedraw > 100) return
     val context = LocalContext.current
-    var nongLi = if (dateVal == -1) "" else nongliArray[dateVal - 1]
-    val sixDays = if (dateVal == -1) "" else sixDaysArray[dateVal - 1]
+    var nongLi = nongLi0
     var textSize1 by remember("") { mutableStateOf(maxTextSizeGongli) }
     var textSize2 by remember("") { mutableStateOf(maxTextSizeNongli) }
     var theColor1 = Color(0xFF018786)
@@ -85,12 +184,13 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
                         monthOffset = ChronoUnit.MONTHS
                             .between(currentDay, wantDate)
                             .toInt()
-                        currentDateNum = -1
-                        weeksMonth = getWeeksOfMonth()
                         jumpToPage(monthOffset + Int.MAX_VALUE / 2 + 2)
                     }, wantDate.year, wantDate.monthValue - 1, wantDate.dayOfMonth
                 )
                 dpd.show()
+            }else if (dayOfMonth == dateVal && monthOffset != 0) {
+                monthOffset = 0
+                jumpToPage(Int.MAX_VALUE / 2 + 2)
             }
         }) {
         Row(
@@ -167,96 +267,6 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int) {
                     )
                 }
             }
-        }
-    }
-}
-
-
-fun getWeeksOfMonth(): Int {
-    now = LocalDateTime.now().plusMonths(monthOffset.toLong())
-    val lengthOfMonth = now.toLocalDate().lengthOfMonth()
-    dayOfMonth = now.dayOfMonth
-    firstDay = now.toLocalDate().with(TemporalAdjusters.firstDayOfMonth())
-    firstDayOfWeek = firstDay.dayOfWeek.value % 7
-    val ret = lengthOfMonth - (7 - firstDayOfWeek)
-    for (i in 0 until firstDayOfWeek) {
-        dateArray[i] = -1
-    }
-    var d = firstDayOfWeek
-    for (i in 1..lengthOfMonth) {
-        dateArray[d++] = i
-        nongliArray[i - 1] = getNongLi(i)
-        sixDaysArray[i - 1] = getSixDay(i)
-    }
-    for (i in d until 42) {
-        dateArray[i] = -1
-    }
-    return ret / 7 + if (ret % 7 == 0) 1 else 2
-}
-
-@Composable
-fun CalendarView() {
-    if (isRedraw > 100) return
-    var textSize1 by remember("") { mutableStateOf(maxTextSize4) }
-    Column(Modifier.padding(bottom = 20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        Row(
-            Modifier
-                .weight(1.0f)
-                .padding(start = 10.dp, end = 10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = if (is_Pad) "$date   $time" else nowDate(),
-                maxLines = 1,
-                fontSize = textSize1,
-                onTextLayout = {
-                    if (it.hasVisualOverflow && textSize1 > minTextSize) {
-                        textSize1 = (textSize1.value - 1.0F).sp
-                    } else {
-                        maxTextSize4 = textSize1
-                        with(sharedPreferences.edit()) {
-                            putFloat("SHARED_PREFS_CALENDAR_TITLE", maxTextSize4.value)
-                            commit()
-                        }
-                    }
-                },
-                color = Color(0xFF018786),
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(6.dp)
-                    .clickable {
-                        monthOffset = 0
-                        currentDateNum = -1
-                        now = LocalDateTime.now()
-                        isClock = !isClock
-                    })
-        }
-        var d = 0
-        for (i in 0 until weeksMonth) {
-            Row(Modifier.weight(if (is_Pad) 0.2f else 0.5f)) {}
-            Row(Modifier.weight(1.0f), verticalAlignment = Alignment.CenterVertically) {
-                for (j in 0..6) {
-                    Date(j, Modifier.weight(1.0f), dateArray[d])
-                    d++
-                }
-            }
-        }
-    }
-}
-
-@Preview(
-    showBackground = true,
-    widthDp = 2000,
-    heightDp = 900,
-)
-@Composable
-fun CalendarPreview() {
-    CalendarTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
-        ) {
-//            ClockUI({ isRed = true })
-            CalendarView()
         }
     }
 }

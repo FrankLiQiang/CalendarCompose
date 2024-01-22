@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color.Companion.DarkGray
 import androidx.compose.ui.unit.sp
 import com.frank.calendar.ui.theme.CalendarTheme
 import com.frank.calendar.ui.theme.HorizontalPagerSample
+import com.frank.calendar.ui.theme.monthOffset
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -48,8 +49,8 @@ var date by mutableStateOf("2023年12月08日")
 var isRed by mutableStateOf(false)
 var isClock by mutableStateOf(true)
 var dateArray = Array(42) { -1 }
-var nongliArray = Array(31) { "" }
-var sixDaysArray = Array(31) { "" }
+var nongliArray = Array(42) { "" }
+var sixDaysArray = Array(42) { "" }
 var isRedraw by mutableStateOf(1)
 var now: LocalDateTime = LocalDateTime.now()
 lateinit var sharedPreferences: SharedPreferences
@@ -90,7 +91,7 @@ class MainActivity : ComponentActivity() {
                         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
                         ClockUI(::leftTimeClicked)
                     } else {
-                        weeksMonth = getWeeksOfMonth()
+                        monthOffset = 0
                         if (!is_Pad) {
                             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
                         }

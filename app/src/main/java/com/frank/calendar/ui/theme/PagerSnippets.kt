@@ -9,11 +9,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.unit.sp
 import com.frank.calendar.CalendarView
-import com.frank.calendar.currentDateNum
-import com.frank.calendar.getWeeksOfMonth
 import com.frank.calendar.maxTextSizeGongli
 import com.frank.calendar.maxTextSizeNongli
-import com.frank.calendar.weeksMonth
 import kotlinx.coroutines.launch
 
 var monthOffset = 0
@@ -40,8 +37,6 @@ fun HorizontalPagerSample() {
     HorizontalPager(state = pagerState) { page ->
         if (page != 0) {
             monthOffset = page - Int.MAX_VALUE / 2 - 2
-            currentDateNum = -1
-            weeksMonth = getWeeksOfMonth()
             maxTextSizeGongli = (maxTextSizeGongli.value + 12.0f).sp
             maxTextSizeNongli = (maxTextSizeNongli.value + 12.0f).sp
 
