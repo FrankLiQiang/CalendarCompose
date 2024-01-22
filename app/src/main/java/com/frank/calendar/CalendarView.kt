@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -81,11 +82,11 @@ fun CalendarView() {
     Column(Modifier.padding(bottom = 20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         Row(
             Modifier
-                .weight(1.0f)
+                .weight(0.5f)
                 .padding(start = 10.dp, end = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = if (is_Pad) "$date   $time" else nowDate(),
+            Text(text = if (is_Pad) nowDate() + "  " + nowWeek() + "  $time" else nowDate(),
                 maxLines = 1,
                 fontSize = textSize1,
                 onTextLayout = {
@@ -110,10 +111,22 @@ fun CalendarView() {
                         isClock = !isClock
                     })
         }
+        if (!is_Pad) {
+            Text(
+                text = time,
+                maxLines = 1,
+                fontSize = textSize1,
+                color = Color(0xFF018786),
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(0.5f)
+                    .padding(6.dp)
+            )
+        }
         weeksMonth = getWeeksOfMonth()
         var d = 0
         for (i in 0 until weeksMonth) {
-            Row(Modifier.weight(if (is_Pad) 0.2f else 0.5f)) {}
+            Row(Modifier.height(if (is_Pad) 10.dp else 30.dp)) {}
             Row(Modifier.weight(1.0f), verticalAlignment = Alignment.CenterVertically) {
                 for (j in 0..6) {
                     Date(j, Modifier.weight(1.0f), dateArray[d], nongliArray[d], sixDaysArray[d])
@@ -187,7 +200,7 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int, nongLi0: String, sixDays
                     }, wantDate.year, wantDate.monthValue - 1, wantDate.dayOfMonth
                 )
                 dpd.show()
-            }else if (dayOfMonth == dateVal && monthOffset != 0) {
+            } else if (dayOfMonth == dateVal && monthOffset != 0) {
                 monthOffset = 0
                 jumpToPage(Int.MAX_VALUE / 2 + 2)
             }
