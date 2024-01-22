@@ -51,7 +51,6 @@ fun getSixDay(dayNum: Int): String {
 
 fun getWeeksOfMonth(): Int {
     val lengthOfMonth = now.toLocalDate().lengthOfMonth()
-    dayOfMonth = now.dayOfMonth
     firstDay = now.toLocalDate().with(TemporalAdjusters.firstDayOfMonth())
     firstDayOfWeek = firstDay.dayOfWeek.value % 7
     val ret = lengthOfMonth - (7 - firstDayOfWeek)

@@ -134,6 +134,7 @@ fun getCurrentDate(): String {
         gongliDate
     } else {
         val wk = nowWeek()
+        dayOfMonth = now.dayOfMonth
         dateColor = !wk.startsWith("星期")
         gongliDate = "${nowDate()}  $wk"
         currentDateNum = newCurrentDate
