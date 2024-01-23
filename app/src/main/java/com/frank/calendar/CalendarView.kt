@@ -244,7 +244,8 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int, nongLi0: String, sixDays
                         )
                     }
                     Box(
-                        modifier = Modifier.weight(1.0f, true)
+                        modifier = Modifier.weight(1.0f, true),
+                        contentAlignment = Alignment.Center,
                     ) {
                         Text(
                             text = nongLi,
@@ -262,8 +263,9 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int, nongLi0: String, sixDays
                             modifier = Modifier.fillMaxSize()
                         )
                     }
-                    Box(
-                        modifier = Modifier.weight(1.0f, true)
+                    Row(
+                        modifier = Modifier.weight(1.0f, true),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
                             text = sixDays,
