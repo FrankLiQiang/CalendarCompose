@@ -31,7 +31,7 @@ public final class SolarTermUtil {
     /**
      * 24节气
      */
-    private static  String SOLAR_TERMS[] = null;
+    private static String SOLAR_TERMS[] = null;
 
     /**
      * 每弧度的角秒数
@@ -657,7 +657,7 @@ public final class SolarTermUtil {
 
         @Override
         public String toString() {
-            return  doubleToString(year) + doubleToString(month) + doubleToString(day);
+            return doubleToString(year) + doubleToString(month) + doubleToString(day);
         }
     }
 

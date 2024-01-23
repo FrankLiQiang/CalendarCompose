@@ -105,7 +105,7 @@ class MainActivity : ComponentActivity() {
     private fun leftTimeClicked() {
         val dpd = DatePickerDialog(
             this, { _, year, month, day ->
-                toDate = LocalDateTime.of(year, month + 1 , day, 0, 0, 0, 0)
+                toDate = LocalDateTime.of(year, month + 1, day, 0, 0, 0, 0)
                 saveTimePerSet()
                 currentDateNum = -1
             }, toDate.year, toDate.monthValue - 1, toDate.dayOfMonth

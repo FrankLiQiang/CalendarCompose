@@ -385,7 +385,7 @@ object LunarCalendar {
         val lunar = LunarUtil.solarToLunar(year, month, day)
         val festival = getTraditionFestival(lunar[0], lunar[1], lunar[2])
         if (!TextUtils.isEmpty(festival)) return festival
-        return numToChinese(lunar[1], lunar[2],lunar[3])
+        return numToChinese(lunar[1], lunar[2], lunar[3])
     }
 
     fun getSixDay(year: Int, month: Int, day: Int): String {
