@@ -10,7 +10,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.unit.sp
 import com.frank.calendar.CalendarView
 import com.frank.calendar.maxTextSizeGongli
-import com.frank.calendar.maxTextSizeNongli
+import com.frank.calendar.maxTextSizeSix
 import kotlinx.coroutines.launch
 
 var monthOffset = 0
@@ -38,7 +38,7 @@ fun HorizontalPagerSample() {
         if (page != 0) {
             monthOffset = page - Int.MAX_VALUE / 2 - 2
             maxTextSizeGongli = (maxTextSizeGongli.value + 12.0f).sp
-            maxTextSizeNongli = (maxTextSizeNongli.value + 12.0f).sp
+            maxTextSizeSix = (maxTextSizeSix.value + 12.0f).sp
 
             Log.i("ABC", "monthOffset = " + monthOffset)
 //        Text(

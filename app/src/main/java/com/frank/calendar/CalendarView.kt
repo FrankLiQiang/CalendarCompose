@@ -82,7 +82,7 @@ fun CalendarView() {
     Column(Modifier.padding(bottom = 20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         Row(
             Modifier
-                .weight(0.5f)
+                .weight(0.8f)
                 .padding(start = 10.dp, end = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -119,7 +119,8 @@ fun CalendarView() {
                 color = Color(0xFF018786),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(0.5f)
+                modifier = Modifier
+                    .weight(0.8f)
                     .padding(6.dp)
             )
         }
@@ -160,7 +161,8 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int, nongLi0: String, sixDays
     val context = LocalContext.current
     var nongLi = nongLi0
     var textSize1 by remember("") { mutableStateOf(maxTextSizeGongli) }
-    var textSize2 by remember("") { mutableStateOf(maxTextSizeNongli) }
+    var textSize2 by remember("") { mutableStateOf(maxTextSizeSix) }
+    var textSize3 by remember("") { mutableStateOf(maxTextSizeSix) }
     var theColor1 = Color(0xFF018786)
     var theColor2 = Color(0xFF018786)
     if (weekId == 0 || weekId == 6) theColor1 = Color.Blue
@@ -241,42 +243,53 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int, nongLi0: String, sixDays
                             modifier = Modifier.fillMaxSize()
                         )
                     }
-                    Text(
-                        text = nongLi,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        onTextLayout = {
-                            if (it.hasVisualOverflow && textSize2 > minTextSize) {
-                                textSize2 = (textSize2.value - 1.0F).sp
-                            }
-                        },
-                        fontSize = textSize2,
-                        color = theColor2,
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(1f, false)
-                    )
-                    Text(
-                        text = sixDays,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        onTextLayout = {
-                            if (it.hasVisualOverflow && textSize2 > minTextSize) {
-                                textSize2 = (textSize2.value - 1.0F).sp
-                            } else {
-                                maxTextSizeNongli = textSize2
-                                with(sharedPreferences.edit()) {
-                                    putFloat("SHARED_PREFS_NONG_LI", maxTextSizeNongli.value + 3.0f)
-                                    commit()
+                    Box(
+                        modifier = Modifier.weight(1.0f, true)
+                    ) {
+                        Text(
+                            text = nongLi,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            onTextLayout = {
+                                if (it.hasVisualOverflow && textSize2 > minTextSize) {
+                                    textSize2 = (textSize2.value - 1.0F).sp
                                 }
-                            }
-                        },
-                        fontSize = textSize2,
-                        color = theColor2,
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(1f, false)
-                    )
+                            },
+                            fontSize = textSize2,
+                            color = theColor2,
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                    Box(
+                        modifier = Modifier.weight(1.0f, true)
+                    ) {
+                        Text(
+                            text = sixDays,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            onTextLayout = {
+                                if (it.hasVisualOverflow && textSize3 > minTextSize) {
+                                    textSize3 = (textSize3.value - 1.0F).sp
+                                } else {
+                                    maxTextSizeSix = textSize3
+                                    with(sharedPreferences.edit()) {
+                                        putFloat(
+                                            "SHARED_PREFS_SIX",
+                                            maxTextSizeSix.value + 3.0f
+                                        )
+                                        commit()
+                                    }
+                                }
+                            },
+                            fontSize = textSize3,
+                            color = theColor2,
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.fillMaxSize() //.weight(1f, false)
+                        )
+                    }
                 }
             }
         }

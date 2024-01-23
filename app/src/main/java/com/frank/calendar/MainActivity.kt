@@ -38,7 +38,7 @@ var maxTextSize2 = 112.sp
 var maxTextSize3 = 112.sp
 var maxTextSize4 = 112.sp
 var maxTextSizeGongli = 132.sp
-var maxTextSizeNongli = 132.sp
+var maxTextSizeSix = 132.sp
 var weeksMonth: Int = 5
 private var thisTimer: Timer = Timer()
 private var thisTask: TimerTask? = null
@@ -123,7 +123,7 @@ class MainActivity : ComponentActivity() {
 
     private fun readToDate() {
         maxTextSize4 = sharedPreferences.getFloat("SHARED_PREFS_CALENDAR_TITLE", 112.0f).sp
-        maxTextSizeNongli = sharedPreferences.getFloat("SHARED_PREFS_NONG_LI", 132.0f).sp
+        maxTextSizeSix = sharedPreferences.getFloat("SHARED_PREFS_SIX", 132.0f).sp
         maxTextSizeGongli = sharedPreferences.getFloat("SHARED_PREFS_GONG_LI", 132.0f).sp
         maxTextSize1 = sharedPreferences.getFloat("SHARED_PREFS_TIME", 312.0f).sp
         maxTextSize2 = sharedPreferences.getFloat("SHARED_PREFS_LEFT", 112.0f).sp
