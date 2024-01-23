@@ -32,7 +32,7 @@ lateinit var firstDay: LocalDate
 var is_Pad = false
 var dayOfMonth = 1
 var firstDayOfWeek: Int = 0
-var minTextSize = 8.sp
+var minTextSize = 5.sp
 var maxTextSize1 = 312.sp
 var maxTextSize2 = 112.sp
 var maxTextSize3 = 112.sp
