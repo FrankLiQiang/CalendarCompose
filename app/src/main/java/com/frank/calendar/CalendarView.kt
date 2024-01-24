@@ -1,10 +1,6 @@
 package com.frank.calendar
 
 import android.app.DatePickerDialog
-import android.content.Context
-import android.content.res.Configuration
-import android.util.DisplayMetrics
-import android.view.WindowManager
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -39,8 +35,6 @@ import com.frank.calendar.ui.theme.monthOffset
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalAdjusters
-import kotlin.math.pow
-import kotlin.math.sqrt
 
 fun getNongLi(dayNum: Int): String {
     return LunarCalendar.getLunarText2(now.year, now.monthValue, dayNum)
@@ -78,25 +72,39 @@ fun getWeeksOfMonth(): Int {
 @Composable
 fun CalendarView() {
     if (isRedraw > 100) return
-    var textSize1 by remember("") { mutableStateOf(maxTextSize4) }
+    var textSize by remember("") { mutableStateOf(if (isPort) maxTextSizeTitle_PORTRAIT else maxTextSizeTitle_LANDSCAPE) }
     Column(Modifier.padding(bottom = 20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         Row(
             Modifier
-                .weight(0.7f)
-                .padding(start = 10.dp, end = 10.dp),
+                .weight(if (isPort) 0.7f else 1.2f),
+                //.padding(start = 10.dp, end = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = if (is_Pad) nowDate() + "  " + nowWeek() + "  $time" else nowDate(),
+            Text(text = if (isPort) nowDate() else nowDate() + "  " + nowWeek() + "  $time",
                 maxLines = 1,
-                fontSize = textSize1,
+                fontSize = textSize,
                 onTextLayout = {
-                    if (it.hasVisualOverflow && textSize1 > minTextSize) {
-                        textSize1 = (textSize1.value - 1.0F).sp
+                    if (it.hasVisualOverflow && textSize > minTextSize) {
+                        textSize = (textSize.value - 1.0F).sp
                     } else {
-                        maxTextSize4 = textSize1
-                        with(sharedPreferences.edit()) {
-                            putFloat("SHARED_PREFS_CALENDAR_TITLE", maxTextSize4.value)
-                            commit()
+                        if (isPort) {
+                            maxTextSizeTitle_PORTRAIT = textSize
+                            with(sharedPreferences.edit()) {
+                                putFloat(
+                                    "SHARED_PREFS_CALENDAR_TITLE_P",
+                                    maxTextSizeTitle_PORTRAIT.value
+                                )
+                                commit()
+                            }
+                        } else {
+                            maxTextSizeTitle_LANDSCAPE = textSize
+                            with(sharedPreferences.edit()) {
+                                putFloat(
+                                    "SHARED_PREFS_CALENDAR_TITLE_L",
+                                    maxTextSizeTitle_LANDSCAPE.value
+                                )
+                                commit()
+                            }
                         }
                     }
                 },
@@ -111,11 +119,11 @@ fun CalendarView() {
                         isClock = !isClock
                     })
         }
-        if (!is_Pad) {
+        if (isPort) {
             Text(
                 text = time,
                 maxLines = 1,
-                fontSize = textSize1,
+                fontSize = textSize,
                 color = Color(0xFF018786),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
@@ -132,7 +140,7 @@ fun CalendarView() {
                     d++
                 }
             }
-            Row(Modifier.height(if (is_Pad) 8.dp else 15.dp)) {}
+            Row(Modifier.height(if (isPort) 15.dp else 2.dp)) {}
         }
     }
 }
@@ -159,9 +167,9 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int, nongLi0: String, sixDays
     if (isRedraw > 100) return
     val context = LocalContext.current
     var nongLi = nongLi0
-    var textSize1 by remember("") { mutableStateOf(maxTextSizeGongli) }
-    var textSize2 by remember("") { mutableStateOf(maxTextSizeSix) }
-    var textSize3 by remember("") { mutableStateOf(maxTextSizeSix) }
+    var textSize1 by remember("") { mutableStateOf(if (isPort) maxTextSizeCalendarDate_PORTRAIT else maxTextSizeCalendarDate_LANDSCAPE) }
+    var textSize2 by remember("") { mutableStateOf(if (isPort) maxTextSizeCalendarSix_PORTRAIT else maxTextSizeCalendarSix_LANDSCAPE) }
+    var textSize3 by remember("") { mutableStateOf(if (isPort) maxTextSizeCalendarSix_PORTRAIT else maxTextSizeCalendarSix_LANDSCAPE) }
     var theColor1 = Color(0xFF018786)
     var theColor2 = Color(0xFF018786)
     if (weekId == 0 || weekId == 6) theColor1 = Color.Blue
@@ -206,106 +214,148 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int, nongLi0: String, sixDays
                 jumpToPage(Int.MAX_VALUE / 2 + 2)
             }
         }) {
+        if (dayOfMonth == dateVal && !isPort) {
+            Image(
+                painter = painterResource(id = R.drawable.round),
+                modifier = Modifier.fillMaxSize(),
+                contentDescription = stringResource(id = R.string.app_name),
+            )
+        }
         Row(
             Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(Modifier.weight(1.0f), horizontalAlignment = Alignment.CenterHorizontally) {
-                if (dateVal != -1) {
-                    Box(
-                        modifier = Modifier.weight(1.6f, true)
-                    ) {
-                        if (dayOfMonth == dateVal) {
-                            Image(
-                                painter = painterResource(id = R.drawable.round),
-                                modifier = Modifier.fillMaxSize(),
-                                contentDescription = stringResource(id = R.string.app_name),
+            @Composable
+            fun showSix() {
+                Column(Modifier.weight(if (isPort) 1.0f else 0.7f), horizontalAlignment = Alignment.CenterHorizontally) {
+                    if (dateVal != -1) {
+                        Box(
+                            modifier = Modifier.weight(1.0f, true),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = nongLi,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                onTextLayout = {
+                                    if (it.hasVisualOverflow && textSize2 > minTextSize) {
+                                        textSize2 = (textSize2.value - 1.0F).sp
+                                    }
+                                },
+                                fontSize = textSize2,
+                                color = theColor2,
+                                textAlign = if (isPort) TextAlign.Center else TextAlign.Left,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.fillMaxSize()
                             )
                         }
-                        Text(
-                            text = "$dateVal",
-                            maxLines = 1,
-                            onTextLayout = {
-                                if (it.hasVisualOverflow && textSize1 > minTextSize) {
-                                    textSize1 = (textSize1.value - 1.0F).sp
-                                } else {
-                                    maxTextSizeGongli = textSize1
-                                    with(sharedPreferences.edit()) {
-                                        putFloat("SHARED_PREFS_GONG_LI", maxTextSizeGongli.value)
-                                        commit()
+                        Row(
+                            modifier = Modifier.weight(1.0f, true),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = sixDays,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                onTextLayout = {
+                                    if (it.hasVisualOverflow && textSize3 > minTextSize) {
+                                        textSize3 = (textSize3.value - 1.0F).sp
+                                    } else {
+                                        if (isPort) {
+                                            maxTextSizeCalendarSix_PORTRAIT = textSize3
+                                            with(sharedPreferences.edit()) {
+                                                putFloat(
+                                                    "SHARED_PREFS_SIX_P",
+                                                    maxTextSizeCalendarSix_PORTRAIT.value + 3.0f
+                                                )
+                                                commit()
+                                            }
+                                        } else {
+                                            maxTextSizeCalendarSix_LANDSCAPE = textSize3
+                                            with(sharedPreferences.edit()) {
+                                                putFloat(
+                                                    "SHARED_PREFS_SIX_L",
+                                                    maxTextSizeCalendarSix_LANDSCAPE.value + 3.0f
+                                                )
+                                                commit()
+                                            }
+                                        }
                                     }
-                                }
-                            },
-                            fontSize = textSize1,
-                            color = theColor1,
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.fillMaxSize()
+                                },
+                                fontSize = textSize3,
+                                color = theColor2,
+                                textAlign = if (isPort) TextAlign.Center else TextAlign.Left,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.fillMaxSize() //.weight(1f, false)
+                            )
+                        }
+                    }
+                }
+            }
+
+            @Composable
+            fun showNum() {
+                Box(
+                    modifier = Modifier.weight(1.0f, true).padding(end = if (isPort) 0.dp else 7.dp)
+                ) {
+                    if (dayOfMonth == dateVal && isPort) {
+                        Image(
+                            painter = painterResource(id = R.drawable.round),
+                            modifier = Modifier.fillMaxSize(),
+                            contentDescription = stringResource(id = R.string.app_name),
                         )
                     }
-                    Box(
-                        modifier = Modifier.weight(1.0f, true),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Text(
-                            text = nongLi,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            onTextLayout = {
-                                if (it.hasVisualOverflow && textSize2 > minTextSize) {
-                                    textSize2 = (textSize2.value - 1.0F).sp
-                                }
-                            },
-                            fontSize = textSize2,
-                            color = theColor2,
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-                    Row(
-                        modifier = Modifier.weight(1.0f, true),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = sixDays,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            onTextLayout = {
-                                if (it.hasVisualOverflow && textSize3 > minTextSize) {
-                                    textSize3 = (textSize3.value - 1.0F).sp
-                                } else {
-                                    maxTextSizeSix = textSize3
+                    Text(
+                        text = "$dateVal",
+                        maxLines = 1,
+                        onTextLayout = {
+                            if (it.hasVisualOverflow && textSize1 > minTextSize) {
+                                textSize1 = (textSize1.value - 1.0F).sp
+                            } else {
+                                if (isPort) {
+                                    maxTextSizeCalendarDate_PORTRAIT = textSize1
                                     with(sharedPreferences.edit()) {
                                         putFloat(
-                                            "SHARED_PREFS_SIX",
-                                            maxTextSizeSix.value + 3.0f
+                                            "SHARED_PREFS_GONG_LI_P",
+                                            maxTextSizeCalendarDate_PORTRAIT.value
+                                        )
+                                        commit()
+                                    }
+                                } else {
+                                    maxTextSizeCalendarDate_LANDSCAPE = textSize1
+                                    with(sharedPreferences.edit()) {
+                                        putFloat(
+                                            "SHARED_PREFS_GONG_LI_L",
+                                            maxTextSizeCalendarDate_LANDSCAPE.value
                                         )
                                         commit()
                                     }
                                 }
-                            },
-                            fontSize = textSize3,
-                            color = theColor2,
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.fillMaxSize() //.weight(1f, false)
-                        )
+                            }
+                        },
+                        fontSize = textSize1,
+                        color = theColor1,
+                        textAlign = if (isPort) TextAlign.Center else TextAlign.Right,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+            }
+
+            if (isPort) {
+                Column(Modifier.weight(2.0f), horizontalAlignment = Alignment.CenterHorizontally) {
+                    if (dateVal != -1) {
+                        showNum()
+                        showSix()
+                    }
+                }
+            } else {
+                Row(Modifier.weight(2.0f), verticalAlignment = Alignment.CenterVertically) {
+                    if (dateVal != -1) {
+                        showNum()
+                        showSix()
                     }
                 }
             }
         }
     }
-}
-
-fun isPad(context: Context): Boolean {
-    val isPad: Boolean = (context.resources.configuration.screenLayout
-            and Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE
-    val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-    val display = wm.defaultDisplay
-    val dm = DisplayMetrics()
-    display.getMetrics(dm)
-    val x = (dm.widthPixels / dm.xdpi).toDouble().pow(2.0)
-    val y = (dm.heightPixels / dm.ydpi).toDouble().pow(2.0)
-    val screenInches = sqrt(x + y) // 屏幕尺寸
-    return isPad || screenInches >= 7.0
 }

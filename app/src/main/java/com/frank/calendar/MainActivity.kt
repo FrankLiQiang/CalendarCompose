@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
@@ -29,20 +30,23 @@ import java.util.TimerTask
 
 
 lateinit var firstDay: LocalDate
-var is_Pad = false
 var dayOfMonth = 1
 var firstDayOfWeek: Int = 0
-var minTextSize = 5.sp
-var maxTextSize1 = 312.sp
-var maxTextSize2 = 112.sp
-var maxTextSize3 = 112.sp
-var maxTextSize4 = 112.sp
-var maxTextSizeGongli = 132.sp
-var maxTextSizeSix = 132.sp
+val minTextSize = 5.sp
+var maxTextSizeTime = 312.sp
+var maxTextSizeLeftDate = 112.sp
+var maxTextSizeGongli = 112.sp
+var maxTextSizeTitle_LANDSCAPE = 112.sp
+var maxTextSizeCalendarDate_LANDSCAPE = 132.sp
+var maxTextSizeCalendarSix_LANDSCAPE = 132.sp
+var maxTextSizeTitle_PORTRAIT = 112.sp
+var maxTextSizeCalendarDate_PORTRAIT = 132.sp
+var maxTextSizeCalendarSix_PORTRAIT = 132.sp
 var weeksMonth: Int = 5
 private var thisTimer: Timer = Timer()
 private var thisTask: TimerTask? = null
 var textColor by mutableStateOf(DarkGray)
+var isPort by mutableStateOf(true)
 var time by mutableStateOf("09:35:23")
 var leftDate by mutableStateOf("农历十月廿六")
 var date by mutableStateOf("2023年12月08日")
@@ -59,8 +63,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        WindowCompat.setDecorFitsSystemWindows(window, false)
-        is_Pad = isPad(this)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        val orientation = resources.configuration.orientation
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            isPort = false
+        } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            isPort = true
+        }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         sharedPreferences = getPreferences(Context.MODE_PRIVATE)
         setContent {
@@ -92,9 +101,7 @@ class MainActivity : ComponentActivity() {
                         ClockUI(::leftTimeClicked)
                     } else {
                         monthOffset = 0
-                        if (!is_Pad) {
-                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
-                        }
+                        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
                         HorizontalPagerSample()
                     }
                 }
@@ -122,16 +129,21 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun readToDate() {
-        maxTextSize4 = sharedPreferences.getFloat("SHARED_PREFS_CALENDAR_TITLE", 112.0f).sp
-        maxTextSizeSix = sharedPreferences.getFloat("SHARED_PREFS_SIX", 132.0f).sp
-        maxTextSizeGongli = sharedPreferences.getFloat("SHARED_PREFS_GONG_LI", 132.0f).sp
-        maxTextSize1 = sharedPreferences.getFloat("SHARED_PREFS_TIME", 312.0f).sp
-        maxTextSize2 = sharedPreferences.getFloat("SHARED_PREFS_LEFT", 112.0f).sp
-        maxTextSize3 = sharedPreferences.getFloat("SHARED_PREFS_WEEK", 112.0f).sp
+        maxTextSizeTime = sharedPreferences.getFloat("SHARED_PREFS_TIME", 312.0f).sp
+        maxTextSizeLeftDate = sharedPreferences.getFloat("SHARED_PREFS_LEFT", 112.0f).sp
+        maxTextSizeGongli = sharedPreferences.getFloat("SHARED_PREFS_WEEK", 112.0f).sp
+
+        maxTextSizeTitle_LANDSCAPE = sharedPreferences.getFloat("SHARED_PREFS_CALENDAR_TITLE_L", 112.0f).sp
+        maxTextSizeCalendarDate_LANDSCAPE = sharedPreferences.getFloat("SHARED_PREFS_GONG_LI_L", 132.0f).sp
+        maxTextSizeCalendarSix_LANDSCAPE = sharedPreferences.getFloat("SHARED_PREFS_SIX_L", 132.0f).sp
+
+        maxTextSizeTitle_PORTRAIT = sharedPreferences.getFloat("SHARED_PREFS_CALENDAR_TITLE_P", 112.0f).sp
+        maxTextSizeCalendarDate_PORTRAIT = sharedPreferences.getFloat("SHARED_PREFS_GONG_LI_P", 132.0f).sp
+        maxTextSizeCalendarSix_PORTRAIT = sharedPreferences.getFloat("SHARED_PREFS_SIX_P", 132.0f).sp
 
         val df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        var defaultDate = df.format(LocalDateTime.now())
-        var highScore = sharedPreferences.getString("SHARED_PREFS_TIME_PER_WORKSET", defaultDate)
+        val defaultDate = df.format(LocalDateTime.now())
+        val highScore = sharedPreferences.getString("SHARED_PREFS_TIME_PER_WORKSET", defaultDate)
         toDate = LocalDateTime.parse(highScore, df)
     }
 }

@@ -32,9 +32,9 @@ var wantDate: LocalDateTime = now
 @Composable
 fun ClockUI(event: () -> Unit, modifier: Modifier = Modifier) {
 
-    var textSize by remember("") { mutableStateOf(maxTextSize1) }
-    var textSize2 by remember("") { mutableStateOf(maxTextSize2) }
-    var textSize3 by remember("") { mutableStateOf(maxTextSize3) }
+    var textSize by remember("") { mutableStateOf(maxTextSizeTime) }
+    var textSize2 by remember("") { mutableStateOf(maxTextSizeLeftDate) }
+    var textSize3 by remember("") { mutableStateOf(maxTextSizeGongli) }
     Column(Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Text(text = time,
             maxLines = 1,
@@ -43,9 +43,9 @@ fun ClockUI(event: () -> Unit, modifier: Modifier = Modifier) {
                 if (it.hasVisualOverflow && textSize > minTextSize) {
                     textSize = (textSize.value - 1.0F).sp
                 } else {
-                    maxTextSize1 = textSize
+                    maxTextSizeTime = textSize
                     with(sharedPreferences.edit()) {
-                        putFloat("SHARED_PREFS_TIME", maxTextSize1.value)
+                        putFloat("SHARED_PREFS_TIME", maxTextSizeTime.value)
                         commit()
                     }
                 }
@@ -70,9 +70,9 @@ fun ClockUI(event: () -> Unit, modifier: Modifier = Modifier) {
                 if (it.hasVisualOverflow && textSize2 > minTextSize) {
                     textSize2 = (textSize2.value - 1.0F).sp
                 } else {
-                    maxTextSize2 = textSize2
+                    maxTextSizeLeftDate = textSize2
                     with(sharedPreferences.edit()) {
-                        putFloat("SHARED_PREFS_LEFT", maxTextSize2.value)
+                        putFloat("SHARED_PREFS_LEFT", maxTextSizeLeftDate.value)
                         commit()
                     }
                 }
@@ -91,9 +91,9 @@ fun ClockUI(event: () -> Unit, modifier: Modifier = Modifier) {
                 if (it.hasVisualOverflow && textSize3 > minTextSize) {
                     textSize3 = (textSize3.value - 1.0F).sp
                 } else {
-                    maxTextSize3 = textSize3
+                    maxTextSizeGongli = textSize3
                     with(sharedPreferences.edit()) {
-                        putFloat("SHARED_PREFS_WEEK", maxTextSize3.value)
+                        putFloat("SHARED_PREFS_WEEK", maxTextSizeGongli.value)
                         commit()
                     }
                 }
