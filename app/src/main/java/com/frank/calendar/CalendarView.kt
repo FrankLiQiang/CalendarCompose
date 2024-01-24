@@ -82,7 +82,7 @@ fun CalendarView() {
     Column(Modifier.padding(bottom = 20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         Row(
             Modifier
-                .weight(0.8f)
+                .weight(0.7f)
                 .padding(start = 10.dp, end = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -120,20 +120,19 @@ fun CalendarView() {
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .weight(0.8f)
-                    .padding(6.dp)
+                    .weight(0.7f)
             )
         }
         weeksMonth = getWeeksOfMonth()
         var d = 0
         for (i in 0 until weeksMonth) {
-            Row(Modifier.height(if (is_Pad) 10.dp else 30.dp)) {}
             Row(Modifier.weight(1.0f), verticalAlignment = Alignment.CenterVertically) {
                 for (j in 0..6) {
                     Date(j, Modifier.weight(1.0f), dateArray[d], nongliArray[d], sixDaysArray[d])
                     d++
                 }
             }
+            Row(Modifier.height(if (is_Pad) 8.dp else 15.dp)) {}
         }
     }
 }
