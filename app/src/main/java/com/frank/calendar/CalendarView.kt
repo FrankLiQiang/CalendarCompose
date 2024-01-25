@@ -75,7 +75,7 @@ fun CalendarView() {
     if (isRedraw > 100) return
     var textSize by remember("") { mutableStateOf(if (isPort) maxTextSizeTitle_PORTRAIT else maxTextSizeTitle_LANDSCAPE) }
     Column(
-        Modifier.padding(bottom = 20.dp, end = 20.dp),
+        Modifier.padding(start = 10.dp, bottom = 10.dp, end = if (isPort) 10.dp else 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
@@ -190,7 +190,7 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int, nongLi0: String, sixDays
     }
     if (nongLi.startsWith("@")) {
         nongLi = nongLi.substring(1)
-        theColor2 = Color.Yellow
+        theColor2 = Color.Magenta
     }
     Box(modifier = modifier
         .padding(0.dp)
@@ -220,28 +220,27 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int, nongLi0: String, sixDays
                 jumpToPage(Int.MAX_VALUE / 2 + 2)
             }
         }) {
-        if (dayOfMonth == dateVal && !isPort) {
-            Image(
-                painter = painterResource(id = R.drawable.round),
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.FillBounds,
-                contentDescription = stringResource(id = R.string.app_name),
-            )
-        }
         Row(
             Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically
         ) {
             @Composable
             fun showSix() {
-                Column(
+                Box(
                     Modifier
                         .padding(
                             top = if (isPort) 0.dp else 0.dp,
                             bottom = if (isPort) 0.dp else 0.dp
                         )
-                        .weight(if (isPort) 1.0f else 0.5f),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .weight(if (isPort) 1.0f else 0.6f),
                 ) {
+                    if (dayOfMonth == dateVal && !isPort) {
+                        Image(
+                            painter = painterResource(id = R.drawable.round),
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Fit,
+                            contentDescription = stringResource(id = R.string.app_name),
+                        )
+                    }
                     if (dateVal != -1) {
                         Text(
                             text = nongLi + "\n" + sixDays,

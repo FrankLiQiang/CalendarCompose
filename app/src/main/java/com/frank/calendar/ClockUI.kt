@@ -138,7 +138,7 @@ fun getCurrentDate(): String {
         dateColor = !wk.startsWith("星期")
         gongliDate = "${nowDate()}  $wk"
         currentDateNum = newCurrentDate
-        isRedraw = 1- isRedraw
+        isRedraw = 1 - isRedraw
         return gongliDate
     }
 }

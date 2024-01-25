@@ -2,11 +2,14 @@ package com.frank.calendar.ui.theme
 
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import com.frank.calendar.CalendarView
 import com.frank.calendar.maxTextSizeCalendarDate_LANDSCAPE
@@ -36,7 +39,7 @@ fun HorizontalPagerSample() {
     }
 
 
-    HorizontalPager(state = pagerState) { page ->
+    HorizontalPager(state = pagerState, modifier = Modifier.background(Color.White)) { page ->
         if (page != 0) {
             monthOffset = page - Int.MAX_VALUE / 2 - 2
             maxTextSizeCalendarDate_LANDSCAPE = (maxTextSizeCalendarDate_LANDSCAPE.value + 12.0f).sp

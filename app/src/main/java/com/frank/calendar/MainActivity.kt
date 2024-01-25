@@ -94,7 +94,7 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.Black),
+                        .background(Color.White),
                 ) {
                     if (isClock) {
                         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
@@ -133,13 +133,19 @@ class MainActivity : ComponentActivity() {
         maxTextSizeLeftDate = sharedPreferences.getFloat("SHARED_PREFS_LEFT", 112.0f).sp
         maxTextSizeGongli = sharedPreferences.getFloat("SHARED_PREFS_WEEK", 112.0f).sp
 
-        maxTextSizeTitle_LANDSCAPE = sharedPreferences.getFloat("SHARED_PREFS_CALENDAR_TITLE_L", 112.0f).sp
-        maxTextSizeCalendarDate_LANDSCAPE = sharedPreferences.getFloat("SHARED_PREFS_GONG_LI_L", 132.0f).sp
-        maxTextSizeCalendarSix_LANDSCAPE = sharedPreferences.getFloat("SHARED_PREFS_SIX_L", 132.0f).sp
+        maxTextSizeTitle_LANDSCAPE =
+            sharedPreferences.getFloat("SHARED_PREFS_CALENDAR_TITLE_L", 112.0f).sp
+        maxTextSizeCalendarDate_LANDSCAPE =
+            sharedPreferences.getFloat("SHARED_PREFS_GONG_LI_L", 132.0f).sp
+        maxTextSizeCalendarSix_LANDSCAPE =
+            sharedPreferences.getFloat("SHARED_PREFS_SIX_L", 132.0f).sp
 
-        maxTextSizeTitle_PORTRAIT = sharedPreferences.getFloat("SHARED_PREFS_CALENDAR_TITLE_P", 112.0f).sp
-        maxTextSizeCalendarDate_PORTRAIT = sharedPreferences.getFloat("SHARED_PREFS_GONG_LI_P", 132.0f).sp
-        maxTextSizeCalendarSix_PORTRAIT = sharedPreferences.getFloat("SHARED_PREFS_SIX_P", 132.0f).sp
+        maxTextSizeTitle_PORTRAIT =
+            sharedPreferences.getFloat("SHARED_PREFS_CALENDAR_TITLE_P", 112.0f).sp
+        maxTextSizeCalendarDate_PORTRAIT =
+            sharedPreferences.getFloat("SHARED_PREFS_GONG_LI_P", 132.0f).sp
+        maxTextSizeCalendarSix_PORTRAIT =
+            sharedPreferences.getFloat("SHARED_PREFS_SIX_P", 132.0f).sp
 
         val df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         val defaultDate = df.format(LocalDateTime.now())
