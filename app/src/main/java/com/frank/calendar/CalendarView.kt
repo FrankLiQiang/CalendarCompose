@@ -277,9 +277,12 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int, nongLi0: String, sixDays
             @Composable
             fun showNum() {
                 Box(
-                    modifier = Modifier
+                    modifier = (if (isPort) Modifier
                         .weight(1.0f, true)
                         .align(alignment = Alignment.Bottom)
+                    else Modifier
+                        .weight(1.0f, true)),
+                    contentAlignment = Alignment.Center
                 ) {
                     if (dayOfMonth == dateVal && isPort) {
                         Image(
