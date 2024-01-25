@@ -246,7 +246,7 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int, nongLi0: String, sixDays
                             text = nongLi + "\n" + sixDays,
                             color = theColor2,
                             fontSize = textSize2,
-                            lineHeight = (textSize2.value + 5).sp,
+                            lineHeight = (textSize2.value + 2).sp,
                             textAlign = TextAlign.Center,
                             onTextLayout = {
                                 if (it.hasVisualOverflow && textSize2 > minTextSize) {
