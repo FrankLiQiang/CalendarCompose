@@ -1,5 +1,6 @@
 package com.frank.calendar
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
@@ -15,7 +16,10 @@ import androidx.compose.ui.graphics.Color.Companion.DarkGray
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import com.frank.calendar.ui.theme.CalendarTheme
+import com.frank.calendar.ui.theme.MyTheme
 import com.frank.calendar.ui.theme.monthOffset
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -30,12 +34,12 @@ var toDate: LocalDateTime = now
 var wantDate: LocalDateTime = now
 
 @Composable
-fun ClockUI(event: () -> Unit, modifier: Modifier = Modifier) {
+fun ClockUI(event: () -> Unit) {
 
     var textSize by remember("") { mutableStateOf(maxTextSizeTime) }
     var textSize2 by remember("") { mutableStateOf(maxTextSizeLeftDate) }
     var textSize3 by remember("") { mutableStateOf(maxTextSizeGongli) }
-    Column(Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(modifier = Modifier.background(MyTheme.colors.background), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(text = time,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -51,11 +55,12 @@ fun ClockUI(event: () -> Unit, modifier: Modifier = Modifier) {
                 }
             },
             fontSize = textSize,
-            color = textColor,
+            color = MyTheme.colors.textPrimary, //textColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .weight(1.2f, true)
+                .background(MyTheme.colors.background)
                 .clickable {
                     textColor = if (textColor == DarkGray) {
                         Color(0xFF018786)
@@ -102,7 +107,7 @@ fun ClockUI(event: () -> Unit, modifier: Modifier = Modifier) {
             color = if (isRed) Color(0xFFBB86FC) else textColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
-            modifier = modifier
+            modifier = Modifier
                 .weight(0.5f, true)
                 .clickable {
                     monthOffset = 0
@@ -171,3 +176,16 @@ val nowWeek: () -> String = {
         "星期${weekString.substring(day - 1, day)}"
     }
 }
+
+@Preview()
+@Composable
+fun PreviewMessageListScreenDark() {
+//    maxTextSizeTime = 12.sp
+//    maxTextSizeLeftDate = 12.sp
+//    maxTextSizeGongli = 12.sp
+    CalendarTheme(darkTheme = true) {
+        ClockUI({})
+    }
+}
+
+//https://blog.csdn.net/dongrimaomaoyu/article/details/122925147
