@@ -49,6 +49,7 @@ var textColor by mutableStateOf(DarkGray)
 var isPort by mutableStateOf(true)
 var time by mutableStateOf("09:35:23")
 var leftDate by mutableStateOf("农历十月廿六")
+var trunck_branch by mutableStateOf("")
 var date by mutableStateOf("2023年12月08日")
 var isRed by mutableStateOf(false)
 var isClock by mutableStateOf(true)
@@ -80,7 +81,9 @@ class MainActivity : ComponentActivity() {
                 override fun run() {
                     try {
                         time = getCurrentTime()
-                        leftDate = getNongLiDate()
+//                        leftDate = getNongLiDate()
+                        leftDate = main_branch()
+//                        trunck_branch = main_branch()
                         date = getCurrentDate()
                         isRed = dateColor
                     } catch (e: Exception) {

@@ -29,6 +29,8 @@ object LunarCalendar {
         SolarTermUtil.init(context)
         MONTH_STR = context.resources.getStringArray(R.array.lunar_first_of_month)
         SIX_DAY = context.resources.getStringArray(R.array.six_days)
+        Trunk = context.resources.getStringArray(R.array.trunk_string_array)
+        Branch = context.resources.getStringArray(R.array.branch_string_array)
         TRADITION_FESTIVAL_STR = context.resources.getStringArray(R.array.tradition_festival)
         DAY_STR = context.resources.getStringArray(R.array.lunar_str)
         SPECIAL_FESTIVAL_STR = context.resources.getStringArray(R.array.special_festivals)
@@ -52,6 +54,16 @@ object LunarCalendar {
      * 六曜
      */
     private var SIX_DAY: Array<String>? = null
+
+    /**
+     * 天干
+     */
+    private var Trunk: Array<String>? = null
+
+    /**
+     * 地支
+     */
+    private var Branch: Array<String>? = null
 
     /**
      * 传统农历节日
@@ -388,11 +400,46 @@ object LunarCalendar {
         return numToChinese(lunar[1], lunar[2], lunar[3])
     }
 
+
+
+    /**
+     * 获取六曜
+     *
+     * @param year  年
+     * @param month 月
+     * @param day   日
+     * @return 六曜
+     */
     fun getSixDay(year: Int, month: Int, day: Int): String {
         val lunar = LunarUtil.solarToLunar(year, month, day)
         val six = (lunar[1] + lunar[2]) % 6
         return SIX_DAY!![six]
     }
+
+    /**
+     * 获取干支
+     *
+     * @param year  年
+     * @param month 月
+     * @param day   日
+     * @return 干支
+     */
+    fun getMainBranch(year: Int, month: Int, day: Int): String {
+        val lunar = LunarUtil.solarToLunar(year, month, day)
+        val year_tb = Trunk!![(lunar[0] - 3) % 10] + Branch!![(lunar[0] - 3) % 12]
+
+
+//        var offset: Int = (((yearGanIndexByLiChun + (index < 0 ? 1 : 0)) % 5 + 1) * 2) % 10
+//        self.monthGanIndex = ((index < 0 ? index + 10 : index) + offset) % 10
+//        self.monthZhiIndex =
+//            ((index < 0 ? index + 12 : index) + LunarUtil.BASE_MONTH_ZHI_INDEX) % 12
+
+        val month_tb = Trunk!![(lunar[0] - 3) % 10] + Branch!![(lunar[0] - 3) % 12]
+        val day_tb = Trunk!![(lunar[0] -3) % 10] + Branch!![(lunar[0] -3) % 12]
+        return year_tb //+ month_tb + day_tb
+    }
+
+//https://github.com/bestheme/lunar-swift/blob/main/Sources/SwiftLunar/Lunar.swift
 
     /**
      * 获取农历节日(日历用)

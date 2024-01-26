@@ -156,6 +156,10 @@ val nongli: () -> String = {
     }"
 }
 
+val main_branch: () -> String = {
+    LunarCalendar.getMainBranch(now.year, now.monthValue, now.dayOfMonth)
+}
+
 val leftDays: () -> String = {
     val cNow = LocalDateTime.of(now.year, now.monthValue, now.dayOfMonth, 0, 0, 0, 0)
     val leftDays = ChronoUnit.DAYS.between(cNow, toDate)
