@@ -17,6 +17,13 @@ package com.frank.calendar
 
 import android.content.Context
 import android.text.TextUtils
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
+
 
 /**
  * 农历计算相关
@@ -427,16 +434,21 @@ object LunarCalendar {
     fun getMainBranch(year: Int, month: Int, day: Int): String {
         val lunar = LunarUtil.solarToLunar(year, month, day)
         val year_tb = Trunk!![(lunar[0] - 3) % 10] + Branch!![(lunar[0] - 3) % 12]
+        val month_tb = Trunk!![(9 + lunar[1] + ((lunar[0] % 5) - 2) * 2 - 1) % 10] + Branch!![(lunar[1] + 2) % 12]
 
+        val c1900 = LocalDate.of(1901, 1, 1)
+        val cNow = LocalDate.of(year, month, day)
+        val leftDays = ChronoUnit.DAYS.between(c1900, cNow) % 60
+        val day_tb = Trunk!![(6 + leftDays.toInt()) % 10] + Branch!![(4 + leftDays.toInt()) % 12]
 
-//        var offset: Int = (((yearGanIndexByLiChun + (index < 0 ? 1 : 0)) % 5 + 1) * 2) % 10
-//        self.monthGanIndex = ((index < 0 ? index + 10 : index) + offset) % 10
-//        self.monthZhiIndex =
-//            ((index < 0 ? index + 12 : index) + LunarUtil.BASE_MONTH_ZHI_INDEX) % 12
+        val zoneId = ZoneId.systemDefault() // 获取当前系统的默认时区
+        val localDateTime = LocalDateTime.now() // 获取当前日期时间
+        val zonedDateTime: ZonedDateTime = localDateTime.atZone(zoneId) // 将LocalDateTime对象转换为ZonedDateTime对象
+        val beijingDateTime = zonedDateTime.withZoneSameInstant(ZoneOffset.UTC).plusHours(8) // 将ZonedDateTime对象转换为UTC时间
+        val leftHours = leftDays * 12 + beijingDateTime.hour / 2
+        val hour_tb = Trunk!![(leftHours.toInt() + 1)% 10] + Branch!![(leftHours.toInt() + 1)% 12]
 
-        val month_tb = Trunk!![(lunar[0] - 3) % 10] + Branch!![(lunar[0] - 3) % 12]
-        val day_tb = Trunk!![(lunar[0] -3) % 10] + Branch!![(lunar[0] -3) % 12]
-        return year_tb //+ month_tb + day_tb
+        return "$year_tb-$month_tb-$day_tb-$hour_tb"
     }
 
 //https://github.com/bestheme/lunar-swift/blob/main/Sources/SwiftLunar/Lunar.swift

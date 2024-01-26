@@ -81,9 +81,8 @@ class MainActivity : ComponentActivity() {
                 override fun run() {
                     try {
                         time = getCurrentTime()
-//                        leftDate = getNongLiDate()
-                        leftDate = main_branch()
-//                        trunck_branch = main_branch()
+                        leftDate = getNongLiDate()
+                        trunck_branch = main_branch()
                         date = getCurrentDate()
                         isRed = dateColor
                     } catch (e: Exception) {

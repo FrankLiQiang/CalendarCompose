@@ -68,6 +68,27 @@ fun ClockUI(event: () -> Unit) {
                         DarkGray
                     }
                 })
+        Text(text = trunck_branch,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            onTextLayout = {
+                if (it.hasVisualOverflow && textSize2 > minTextSize) {
+                    textSize2 = (textSize2.value - 1.0F).sp
+                } else {
+                    maxTextSizeLeftDate = textSize2
+                    with(sharedPreferences.edit()) {
+                        putFloat("SHARED_PREFS_LEFT", maxTextSizeLeftDate.value)
+                        commit()
+                    }
+                }
+            },
+            fontSize = textSize2,
+            color = textColor,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .clickable { event() }
+                .weight(0.3f, true))
         Text(text = leftDate,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -192,4 +213,4 @@ fun PreviewMessageListScreenDark() {
     }
 }
 
-//https://blog.csdn.net/dongrimaomaoyu/article/details/122925147
+//https://github.com/bestheme/lunar-swift/blob/main/Sources/SwiftLunar/Lunar.swift
