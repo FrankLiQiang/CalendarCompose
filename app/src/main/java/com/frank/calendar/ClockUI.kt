@@ -39,7 +39,10 @@ fun ClockUI(event: () -> Unit) {
     var textSize by remember("") { mutableStateOf(maxTextSizeTime) }
     var textSize2 by remember("") { mutableStateOf(maxTextSizeLeftDate) }
     var textSize3 by remember("") { mutableStateOf(maxTextSizeGongli) }
-    Column(modifier = Modifier.background(MyTheme.colors.background), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = Modifier.background(MyTheme.colors.background),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Text(text = time,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -68,27 +71,15 @@ fun ClockUI(event: () -> Unit) {
                         DarkGray
                     }
                 })
-        Text(text = trunck_branch,
+        Text(
+            text = trunck_branch,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            onTextLayout = {
-                if (it.hasVisualOverflow && textSize2 > minTextSize) {
-                    textSize2 = (textSize2.value - 1.0F).sp
-                } else {
-                    maxTextSizeLeftDate = textSize2
-                    with(sharedPreferences.edit()) {
-                        putFloat("SHARED_PREFS_LEFT", maxTextSizeLeftDate.value)
-                        commit()
-                    }
-                }
-            },
             fontSize = textSize2,
             color = textColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .clickable { event() }
-                .weight(0.3f, true))
+            modifier = Modifier.weight(0.3f, true)
+        )
         Text(text = leftDate,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -150,7 +141,7 @@ fun getNongLiDate(): String {
     return if (currentDateNum == newCurrentDate) {
         nongliDate
     } else {
-        nongliDate = "${nongli()}  ${leftDays()}"
+        nongliDate = "${nongli()}${leftDays()}"
         nongliDate
     }
 }
@@ -171,10 +162,12 @@ fun getCurrentDate(): String {
 
 val nongli: () -> String = {
     "农历 ${
-        LunarCalendar.getLunarText(now.year, now.monthValue, now.dayOfMonth)
-    }  ${
-        LunarCalendar.getSixDay(now.year, now.monthValue, now.dayOfMonth)
-    }"
+        LunarCalendar.getLunarText(
+            now.year,
+            now.monthValue,
+            now.dayOfMonth
+        )
+    }  ${LunarCalendar.getSixDay(now.year, now.monthValue, now.dayOfMonth)}"
 }
 
 val main_branch: () -> String = {
@@ -205,9 +198,6 @@ val nowWeek: () -> String = {
 @Preview()
 @Composable
 fun PreviewMessageListScreenDark() {
-//    maxTextSizeTime = 12.sp
-//    maxTextSizeLeftDate = 12.sp
-//    maxTextSizeGongli = 12.sp
     CalendarTheme(darkTheme = false) {
         ClockUI({})
     }

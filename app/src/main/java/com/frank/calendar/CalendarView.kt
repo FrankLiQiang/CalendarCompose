@@ -190,7 +190,8 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int, nongLi0: String, sixDays
     }
     if (nongLi.startsWith("@")) {
         nongLi = nongLi.substring(1)
-        theColor2 = Color.Magenta
+//        theColor2 = Color.Magenta
+        theColor2 = Color(0xFF88FF33)
     }
     Box(modifier = modifier
         .clickable {

@@ -48,7 +48,7 @@ private var thisTask: TimerTask? = null
 var textColor by mutableStateOf(DarkGray)
 var isPort by mutableStateOf(true)
 var time by mutableStateOf("09:35:23")
-var leftDate by mutableStateOf("农历十月廿六")
+var leftDate by mutableStateOf("")
 var trunck_branch by mutableStateOf("")
 var date by mutableStateOf("2023年12月08日")
 var isRed by mutableStateOf(false)
