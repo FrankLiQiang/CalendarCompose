@@ -78,12 +78,13 @@ val myLightColors = MyColor(
     textPrimary = Color(0xFF333333),
     textSecondary = Color(0xFF666666),
     background = Color(0xFFFFFFFF)
+//    background = Color(0xFF888888)
 )
 
 //Dark Mode
 val myDarkColors = MyColor(
     textPrimary = Color(0xFFFFFFFF),
     textSecondary = Color(0xCCFFFFFF),
-    background = Color(0xFF333333)
+    background = Color(0xFF000000)
 //    background = Color(0xFFFFFFFF)
 )

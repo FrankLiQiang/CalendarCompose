@@ -193,7 +193,6 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int, nongLi0: String, sixDays
         theColor2 = Color.Magenta
     }
     Box(modifier = modifier
-        .padding(0.dp)
         .clickable {
             if (dateVal == -1) {
                 val dpd = DatePickerDialog(
@@ -226,12 +225,9 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int, nongLi0: String, sixDays
             @Composable
             fun showSix() {
                 Box(
-                    Modifier
-                        .padding(
-                            top = if (isPort) 0.dp else 0.dp,
-                            bottom = if (isPort) 0.dp else 0.dp
-                        )
+                    modifier = Modifier
                         .weight(if (isPort) 1.0f else 0.6f),
+                    contentAlignment = Alignment.Center
                 ) {
                     if (dayOfMonth == dateVal && !isPort) {
                         Image(
@@ -281,10 +277,12 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int, nongLi0: String, sixDays
             @Composable
             fun showNum() {
                 Box(
-                    modifier = Modifier
+                    modifier = (if (isPort) Modifier
                         .weight(1.0f, true)
-                        .padding(end = if (isPort) 0.dp else 7.dp)
                         .align(alignment = Alignment.Bottom)
+                    else Modifier
+                        .weight(1.0f, true)),
+                    contentAlignment = Alignment.Center
                 ) {
                     if (dayOfMonth == dateVal && isPort) {
                         Image(

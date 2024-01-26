@@ -55,7 +55,7 @@ fun ClockUI(event: () -> Unit) {
                 }
             },
             fontSize = textSize,
-            color = MyTheme.colors.textPrimary, //textColor,
+            color = textColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
@@ -187,7 +187,7 @@ fun PreviewMessageListScreenDark() {
 //    maxTextSizeTime = 12.sp
 //    maxTextSizeLeftDate = 12.sp
 //    maxTextSizeGongli = 12.sp
-    CalendarTheme(darkTheme = true) {
+    CalendarTheme(darkTheme = false) {
         ClockUI({})
     }
 }
