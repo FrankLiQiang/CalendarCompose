@@ -50,6 +50,11 @@ object LunarCalendar {
     private val SOLAR_TERMS = mutableMapOf<Int, Array<String>>()
 
     /**
+     * 保存每年24节气(农历)
+     */
+    private var LUNAR_TERMS = mutableMapOf<Int, Array<IntArray>>()
+
+    /**
      * 农历月份第一天转写
      */
     private var MONTH_STR: Array<String>? = null
@@ -428,15 +433,46 @@ object LunarCalendar {
      * @return 干支
      */
     fun getMainBranch(year: Int, month: Int, day: Int): String {
-        val lunar = LunarUtil.solarToLunar(year, month, day)
-        val year_tb = Trunk!![(lunar[0] - 3) % 10] + Branch!![(lunar[0] - 3) % 12]
-        val month_tb =
-            Trunk!![(9 + lunar[1] + ((lunar[0] % 5) - 2) * 2 - 1) % 10] + Branch!![(lunar[1] + 2) % 12]
-
+        var lunar: IntArray?
+        val yearTb: String
+        val monthTb: String
+        if (isByLiChun) {
+            if (!SOLAR_TERMS.containsKey(year)) {
+                SOLAR_TERMS[year] = SolarTermUtil.getSolarTerms(year)
+                LUNAR_TERMS[year] = getLunarTerms(year)
+            }
+            val solarTerm: Array<String> = SOLAR_TERMS[year]!!
+            val lunarTerm = LUNAR_TERMS[year]
+            val index = if (month == 1) 23 else (month - 2) * 2
+            val firstJieQi = solarTerm[index].subSequence(0, 8).toString()
+            lunar = lunarTerm?.get(index)
+            val text = year.toString() + getString(month, day)
+            if (text < firstJieQi) {
+                if (index == 0) {
+                    lunar = lunarTerm?.get(23)
+                } else if (index == 23) {
+                    if (!SOLAR_TERMS.containsKey(year - 1)) {
+                        SOLAR_TERMS[year - 1] = SolarTermUtil.getSolarTerms(year - 1)
+                        LUNAR_TERMS[year - 1] = getLunarTerms(year - 1)
+                    }
+                    lunar = lunarTerm?.get(22)
+                } else {
+                    lunar = lunarTerm?.get(index - 1)
+                }
+            }
+            yearTb = Trunk!![(lunar!![0] - 3) % 10] + Branch!![(lunar[0] - 3) % 12]
+            monthTb = Trunk!![(9 + lunar[1] + ((lunar[0] % 5) - 2) * 2 - 1) % 10] + Branch!![(lunar[1] + 2) % 12]
+        } else {
+            lunar = LunarUtil.solarToLunar(year, month, day)
+            yearTb = Trunk!![(lunar[0] - 3) % 10] + Branch!![(lunar[0] - 3) % 12]
+            monthTb =
+                Trunk!![(9 + lunar[1] + ((lunar[0] % 5) - 2) * 2 - 1) % 10] + Branch!![(lunar[1] + 2) % 12]
+        }
         val c1900 = LocalDate.of(1901, 1, 1)
         val cNow = LocalDate.of(year, month, day)
         val leftDays = ChronoUnit.DAYS.between(c1900, cNow) % 60
         val day_tb = Trunk!![(6 + leftDays.toInt()) % 10] + Branch!![(4 + leftDays.toInt()) % 12]
+//        val day_tb = getMainBranchDay(year, month, day)
 
 //        val zoneId = ZoneId.systemDefault() // 获取当前系统的默认时区
 //        val localDateTime = LocalDateTime.now() // 获取当前日期时间
@@ -446,10 +482,43 @@ object LunarCalendar {
         val leftHours = leftDays * 12 + ((LocalDateTime.now().hour + 1) % 24) / 2 + 1
         val hour_tb = Trunk!![leftHours.toInt() % 10] + Branch!![leftHours.toInt() % 12]
 
-        return "$year_tb-$month_tb-$day_tb-$hour_tb"
+        return "$yearTb-$monthTb-$day_tb-$hour_tb"
     }
 
-//https://github.com/bestheme/lunar-swift/blob/main/Sources/SwiftLunar/Lunar.swift
+    /**
+     * 获得某一年24节气(阴历)
+     *
+     * @param year 年
+     * @return 24节气
+     */
+    private fun getLunarTerms(year: Int): Array<IntArray> {
+        val solarTerms = Array(24){ intArrayOf()}
+
+        for ((i, sDate) in SOLAR_TERMS[year]!!.withIndex()) {
+            val y = sDate.subSequence(0, 4).toString().toInt()
+            val m = sDate.subSequence(4, 6).toString().toInt()
+            val d = sDate.subSequence(6, 8).toString().toInt()
+            val lunar = LunarUtil.solarToLunar(y, m, d)
+            solarTerms[i] = lunar
+        }
+        return solarTerms
+    }
+
+    /**
+     * 获取日干支
+     *
+     * @param year  年
+     * @param month 月
+     * @param day   日
+     * @return 日干支
+     */
+    fun getMainBranchDay(year: Int, month: Int, day: Int): String {
+        val c1900 = LocalDate.of(1901, 1, 1)
+        val cNow = LocalDate.of(year, month, day)
+        val leftDays = ChronoUnit.DAYS.between(c1900, cNow) % 60
+        val day_tb = Trunk!![(6 + leftDays.toInt()) % 10] + Branch!![(4 + leftDays.toInt()) % 12]
+        return day_tb
+    }
 
     /**
      * 获取农历节日(日历用)
@@ -485,6 +554,7 @@ object LunarCalendar {
     private fun getSolarTerm(year: Int, month: Int, day: Int): String {
         if (!SOLAR_TERMS.containsKey(year)) {
             SOLAR_TERMS[year] = SolarTermUtil.getSolarTerms(year)
+            LUNAR_TERMS[year] = getLunarTerms(year)
         }
         val solarTerm: Array<String> = SOLAR_TERMS[year]!!
         val text = year.toString() + getString(month, day)

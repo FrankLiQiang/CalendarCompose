@@ -54,18 +54,21 @@ fun getWeeksOfMonth(): Int {
         dateArray[i] = -1
         nongliArray[i] = ""
         sixDaysArray[i] = ""
+        tbDaysArray[i] = ""
     }
     var d = firstDayOfWeek
     for (i in 1..lengthOfMonth) {
         dateArray[d] = i
         nongliArray[d] = getNongLi(i)
         sixDaysArray[d] = getSixDay(i)
+        tbDaysArray[d] = mainBranchDay(i)
         d++
     }
     for (i in d until 42) {
         dateArray[i] = -1
         nongliArray[i] = ""
         sixDaysArray[i] = ""
+        tbDaysArray[i] = ""
     }
     return ret / 7 + if (ret % 7 == 0) 1 else 2
 }
@@ -143,7 +146,7 @@ fun CalendarView() {
                     if (!isPort) {
                         Row(Modifier.width(17.dp)) {}
                     }
-                    Date(j, Modifier.weight(1.0f), dateArray[d], nongliArray[d], sixDaysArray[d])
+                    Date(j, Modifier.weight(1.0f), dateArray[d], nongliArray[d], sixDaysArray[d], tbDaysArray[d])
                     d++
                 }
             }
@@ -170,7 +173,7 @@ fun CalendarPreview() {
 }
 
 @Composable
-fun Date(weekId: Int, modifier: Modifier, dateVal: Int, nongLi0: String, sixDays: String) {
+fun Date(weekId: Int, modifier: Modifier, dateVal: Int, nongLi0: String, sixDays: String, tb_day: String) {
     if (isRedraw > 100) return
     val context = LocalContext.current
     var nongLi = nongLi0
@@ -240,7 +243,8 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int, nongLi0: String, sixDays
                     }
                     if (dateVal != -1) {
                         Text(
-                            text = nongLi + "\n" + sixDays,
+                            text = nongLi + "\n" + tb_day + "\n" + sixDays,
+//                            text = nongLi + "\n" + tb_day,
                             color = theColor2,
                             fontSize = textSize2,
                             lineHeight = (textSize2.value + 2).sp,
@@ -346,4 +350,8 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int, nongLi0: String, sixDays
             }
         }
     }
+}
+
+fun mainBranchDay (day: Int): String {
+    return LunarCalendar.getMainBranchDay(now.year, now.monthValue, day)
 }

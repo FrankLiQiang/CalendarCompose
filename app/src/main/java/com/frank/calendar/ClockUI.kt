@@ -78,7 +78,12 @@ fun ClockUI(event: () -> Unit) {
             color = textColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.weight(0.3f, true)
+            modifier = Modifier
+                .weight(0.3f, true)
+                .clickable {
+                    isByLiChun = !isByLiChun
+                    trunck_branch = main_branch()
+                }
         )
         Text(text = leftDate,
             maxLines = 1,
@@ -202,5 +207,3 @@ fun PreviewMessageListScreenDark() {
         ClockUI({})
     }
 }
-
-//https://github.com/bestheme/lunar-swift/blob/main/Sources/SwiftLunar/Lunar.swift

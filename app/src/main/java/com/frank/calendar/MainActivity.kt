@@ -53,9 +53,11 @@ var trunck_branch by mutableStateOf("")
 var date by mutableStateOf("2023年12月08日")
 var isRed by mutableStateOf(false)
 var isClock by mutableStateOf(true)
+var isByLiChun by mutableStateOf(true)
 var dateArray = Array(42) { -1 }
 var nongliArray = Array(42) { "" }
 var sixDaysArray = Array(42) { "" }
+var tbDaysArray = Array(42) { "" }
 var isRedraw by mutableStateOf(1)
 var now: LocalDateTime = LocalDateTime.now()
 lateinit var sharedPreferences: SharedPreferences
