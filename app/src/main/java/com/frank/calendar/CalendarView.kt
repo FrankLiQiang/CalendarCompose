@@ -150,7 +150,7 @@ fun CalendarView() {
                     d++
                 }
             }
-            Row(Modifier.height(if (isPort) 22.dp else 0.dp)) {}
+//            Row(Modifier.height(if (isPort) 22.dp else 0.dp)) {}
         }
     }
 }
@@ -230,7 +230,7 @@ fun Date(weekId: Int, modifier: Modifier, dateVal: Int, nongLi0: String, sixDays
             fun showSix() {
                 Box(
                     modifier = Modifier
-                        .weight(if (isPort) 1.0f else 0.6f),
+                        .weight(if (isPort) 1.5f else 0.6f),
                     contentAlignment = Alignment.Center
                 ) {
                     if (dayOfMonth == dateVal && !isPort) {
