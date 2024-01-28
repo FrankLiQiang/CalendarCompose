@@ -86,7 +86,7 @@ fun CalendarView() {
                 .weight(if (isPort) 0.7f else 1.2f),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = if (isPort) nowDate() else nowDate() + "  " + nowWeek() + "  $time",
+            Text(text = if (isPort) nowDate() else nowDate() + "  " + nowWeek() + if (monthOffset == 0) "  $time" else "",
                 maxLines = 1,
                 fontSize = textSize,
                 onTextLayout = {
@@ -125,7 +125,7 @@ fun CalendarView() {
                         isClock = !isClock
                     })
         }
-        if (isPort) {
+        if (isPort && monthOffset == 0) {
             Text(
                 text = time,
                 maxLines = 1,
