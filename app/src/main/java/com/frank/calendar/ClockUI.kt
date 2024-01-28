@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.frank.calendar.ui.theme.CalendarTheme
 import com.frank.calendar.ui.theme.MyTheme
+import com.frank.calendar.ui.theme.isShowSettingDialog
 import com.frank.calendar.ui.theme.monthOffset
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -81,8 +82,9 @@ fun ClockUI(event: () -> Unit) {
             modifier = Modifier
                 .weight(0.3f, true)
                 .clickable {
-                    isByLiChun = !isByLiChun
-                    trunck_branch = main_branch()
+                    isShowSettingDialog = true
+//                    isByLiChun = !isByLiChun
+//                    trunck_branch = main_branch()
                 }
         )
         Text(text = leftDate,
@@ -176,7 +178,7 @@ val nongli: () -> String = {
 }
 
 val main_branch: () -> String = {
-    LunarCalendar.getMainBranch(now.year, now.monthValue, now.dayOfMonth)
+    LunarCalendar.getMainBranch(now.year, now.monthValue, now.dayOfMonth, now.hour)
 }
 
 val leftDays: () -> String = {

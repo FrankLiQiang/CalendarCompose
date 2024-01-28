@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color.Companion.DarkGray
 import androidx.compose.ui.unit.sp
 import com.frank.calendar.ui.theme.CalendarTheme
 import com.frank.calendar.ui.theme.HorizontalPagerSample
+import com.frank.calendar.ui.theme.SetSettingDialog
 import com.frank.calendar.ui.theme.monthOffset
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -108,6 +109,7 @@ class MainActivity : ComponentActivity() {
                         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
                         HorizontalPagerSample()
                     }
+                    SetSettingDialog()
                 }
             }
         }

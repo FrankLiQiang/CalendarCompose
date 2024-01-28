@@ -18,7 +18,6 @@ package com.frank.calendar
 import android.content.Context
 import android.text.TextUtils
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 
@@ -432,7 +431,7 @@ object LunarCalendar {
      * @param day   日
      * @return 干支
      */
-    fun getMainBranch(year: Int, month: Int, day: Int): String {
+    fun getMainBranch(year: Int, month: Int, day: Int, hour: Int): String {
         var lunar: IntArray?
         val yearTb: String
         val monthTb: String
@@ -461,7 +460,8 @@ object LunarCalendar {
                 }
             }
             yearTb = Trunk!![(lunar!![0] - 3) % 10] + Branch!![(lunar[0] - 3) % 12]
-            monthTb = Trunk!![(9 + lunar[1] + ((lunar[0] % 5) - 2) * 2 - 1) % 10] + Branch!![(lunar[1] + 2) % 12]
+            monthTb =
+                Trunk!![(9 + lunar[1] + ((lunar[0] % 5) - 2) * 2 - 1) % 10] + Branch!![(lunar[1] + 2) % 12]
         } else {
             lunar = LunarUtil.solarToLunar(year, month, day)
             yearTb = Trunk!![(lunar[0] - 3) % 10] + Branch!![(lunar[0] - 3) % 12]
@@ -479,7 +479,7 @@ object LunarCalendar {
 //        val zonedDateTime: ZonedDateTime = localDateTime.atZone(zoneId) // 将LocalDateTime对象转换为ZonedDateTime对象
 //        val beijingDateTime = zonedDateTime.withZoneSameInstant(ZoneOffset.UTC).plusHours(8) // 将ZonedDateTime对象转换为UTC时间
 //        val leftHours = leftDays * 12 + ((beijingDateTime.hour + 1) % 24) / 2 + 1
-        val leftHours = leftDays * 12 + ((LocalDateTime.now().hour + 1) % 24) / 2 + 1
+        val leftHours = leftDays * 12 + ((hour + 1) % 24) / 2 + 1
         val hour_tb = Trunk!![leftHours.toInt() % 10] + Branch!![leftHours.toInt() % 12]
 
         return "$yearTb-$monthTb-$day_tb-$hour_tb"
@@ -492,7 +492,7 @@ object LunarCalendar {
      * @return 24节气
      */
     private fun getLunarTerms(year: Int): Array<IntArray> {
-        val solarTerms = Array(24){ intArrayOf()}
+        val solarTerms = Array(24) { intArrayOf() }
 
         for ((i, sDate) in SOLAR_TERMS[year]!!.withIndex()) {
             val y = sDate.subSequence(0, 4).toString().toInt()
