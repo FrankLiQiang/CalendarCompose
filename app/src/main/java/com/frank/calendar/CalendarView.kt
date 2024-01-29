@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frank.calendar.ui.theme.CalendarTheme
+import com.frank.calendar.ui.theme.isShowSettingDialog
 import com.frank.calendar.ui.theme.jumpToPage
 import com.frank.calendar.ui.theme.monthOffset
 import java.time.LocalDateTime
@@ -135,7 +136,13 @@ fun CalendarView() {
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .weight(0.7f)
+                    .clickable {
+                        isShowSettingDialog = true
+                    }
             )
+        }
+        if (!isPort) {
+            isShowSettingDialog = false
         }
         weeksMonth = getWeeksOfMonth()
         Row(Modifier.height(if (isPort) 15.dp else 27.dp)) {}

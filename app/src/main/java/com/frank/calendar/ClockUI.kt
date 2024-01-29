@@ -20,7 +20,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.frank.calendar.ui.theme.CalendarTheme
 import com.frank.calendar.ui.theme.MyTheme
-import com.frank.calendar.ui.theme.isShowSettingDialog
 import com.frank.calendar.ui.theme.monthOffset
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -81,11 +80,6 @@ fun ClockUI(event: () -> Unit) {
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .weight(0.3f, true)
-                .clickable {
-                    isShowSettingDialog = true
-//                    isByLiChun = !isByLiChun
-//                    trunck_branch = main_branch()
-                }
         )
         Text(text = leftDate,
             maxLines = 1,

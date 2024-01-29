@@ -7,19 +7,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TimePicker
-import androidx.compose.material3.TimePickerLayoutType
 import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,18 +25,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.frank.calendar.LunarCalendar
 import com.frank.calendar.LunarUtil
+import java.time.Instant
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Calendar
+import java.time.ZoneOffset
 
 var isShowSettingDialog by mutableStateOf(false)
 var isLunar by mutableStateOf(false)
 var isLeap by mutableStateOf(false)
+var theTime = LocalDateTime.now()
+var chooseTime by mutableStateOf(theTime.hour)
+var sTB by mutableStateOf("")
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,9 +49,6 @@ private fun ShowSettingDialog(
     onDismiss: () -> Unit,
     onNegativeClick: () -> Unit,
 ) {
-
-    val df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-    sTime = df.format(theTime)
 
     sTB = LunarCalendar.getMainBranch(
         theTime.year, theTime.monthValue, theTime.dayOfMonth, theTime.hour
@@ -63,96 +63,106 @@ private fun ShowSettingDialog(
                 .fillMaxSize()
                 .background(Color.Black)
         ) {
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .align(alignment = Alignment.BottomEnd),
-                verticalAlignment = Alignment.Bottom
             ) {
-                val timePickerState = rememberTimePickerState(
-                    initialHour = theTime.hour,
-                    initialMinute = theTime.minute,
-                )
                 val datePickerState =
                     rememberDatePickerState(
                         initialDisplayMode = DisplayMode.Picker,
-                        initialSelectedDateMillis = System.currentTimeMillis()
+                        initialSelectedDateMillis = theTime.toLocalDate()
+                            .atStartOfDay(ZoneOffset.ofHours(0)).toInstant().toEpochMilli()
                     )
                 DatePicker(
+                    title = null,
                     state = datePickerState,
-                    modifier = Modifier
-                        .size(350.dp, 400.dp)
-                        .weight(2f),
                 )
-                TimePicker(
-                    state = timePickerState,
-                    layoutType = TimePickerLayoutType.Vertical,
-                    modifier = Modifier.weight(2f),
-                )
-                Column(
-                    modifier = Modifier
-                        .weight(1.2f)
-                        .fillMaxSize()
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        horizontalArrangement = Arrangement.Start,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
 
+                    Checkbox(
+                        checked = isLunar, onCheckedChange = {
+                            isLunar = !isLunar
+                        }, modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                    Text(
+                        text = "农历",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                    if (isLunar) {
                         Checkbox(
-                            checked = isLunar, onCheckedChange = {
-                                isLunar = !isLunar
+                            checked = isLeap, onCheckedChange = {
+                                isLeap = !isLeap
                             }, modifier = Modifier.align(Alignment.CenterVertically)
                         )
                         Text(
-                            text = "农历",
+                            text = "闰年",
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
-                        if (isLunar) {
-                            Checkbox(
-                                checked = isLeap, onCheckedChange = {
-                                    isLeap = !isLeap
-                                }, modifier = Modifier.align(Alignment.CenterVertically)
-                            )
-                            Text(
-                                text = "闰年",
-                                style = MaterialTheme.typography.bodyLarge,
-                                modifier = Modifier.align(Alignment.CenterVertically)
-                            )
-                        }
                     }
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1.0f)
-                    ) {}
-                    getTB(
-                        datePickerState.selectedDateMillis,
-                        timePickerState.hour,
-                        timePickerState.minute
-                    )
-
+                    getTB(datePickerState.selectedDateMillis)
+                }
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
                         text = sTB,
                         style = MaterialTheme.typography.bodyLarge,
+                        fontSize = 30.sp
                     )
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1.0f)
-                    ) {}
-                    Row(
-                        modifier = Modifier.padding(end = 10.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1.0f)
-                        ) {}
-                        TextButton(onClick = onNegativeClick) {
-                            Text(text = "Close")
-                        }
+                }
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 18.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "${chooseTime} 时",
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontSize = 30.sp
+                    )
+                }
+                Slider(
+                    modifier = Modifier.padding(18.dp),
+                    value = chooseTime.toFloat(),
+                    onValueChange = {
+                        chooseTime = it.toInt()
+                    },
+                    valueRange = 0f..23f,
+                )
+                Row(
+                    modifier = Modifier.weight(1.0f)
+                ) {}
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(Color.DarkGray)
+                ) {}
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(18.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    TextButton(onClick = onNegativeClick) {
+                        Text(
+                            text = "Close",
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontSize = 30.sp
+                        )
                     }
                 }
             }
@@ -178,22 +188,10 @@ fun closeDialog() {
     isShowSettingDialog = !isShowSettingDialog
 }
 
-var sTime by mutableStateOf("")
-var sTB by mutableStateOf("")
-var theTime = LocalDateTime.now()
-
-fun getTB(timeStamp: Long?, hour: Int, minute: Int) {
-    val calendar = Calendar.getInstance()
-    calendar.timeInMillis = if (timeStamp == null) 0L else timeStamp
-    theTime = LocalDateTime.of(
-        calendar.get(Calendar.YEAR),
-        calendar.get(Calendar.MONTH) + 1,
-        calendar.get(Calendar.DAY_OF_MONTH),
-        hour,
-        minute
-    )
-
-    val df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+fun getTB(timeStamp: Long?) {
+    if (timeStamp != null) {
+        theTime = Instant.ofEpochMilli(timeStamp).atZone(ZoneOffset.ofHours(0)).toLocalDateTime()
+    }
     if (isLunar) {
         val s = LunarUtil.lunarToSolar(
             theTime.year,
@@ -205,18 +203,17 @@ fun getTB(timeStamp: Long?, hour: Int, minute: Int) {
             s[0],
             s[1],
             s[2],
-            theTime.hour,
-            theTime.minute,
+            chooseTime,
+            0,
             0,
             0
         )
     }
-    sTime = df.format(theTime)
     sTB = LunarCalendar.getMainBranch(
         theTime.year,
         theTime.monthValue,
         theTime.dayOfMonth,
-        theTime.hour
+        chooseTime
     )
 }
 
