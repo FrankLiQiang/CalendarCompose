@@ -9,14 +9,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Checkbox
+import androidx.compose.material.Checkbox
+import androidx.compose.material.CheckboxDefaults
+import androidx.compose.material.Slider
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -86,24 +86,32 @@ private fun ShowSettingDialog(
                 ) {
 
                     Checkbox(
+                        colors = CheckboxDefaults.colors(
+                            uncheckedColor = Color.LightGray,
+                            checkmarkColor = Color.LightGray,
+                        ),
                         checked = isLunar, onCheckedChange = {
                             isLunar = !isLunar
                         }, modifier = Modifier.align(Alignment.CenterVertically)
                     )
                     Text(
                         text = "农历",
-                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.LightGray,
                         modifier = Modifier.align(Alignment.CenterVertically)
                     )
                     if (isLunar) {
                         Checkbox(
+                            colors = CheckboxDefaults.colors(
+                                uncheckedColor = Color.LightGray,
+                                checkmarkColor = Color.LightGray,
+                            ),
                             checked = isLeap, onCheckedChange = {
                                 isLeap = !isLeap
                             }, modifier = Modifier.align(Alignment.CenterVertically)
                         )
                         Text(
                             text = "闰年",
-                            style = MaterialTheme.typography.bodyLarge,
+                            color = Color.LightGray,
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
                     }
@@ -116,7 +124,7 @@ private fun ShowSettingDialog(
                 ) {
                     Text(
                         text = sTB,
-                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.LightGray,
                         fontSize = 30.sp
                     )
                 }
@@ -127,7 +135,7 @@ private fun ShowSettingDialog(
                 ) {
                     Text(
                         text = sNongLi,
-                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.LightGray,
                         fontSize = 30.sp
                     )
                 }
@@ -141,7 +149,7 @@ private fun ShowSettingDialog(
                     Text(
                         text = "${chooseTime} 时",
                         fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.LightGray,
                         fontSize = 30.sp
                     )
                 }
@@ -173,7 +181,7 @@ private fun ShowSettingDialog(
                         Text(
                             text = "Close",
                             fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.bodyLarge,
+                            color = Color.LightGray,
                             fontSize = 30.sp
                         )
                     }
