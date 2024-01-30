@@ -31,9 +31,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frank.calendar.ui.theme.CalendarTheme
+import com.frank.calendar.ui.theme.chooseTime
 import com.frank.calendar.ui.theme.isShowSettingDialog
 import com.frank.calendar.ui.theme.jumpToPage
 import com.frank.calendar.ui.theme.monthOffset
+import com.frank.calendar.ui.theme.sTB
+import com.frank.calendar.ui.theme.theTime
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalAdjusters
@@ -137,6 +140,12 @@ fun CalendarView() {
                 modifier = Modifier
                     .weight(0.7f)
                     .clickable {
+                        sTB = LunarCalendar.getMainBranch(
+                            theTime.year,
+                            theTime.monthValue,
+                            theTime.dayOfMonth,
+                            chooseTime
+                        )
                         isShowSettingDialog = true
                     }
             )

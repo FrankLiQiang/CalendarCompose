@@ -1,5 +1,6 @@
 package com.frank.calendar.ui.theme
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,11 +10,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Checkbox
-import androidx.compose.material.CheckboxDefaults
-import androidx.compose.material.Slider
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Slider
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -52,10 +52,6 @@ private fun ShowSettingDialog(
     onNegativeClick: () -> Unit,
 ) {
 
-    sTB = LunarCalendar.getMainBranch(
-        theTime.year, theTime.monthValue, theTime.dayOfMonth, theTime.hour
-    )
-
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false),
@@ -86,27 +82,20 @@ private fun ShowSettingDialog(
                 ) {
 
                     Checkbox(
-                        colors = CheckboxDefaults.colors(
-                            uncheckedColor = Color.LightGray,
-                            checkmarkColor = Color.LightGray,
-                        ),
                         checked = isLunar, onCheckedChange = {
                             isLunar = !isLunar
+                            getTB(datePickerState.selectedDateMillis)
                         }, modifier = Modifier.align(Alignment.CenterVertically)
                     )
                     Text(
                         text = "农历",
-                        color = Color.LightGray,
                         modifier = Modifier.align(Alignment.CenterVertically)
                     )
                     if (isLunar) {
                         Checkbox(
-                            colors = CheckboxDefaults.colors(
-                                uncheckedColor = Color.LightGray,
-                                checkmarkColor = Color.LightGray,
-                            ),
                             checked = isLeap, onCheckedChange = {
                                 isLeap = !isLeap
+                                getTB(datePickerState.selectedDateMillis)
                             }, modifier = Modifier.align(Alignment.CenterVertically)
                         )
                         Text(
@@ -115,7 +104,6 @@ private fun ShowSettingDialog(
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
                     }
-                    getTB(datePickerState.selectedDateMillis)
                 }
                 Row(
                     horizontalArrangement = Arrangement.Center,
@@ -124,7 +112,6 @@ private fun ShowSettingDialog(
                 ) {
                     Text(
                         text = sTB,
-                        color = Color.LightGray,
                         fontSize = 30.sp
                     )
                 }
@@ -135,7 +122,6 @@ private fun ShowSettingDialog(
                 ) {
                     Text(
                         text = sNongLi,
-                        color = Color.LightGray,
                         fontSize = 30.sp
                     )
                 }
@@ -149,7 +135,6 @@ private fun ShowSettingDialog(
                     Text(
                         text = "${chooseTime} 时",
                         fontWeight = FontWeight.Bold,
-                        color = Color.LightGray,
                         fontSize = 30.sp
                     )
                 }
@@ -158,6 +143,7 @@ private fun ShowSettingDialog(
                     value = chooseTime.toFloat(),
                     onValueChange = {
                         chooseTime = it.toInt()
+                        getTB(datePickerState.selectedDateMillis)
                     },
                     valueRange = 0f..23f,
                 )
@@ -181,7 +167,6 @@ private fun ShowSettingDialog(
                         Text(
                             text = "Close",
                             fontWeight = FontWeight.Bold,
-                            color = Color.LightGray,
                             fontSize = 30.sp
                         )
                     }
@@ -210,6 +195,8 @@ fun closeDialog() {
 }
 
 fun getTB(timeStamp: Long?) {
+    Log.i("AAA", "BBB")
+
     if (timeStamp != null) {
         theTime = Instant.ofEpochMilli(timeStamp).atZone(ZoneOffset.ofHours(0)).toLocalDateTime()
     }
