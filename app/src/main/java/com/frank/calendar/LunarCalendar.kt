@@ -34,6 +34,7 @@ object LunarCalendar {
         SIX_DAY = context.resources.getStringArray(R.array.six_days)
         Trunk = context.resources.getStringArray(R.array.trunk_string_array)
         Branch = context.resources.getStringArray(R.array.branch_string_array)
+        Animal = context.resources.getStringArray(R.array.animal_string_array)
         TRADITION_FESTIVAL_STR = context.resources.getStringArray(R.array.tradition_festival)
         DAY_STR = context.resources.getStringArray(R.array.lunar_str)
         SPECIAL_FESTIVAL_STR = context.resources.getStringArray(R.array.special_festivals)
@@ -67,6 +68,11 @@ object LunarCalendar {
      * 地支
      */
     private var Branch: Array<String>? = null
+
+    /**
+     * 生肖
+     */
+    private var Animal: Array<String>? = null
 
     /**
      * 传统农历节日
@@ -441,9 +447,9 @@ object LunarCalendar {
         //年干支
         val lichun = solarTerm[0].subSequence(0, 8).toString()
         yearTb = if (text < lichun) {
-            Trunk!![(year - 4) % 10] + Branch!![(year - 4) % 12]
+            "(" + Animal!![(year - 4) % 12] + "年) " + Trunk!![(year - 4) % 10] + Branch!![(year - 4) % 12]
         } else {
-            Trunk!![(year - 3) % 10] + Branch!![(year - 3) % 12]
+            "(" + Animal!![(year - 3) % 12] + "年) " + Trunk!![(year - 3) % 10] + Branch!![(year - 3) % 12]
         }
 
         //月干支

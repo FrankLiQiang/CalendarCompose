@@ -35,6 +35,7 @@ import com.frank.calendar.LunarUtil
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 var isShowSettingDialog by mutableStateOf(false)
 var isLunar by mutableStateOf(false)
@@ -42,6 +43,7 @@ var isLeap by mutableStateOf(false)
 var theTime = LocalDateTime.now()
 var chooseTime by mutableStateOf(theTime.hour)
 var sTB by mutableStateOf("")
+var sNongLi by mutableStateOf("")
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -114,6 +116,17 @@ private fun ShowSettingDialog(
                 ) {
                     Text(
                         text = sTB,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontSize = 30.sp
+                    )
+                }
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = sNongLi,
                         style = MaterialTheme.typography.bodyLarge,
                         fontSize = 30.sp
                     )
@@ -207,6 +220,25 @@ fun getTB(timeStamp: Long?) {
             0,
             0,
             0
+        )
+
+
+        val formatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日")
+        sNongLi = theTime.format(formatter)
+
+        val day: Int = theTime.dayOfWeek.value
+        val weekString = "一二三四五六日"
+        sNongLi += "  星期${weekString.substring(day - 1, day)}"
+    } else {
+        sNongLi = LunarCalendar.getLunarText(
+            theTime.year,
+            theTime.monthValue,
+            theTime.dayOfMonth,
+        )
+        sNongLi += "  " + LunarCalendar.getSixDay(
+            theTime.year,
+            theTime.monthValue,
+            theTime.dayOfMonth,
         )
     }
     sTB = LunarCalendar.getMainBranch(
