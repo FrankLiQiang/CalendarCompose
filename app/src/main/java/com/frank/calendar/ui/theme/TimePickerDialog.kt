@@ -11,12 +11,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DisplayMode
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -67,14 +66,32 @@ private fun ShowSettingDialog(
             ) {
                 val datePickerState =
                     rememberDatePickerState(
-                        initialDisplayMode = DisplayMode.Picker,
                         initialSelectedDateMillis = theTime.toLocalDate()
                             .atStartOfDay(ZoneOffset.ofHours(0)).toInstant().toEpochMilli()
                     )
-                DatePicker(
-                    title = null,
-                    state = datePickerState,
-                )
+                Box() {
+                    DatePicker(
+                        title = null,
+                        state = datePickerState,
+                    )
+                    Row(
+                        horizontalArrangement = Arrangement.End,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        TextButton(
+                            modifier = Modifier
+                                .background(Color.Black),
+                            onClick = {
+                            }) {
+                            Text(
+                                text = "        ",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 30.sp
+                            )
+                        }
+                    }
+                }
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier.fillMaxWidth(),
@@ -84,7 +101,6 @@ private fun ShowSettingDialog(
                     Checkbox(
                         checked = isLunar, onCheckedChange = {
                             isLunar = !isLunar
-                            getTB(datePickerState.selectedDateMillis)
                         }, modifier = Modifier.align(Alignment.CenterVertically)
                     )
                     Text(
@@ -95,7 +111,6 @@ private fun ShowSettingDialog(
                         Checkbox(
                             checked = isLeap, onCheckedChange = {
                                 isLeap = !isLeap
-                                getTB(datePickerState.selectedDateMillis)
                             }, modifier = Modifier.align(Alignment.CenterVertically)
                         )
                         Text(
@@ -143,7 +158,6 @@ private fun ShowSettingDialog(
                     value = chooseTime.toFloat(),
                     onValueChange = {
                         chooseTime = it.toInt()
-                        getTB(datePickerState.selectedDateMillis)
                     },
                     valueRange = 0f..23f,
                 )
@@ -157,12 +171,21 @@ private fun ShowSettingDialog(
                         .background(Color.DarkGray)
                 ) {}
                 Row(
-                    horizontalArrangement = Arrangement.End,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(18.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    TextButton(onClick = {
+                        getTB(datePickerState.selectedDateMillis)
+                    }) {
+                        Text(
+                            text = "Compute",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 30.sp
+                        )
+                    }
+                    Row(modifier = Modifier.weight(1.0f)) {}
                     TextButton(onClick = onNegativeClick) {
                         Text(
                             text = "Close",
@@ -196,6 +219,7 @@ fun closeDialog() {
 
 fun getTB(timeStamp: Long?) {
     Log.i("AAA", "BBB")
+
 
     if (timeStamp != null) {
         theTime = Instant.ofEpochMilli(timeStamp).atZone(ZoneOffset.ofHours(0)).toLocalDateTime()
