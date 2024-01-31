@@ -368,6 +368,7 @@ object LunarCalendar {
      * @return 传回农历 year年month月的总天数
      */
     fun daysInLunarMonth(year: Int, month: Int): Int {
+        if (year == 1899) return 30
         return if (LUNAR_INFO[year - 1900] and (0x10000 shr month) == 0) 29 else 30
     }
 
