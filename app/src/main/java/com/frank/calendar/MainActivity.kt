@@ -51,10 +51,10 @@ var isPort by mutableStateOf(true)
 var time by mutableStateOf("09:35:23")
 var leftDate by mutableStateOf("")
 var trunck_branch by mutableStateOf("")
+var year_name by mutableStateOf("")
 var date by mutableStateOf("2023年12月08日")
 var isRed by mutableStateOf(false)
 var isClock by mutableStateOf(true)
-var isByLiChun by mutableStateOf(true)
 var dateArray = Array(42) { -1 }
 var nongliArray = Array(42) { "" }
 var sixDaysArray = Array(42) { "" }
@@ -85,6 +85,7 @@ class MainActivity : ComponentActivity() {
                         time = getCurrentTime()
                         leftDate = getNongLiDate()
                         trunck_branch = main_branch()
+                        year_name = jp_year_name()
                         date = getCurrentDate()
                         isRed = dateColor
                     } catch (e: Exception) {

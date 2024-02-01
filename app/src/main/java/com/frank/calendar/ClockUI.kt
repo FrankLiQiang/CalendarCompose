@@ -72,7 +72,7 @@ fun ClockUI(event: () -> Unit) {
                     }
                 })
         Text(
-            text = trunck_branch,
+            text = "$trunck_branch ($year_name)",
             maxLines = 1,
             fontSize = textSize2,
             color = textColor,
@@ -173,6 +173,10 @@ val nongli: () -> String = {
 
 val main_branch: () -> String = {
     LunarCalendar.getMainBranch(now.year, now.monthValue, now.dayOfMonth, now.hour)
+}
+
+val jp_year_name: () -> String = {
+    LunarCalendar.getYearName(now.year, now.monthValue, now.dayOfMonth)
 }
 
 val leftDays: () -> String = {

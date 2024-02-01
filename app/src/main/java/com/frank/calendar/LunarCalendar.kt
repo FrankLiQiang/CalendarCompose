@@ -35,6 +35,7 @@ object LunarCalendar {
         Trunk = context.resources.getStringArray(R.array.trunk_string_array)
         Branch = context.resources.getStringArray(R.array.branch_string_array)
         Animal = context.resources.getStringArray(R.array.animal_string_array)
+        YearName = context.resources.getStringArray(R.array.year_string_array)
         TRADITION_FESTIVAL_STR = context.resources.getStringArray(R.array.tradition_festival)
         DAY_STR = context.resources.getStringArray(R.array.lunar_str)
         SPECIAL_FESTIVAL_STR = context.resources.getStringArray(R.array.special_festivals)
@@ -73,6 +74,11 @@ object LunarCalendar {
      * 生肖
      */
     private var Animal: Array<String>? = null
+
+    /**
+     * 日本年号
+     */
+    private var YearName: Array<String>? = null
 
     /**
      * 传统农历节日
@@ -494,6 +500,33 @@ object LunarCalendar {
         val leftDays = ChronoUnit.DAYS.between(c1900, cNow) % 60
         val day_tb = Trunk!![(1 + leftDays.toInt()) % 10] + Branch!![(11 + leftDays.toInt()) % 12]
         return day_tb
+    }
+
+    /**
+     * 获取日本年号
+     *
+     * @param year  年
+     * @param month 月
+     * @param day   日
+     * @return 日本年号
+     */
+    fun getYearName(year: Int, month: Int, day: Int): String {
+        var yearName = ""
+        var yearNum = ""
+        val text = year.toString() + getString(month, day)
+
+        for (i in 0 until YearName!!.size) {
+            val y1 = YearName!![i].substring(2)
+            val y2 = YearName!![i + 1].substring(2)
+            if (y1 <= text && text < y2) {
+                yearName = YearName!![i].substring(0,2)
+                val startYear = YearName!![i].substring(2, 6)
+                val ys = year - startYear.toInt() + 1
+                yearNum = " ${ys} 年"
+                break
+            }
+        }
+        return yearName + yearNum
     }
 
     /**

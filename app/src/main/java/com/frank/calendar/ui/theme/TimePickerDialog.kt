@@ -42,9 +42,11 @@ var isLeap by mutableStateOf(false)
 var theTime = LocalDateTime.now()
 var chooseTime by mutableStateOf(theTime.hour)
 var sTB by mutableStateOf("")
+var sYearName by mutableStateOf("")
 var dateInfo by mutableStateOf("")
 var oldTimeStamp = 0L
 var oldTimeStamp1 = 0L
+var oldTimeStamp2 = 0L
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -144,6 +146,16 @@ private fun ShowSettingDialog(
                 }
                 Row(
                     horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = getYearName(datePickerState.selectedDateMillis),
+                        fontSize = 30.sp
+                    )
+                }
+                Row(
+                    horizontalArrangement = Arrangement.Center,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 18.dp),
@@ -237,7 +249,6 @@ fun getDateInfo(timeStamp: Long?): String {
             0
         )
 
-
         val formatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日")
         dateInfo = theTime.format(formatter)
 
@@ -246,11 +257,6 @@ fun getDateInfo(timeStamp: Long?): String {
         dateInfo += "  星期${weekString.substring(day - 1, day)}"
     } else {
         dateInfo = LunarCalendar.getLunarText(
-            theTime.year,
-            theTime.monthValue,
-            theTime.dayOfMonth,
-        )
-        dateInfo += "  " + LunarCalendar.getSixDay(
             theTime.year,
             theTime.monthValue,
             theTime.dayOfMonth,
@@ -293,6 +299,45 @@ fun getTB(timeStamp: Long?): String {
         chooseTime
     )
     return sTB
+}
+
+fun getYearName(timeStamp: Long?): String {
+    Log.i("AAA", "BBB")
+    if (oldTimeStamp2 == timeStamp) {
+        return sYearName
+    }
+    if (timeStamp != null) {
+        oldTimeStamp2 = timeStamp
+        theTime = Instant.ofEpochMilli(timeStamp).atZone(ZoneOffset.ofHours(0)).toLocalDateTime()
+    }
+    if (isLunar) {
+        val s = LunarUtil.lunarToSolar(
+            theTime.year,
+            theTime.monthValue,
+            theTime.dayOfMonth,
+            isLeap
+        )
+        theTime = LocalDateTime.of(
+            s[0],
+            s[1],
+            s[2],
+            chooseTime,
+            0,
+            0,
+            0
+        )
+    }
+    sYearName = LunarCalendar.getYearName(
+        theTime.year,
+        theTime.monthValue,
+        theTime.dayOfMonth,
+    )
+    sYearName += "  " + LunarCalendar.getSixDay(
+        theTime.year,
+        theTime.monthValue,
+        theTime.dayOfMonth,
+    )
+    return sYearName
 }
 
 //https://juejin.cn/post/6892794891223760909

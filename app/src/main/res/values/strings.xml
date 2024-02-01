@@ -187,4 +187,13 @@
         <item>鸡</item>
         <item>狗</item>
     </string-array>
+
+    <string-array name="year_string_array">
+        <item>明治18680901</item>
+        <item>大正19120730</item>
+        <item>昭和19261225</item>
+        <item>平成19890108</item>
+        <item>令和20190501</item>
+        <item>令和21090501</item>
+    </string-array>
 </resources>
