@@ -126,7 +126,12 @@ private fun ShowSettingDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = sTB,
+                        text = LunarCalendar.getMainBranch(
+                            theTime.year,
+                            theTime.monthValue,
+                            theTime.dayOfMonth,
+                            chooseTime
+                        ),
                         fontSize = 30.sp
                     )
                 }
@@ -136,7 +141,7 @@ private fun ShowSettingDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = sNongLi,
+                        text = getTB(datePickerState.selectedDateMillis),
                         fontSize = 30.sp
                     )
                 }
@@ -176,15 +181,6 @@ private fun ShowSettingDialog(
                         .padding(18.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    TextButton(onClick = {
-                        getTB(datePickerState.selectedDateMillis)
-                    }) {
-                        Text(
-                            text = "Compute",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 30.sp
-                        )
-                    }
                     Row(modifier = Modifier.weight(1.0f)) {}
                     TextButton(onClick = onNegativeClick) {
                         Text(
@@ -217,7 +213,7 @@ fun closeDialog() {
     isShowSettingDialog = !isShowSettingDialog
 }
 
-fun getTB(timeStamp: Long?) {
+fun getTB(timeStamp: Long?) : String{
     Log.i("AAA", "BBB")
 
 
@@ -266,6 +262,7 @@ fun getTB(timeStamp: Long?) {
         theTime.dayOfMonth,
         chooseTime
     )
+    return sNongLi
 }
 
 //https://juejin.cn/post/6892794891223760909
