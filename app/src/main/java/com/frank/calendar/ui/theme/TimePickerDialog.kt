@@ -187,7 +187,7 @@ private fun ShowSettingDialog(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(18.dp),
+                        .padding(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Row(modifier = Modifier.weight(1.0f)) {}
@@ -195,7 +195,7 @@ private fun ShowSettingDialog(
                         Text(
                             text = "Close",
                             fontWeight = FontWeight.Bold,
-                            fontSize = 30.sp
+                            fontSize = 20.sp
                         )
                     }
                 }

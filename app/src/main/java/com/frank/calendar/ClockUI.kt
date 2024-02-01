@@ -39,6 +39,7 @@ fun ClockUI(event: () -> Unit) {
     var textSize by remember("") { mutableStateOf(maxTextSizeTime) }
     var textSize2 by remember("") { mutableStateOf(maxTextSizeLeftDate) }
     var textSize3 by remember("") { mutableStateOf(maxTextSizeGongli) }
+    var textSize4 by remember("") { mutableStateOf(maxTextSizeTB) }
     Column(
         modifier = Modifier.background(MyTheme.colors.background),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -74,7 +75,18 @@ fun ClockUI(event: () -> Unit) {
         Text(
             text = "$trunck_branch ($year_name)",
             maxLines = 1,
-            fontSize = textSize2,
+            fontSize = textSize4,
+            onTextLayout = {
+                if (it.hasVisualOverflow && textSize4 > minTextSize) {
+                    textSize4 = (textSize4.value - 1.0F).sp
+                } else {
+                    maxTextSizeTB = textSize4
+                    with(sharedPreferences.edit()) {
+                        putFloat("SHARED_PREFS_TB", maxTextSizeTB.value)
+                        commit()
+                    }
+                }
+            },
             color = textColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,

@@ -35,6 +35,7 @@ var dayOfMonth = 1
 var firstDayOfWeek: Int = 0
 val minTextSize = 5.sp
 var maxTextSizeTime = 312.sp
+var maxTextSizeTB = 312.sp
 var maxTextSizeLeftDate = 112.sp
 var maxTextSizeGongli = 112.sp
 var maxTextSizeTitle_LANDSCAPE = 112.sp
@@ -136,6 +137,7 @@ class MainActivity : ComponentActivity() {
 
     private fun readToDate() {
         maxTextSizeTime = sharedPreferences.getFloat("SHARED_PREFS_TIME", 312.0f).sp
+        maxTextSizeTB = sharedPreferences.getFloat("SHARED_PREFS_TB", 312.0f).sp
         maxTextSizeLeftDate = sharedPreferences.getFloat("SHARED_PREFS_LEFT", 112.0f).sp
         maxTextSizeGongli = sharedPreferences.getFloat("SHARED_PREFS_WEEK", 112.0f).sp
 
