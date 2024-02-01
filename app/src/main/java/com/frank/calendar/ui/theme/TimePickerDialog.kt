@@ -42,7 +42,9 @@ var isLeap by mutableStateOf(false)
 var theTime = LocalDateTime.now()
 var chooseTime by mutableStateOf(theTime.hour)
 var sTB by mutableStateOf("")
-var sNongLi by mutableStateOf("")
+var dateInfo by mutableStateOf("")
+var oldTimeStamp = 0L
+var oldTimeStamp1 = 0L
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -126,12 +128,7 @@ private fun ShowSettingDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = LunarCalendar.getMainBranch(
-                            theTime.year,
-                            theTime.monthValue,
-                            theTime.dayOfMonth,
-                            chooseTime
-                        ),
+                        text = getTB(datePickerState.selectedDateMillis),
                         fontSize = 30.sp
                     )
                 }
@@ -141,7 +138,7 @@ private fun ShowSettingDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = getTB(datePickerState.selectedDateMillis),
+                        text = getDateInfo(datePickerState.selectedDateMillis),
                         fontSize = 30.sp
                     )
                 }
@@ -213,11 +210,14 @@ fun closeDialog() {
     isShowSettingDialog = !isShowSettingDialog
 }
 
-fun getTB(timeStamp: Long?) : String{
+fun getDateInfo(timeStamp: Long?): String {
     Log.i("AAA", "BBB")
-
+    if (oldTimeStamp == timeStamp) {
+        return dateInfo
+    }
 
     if (timeStamp != null) {
+        oldTimeStamp = timeStamp
         theTime = Instant.ofEpochMilli(timeStamp).atZone(ZoneOffset.ofHours(0)).toLocalDateTime()
     }
     if (isLunar) {
@@ -239,21 +239,51 @@ fun getTB(timeStamp: Long?) : String{
 
 
         val formatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日")
-        sNongLi = theTime.format(formatter)
+        dateInfo = theTime.format(formatter)
 
         val day: Int = theTime.dayOfWeek.value
         val weekString = "一二三四五六日"
-        sNongLi += "  星期${weekString.substring(day - 1, day)}"
+        dateInfo += "  星期${weekString.substring(day - 1, day)}"
     } else {
-        sNongLi = LunarCalendar.getLunarText(
+        dateInfo = LunarCalendar.getLunarText(
             theTime.year,
             theTime.monthValue,
             theTime.dayOfMonth,
         )
-        sNongLi += "  " + LunarCalendar.getSixDay(
+        dateInfo += "  " + LunarCalendar.getSixDay(
             theTime.year,
             theTime.monthValue,
             theTime.dayOfMonth,
+        )
+    }
+    return dateInfo
+}
+
+fun getTB(timeStamp: Long?): String {
+    Log.i("AAA", "BBB")
+    if (oldTimeStamp1 == timeStamp) {
+        return sTB
+    }
+
+    if (timeStamp != null) {
+        oldTimeStamp1 = timeStamp
+        theTime = Instant.ofEpochMilli(timeStamp).atZone(ZoneOffset.ofHours(0)).toLocalDateTime()
+    }
+    if (isLunar) {
+        val s = LunarUtil.lunarToSolar(
+            theTime.year,
+            theTime.monthValue,
+            theTime.dayOfMonth,
+            isLeap
+        )
+        theTime = LocalDateTime.of(
+            s[0],
+            s[1],
+            s[2],
+            chooseTime,
+            0,
+            0,
+            0
         )
     }
     sTB = LunarCalendar.getMainBranch(
@@ -262,7 +292,7 @@ fun getTB(timeStamp: Long?) : String{
         theTime.dayOfMonth,
         chooseTime
     )
-    return sNongLi
+    return sTB
 }
 
 //https://juejin.cn/post/6892794891223760909

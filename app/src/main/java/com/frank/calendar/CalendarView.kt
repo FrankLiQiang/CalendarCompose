@@ -31,12 +31,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frank.calendar.ui.theme.CalendarTheme
-import com.frank.calendar.ui.theme.chooseTime
 import com.frank.calendar.ui.theme.isShowSettingDialog
 import com.frank.calendar.ui.theme.jumpToPage
 import com.frank.calendar.ui.theme.monthOffset
-import com.frank.calendar.ui.theme.sTB
-import com.frank.calendar.ui.theme.theTime
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalAdjusters
@@ -140,12 +137,6 @@ fun CalendarView() {
                 modifier = Modifier
                     .weight(0.7f)
                     .clickable {
-                        sTB = LunarCalendar.getMainBranch(
-                            theTime.year,
-                            theTime.monthValue,
-                            theTime.dayOfMonth,
-                            chooseTime
-                        )
                         isShowSettingDialog = true
                     }
             )
@@ -273,8 +264,8 @@ fun Date(
                     }
                     if (dateVal != -1) {
                         Text(
-                            text = nongLi.subSequence(0, 2).toString() + "\n" + tb_day + "\n" + sixDays,
-//                            text = nongLi + "\n" + tb_day,
+                            text = nongLi.subSequence(0, 2)
+                                .toString() + "\n" + tb_day + "\n" + sixDays,
                             color = theColor2,
                             fontSize = textSize2,
                             lineHeight = (textSize2.value + 2).sp,
