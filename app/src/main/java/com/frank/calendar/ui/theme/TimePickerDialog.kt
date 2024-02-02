@@ -45,8 +45,7 @@ var sTB by mutableStateOf("")
 var sYearName by mutableStateOf("")
 var dateInfo by mutableStateOf("")
 var oldTimeStamp = 0L
-var oldTimeStamp1 = 0L
-var oldTimeStamp2 = 0L
+var oldChooseTime = 0
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,6 +72,7 @@ private fun ShowSettingDialog(
                         initialSelectedDateMillis = theTime.toLocalDate()
                             .atStartOfDay(ZoneOffset.ofHours(0)).toInstant().toEpochMilli()
                     )
+                getDateInfo(datePickerState.selectedDateMillis, chooseTime)
                 Box() {
                     DatePicker(
                         title = null,
@@ -130,7 +130,7 @@ private fun ShowSettingDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = getTB(datePickerState.selectedDateMillis),
+                        text = sTB,
                         fontSize = 30.sp
                     )
                 }
@@ -140,7 +140,7 @@ private fun ShowSettingDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = getDateInfo(datePickerState.selectedDateMillis),
+                        text = dateInfo,
                         fontSize = 30.sp
                     )
                 }
@@ -150,7 +150,7 @@ private fun ShowSettingDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = getYearName(datePickerState.selectedDateMillis),
+                        text = sYearName,
                         fontSize = 30.sp
                     )
                 }
@@ -172,6 +172,7 @@ private fun ShowSettingDialog(
                     value = chooseTime.toFloat(),
                     onValueChange = {
                         chooseTime = it.toInt()
+                        getDateInfo(datePickerState.selectedDateMillis, chooseTime)
                     },
                     valueRange = 0f..23f,
                 )
@@ -222,14 +223,15 @@ fun closeDialog() {
     isShowSettingDialog = !isShowSettingDialog
 }
 
-fun getDateInfo(timeStamp: Long?): String {
+fun getDateInfo(timeStamp: Long?, cTime: Int) {
     Log.i("AAA", "BBB")
-    if (oldTimeStamp == timeStamp) {
-        return dateInfo
+    if (oldTimeStamp == timeStamp && oldChooseTime == cTime) {
+        return
     }
 
     if (timeStamp != null) {
         oldTimeStamp = timeStamp
+        oldChooseTime = cTime
         theTime = Instant.ofEpochMilli(timeStamp).atZone(ZoneOffset.ofHours(0)).toLocalDateTime()
     }
     if (isLunar) {
@@ -262,71 +264,12 @@ fun getDateInfo(timeStamp: Long?): String {
             theTime.dayOfMonth,
         )
     }
-    return dateInfo
-}
-
-fun getTB(timeStamp: Long?): String {
-    Log.i("AAA", "BBB")
-    if (oldTimeStamp1 == timeStamp) {
-        return sTB
-    }
-
-    if (timeStamp != null) {
-        oldTimeStamp1 = timeStamp
-        theTime = Instant.ofEpochMilli(timeStamp).atZone(ZoneOffset.ofHours(0)).toLocalDateTime()
-    }
-    if (isLunar) {
-        val s = LunarUtil.lunarToSolar(
-            theTime.year,
-            theTime.monthValue,
-            theTime.dayOfMonth,
-            isLeap
-        )
-        theTime = LocalDateTime.of(
-            s[0],
-            s[1],
-            s[2],
-            chooseTime,
-            0,
-            0,
-            0
-        )
-    }
     sTB = LunarCalendar.getMainBranch(
         theTime.year,
         theTime.monthValue,
         theTime.dayOfMonth,
         chooseTime
     )
-    return sTB
-}
-
-fun getYearName(timeStamp: Long?): String {
-    Log.i("AAA", "BBB")
-    if (oldTimeStamp2 == timeStamp) {
-        return sYearName
-    }
-    if (timeStamp != null) {
-        oldTimeStamp2 = timeStamp
-        theTime = Instant.ofEpochMilli(timeStamp).atZone(ZoneOffset.ofHours(0)).toLocalDateTime()
-    }
-    if (isLunar) {
-        val s = LunarUtil.lunarToSolar(
-            theTime.year,
-            theTime.monthValue,
-            theTime.dayOfMonth,
-            isLeap
-        )
-        theTime = LocalDateTime.of(
-            s[0],
-            s[1],
-            s[2],
-            chooseTime,
-            0,
-            0,
-            0
-        )
-    }
     sYearName = LunarCalendar.getYearName(
         theTime.year,
         theTime.monthValue,
@@ -337,7 +280,6 @@ fun getYearName(timeStamp: Long?): String {
         theTime.monthValue,
         theTime.dayOfMonth,
     )
-    return sYearName
 }
 
 //https://juejin.cn/post/6892794891223760909
