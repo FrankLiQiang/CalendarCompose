@@ -204,7 +204,7 @@ val nowDate: () -> String = {
 }
 
 val nowWeek: () -> String = {
-    val solar = LunarCalendar.gregorianFestival(now.monthValue, now.dayOfMonth)
+    val solar = LunarCalendar.gregorianFestival(now.monthValue, now.dayOfMonth, now.dayOfWeek.value)
     solar.ifEmpty {
         val day: Int = now.dayOfWeek.value
         val weekString = "一二三四五六日"

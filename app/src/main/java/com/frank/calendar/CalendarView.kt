@@ -38,8 +38,8 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalAdjusters
 
-fun getNongLi(dayNum: Int): String {
-    return LunarCalendar.getLunarText2(now.year, now.monthValue, dayNum)
+fun getNongLi(dayNum: Int, weekDay: Int): String {
+    return LunarCalendar.getLunarText2(now.year, now.monthValue, dayNum, weekDay)
 }
 
 fun getSixDay(dayNum: Int): String {
@@ -60,7 +60,7 @@ fun getWeeksOfMonth(): Int {
     var d = firstDayOfWeek
     for (i in 1..lengthOfMonth) {
         dateArray[d] = i
-        nongliArray[d] = getNongLi(i)
+        nongliArray[d] = getNongLi(i, d % 7)
         sixDaysArray[d] = getSixDay(i)
         tbDaysArray[d] = mainBranchDay(i)
         d++

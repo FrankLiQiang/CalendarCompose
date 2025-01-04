@@ -60,7 +60,6 @@
 
     <string-array name="solar_festival" tools:ignore="InconsistentArrays">
         <item>0101元旦</item>
-        <item>0108成人の日</item>
         <item>0211建国記念</item>
         <item>0212振替休日</item>
         <item>0214情人节</item>
@@ -80,19 +79,16 @@
         <item>0521老公生日</item>
         <item>0601儿童节</item>
         <item>0701建党节</item>
-        <item>0715海日</item>
         <item>0716老婆生日</item>
         <item>0801建军节</item>
         <item>0811山日</item>
         <item>0812振替休日</item>
         <item>0825女儿生日</item>
         <item>0910教师节</item>
-        <item>0916敬老日</item>
         <item>0922秋分</item>
         <item>0923振替休日</item>
         <item>0928儿子生日</item>
         <item>1001国庆节</item>
-        <item>1014运动节</item>
         <item>1031万圣节</item>
         <item>1103文化の日</item>
         <item>1104振替休日</item>

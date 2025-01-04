@@ -17,6 +17,7 @@ package com.frank.calendar
 
 import android.content.Context
 import android.text.TextUtils
+import android.util.Log
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -385,13 +386,27 @@ object LunarCalendar {
      * @param day   公历日期
      * @return 公历节日
      */
-    fun gregorianFestival(month: Int, day: Int): String {
+    fun gregorianFestival(month: Int, day: Int, week: Int): String {
         val text = getString(month, day)
         var solar = ""
         for (aMSolarCalendar in SOLAR_CALENDAR!!) {
             if (aMSolarCalendar.contains(text)) {
                 solar = aMSolarCalendar.replace(text, "")
                 break
+            }
+        }
+        if (solar.isEmpty() && week == 1) {
+            if (month == 1 && day >= 8 && day <= 14) {
+                solar = "成人"
+            }
+            if (month == 10 && day >= 8 && day <= 14) {
+                solar = "体育"
+            }
+            if (month == 7 && day >= 15 && day <= 21) {
+                solar = "海日"
+            }
+            if (month == 9 && day >= 15 && day <= 21) {
+                solar= "敬老"
             }
         }
         return solar
@@ -537,10 +552,10 @@ object LunarCalendar {
      * @param day   日
      * @return 农历节日
      */
-    fun getLunarText2(year: Int, month: Int, day: Int): String {
+    fun getLunarText2(year: Int, month: Int, day: Int, weekDay: Int): String {
         val termText: String = getSolarTerm(year, month, day)
 
-        val solar = gregorianFestival(month, day)
+        val solar = gregorianFestival(month, day, weekDay)
         if (!TextUtils.isEmpty(solar)) return "%$solar"
 
         val lunar = LunarUtil.solarToLunar(year, month, day)
