@@ -202,8 +202,8 @@ fun Date(
     var textSize2 by remember("") { mutableStateOf(if (isPort) maxTextSizeCalendarSix_PORTRAIT else maxTextSizeCalendarSix_LANDSCAPE) }
     var theColor1 = Color(0xFF018786)
     var theColor2 = Color(0xFF018786)
-    if (weekId == 0 || weekId == 6) theColor1 = Color.Blue
-    if (weekId == 0 || weekId == 6) theColor2 = Color.Blue
+    if (weekId == 0 || weekId == 6) theColor1 = Color.Green
+    if (weekId == 0 || weekId == 6) theColor2 = Color.Green
     if (nongLi.startsWith("*")) {
         nongLi = nongLi.substring(1)
         theColor2 = Color.Red
