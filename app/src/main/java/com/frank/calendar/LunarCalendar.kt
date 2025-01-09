@@ -393,7 +393,7 @@ object LunarCalendar {
      * @param day   公历日期
      * @return 公历节日
      */
-    fun gregorianFestival(year: Int, month: Int, day: Int, week: Int): String {
+    fun gregorianFestival(year: Int, month: Int, day: Int, week: Int, solarTerm: String): String {
         val text = getString(month, day)
         var solar = ""
         for (aMSolarCalendar in SOLAR_CALENDAR!!) {
@@ -403,10 +403,14 @@ object LunarCalendar {
             }
         }
 
+        if (solarTerm == "春分" || solarTerm == "秋分") {
+            solar = solarTerm;
+        }
+
         //振替休日
         if (solar.isEmpty()) {
             val currentDay = LocalDateTime.of(year,month, day, 0, 0, 0,0)
-            var beforeDay = currentDay.plusDays(-1)
+            val beforeDay = currentDay.plusDays(-1)
             val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
             val textB = beforeDay.format(formatter).substring(4,8)
             for (aMSolarCalendar in SOLAR_CALENDAR!!) {
@@ -422,8 +426,18 @@ object LunarCalendar {
                     solar = "振替"
                 }
             }
+            if (solar.isEmpty()) {
+                //节气
+                val termText: String = getSolarTerm(beforeDay.year, beforeDay.monthValue, beforeDay.dayOfMonth)
+                if (termText == "春分" || termText == "秋分") {
+                    if (beforeDay.dayOfWeek.value == 7) {
+                        solar = "振替"
+                    }
+                }
+            }
         }
 
+        // 中国节日
         if (solar.isEmpty()) {
             for (aMSolarCalendar in CHINA_CALENDAR!!) {
                 if (aMSolarCalendar.contains(text)) {
@@ -465,7 +479,11 @@ object LunarCalendar {
     fun getLunarText(year: Int, month: Int, day: Int): String {
         val lunar = LunarUtil.solarToLunar(year, month, day)
         val festival = getTraditionFestival(lunar[0], lunar[1], lunar[2])
-        if (!TextUtils.isEmpty(festival)) return festival
+        nongliDateColor = false
+        if (!TextUtils.isEmpty(festival)) {
+            nongliDateColor = true
+            return festival
+        }
         return numToChinese(lunar[1], lunar[2], lunar[3])
     }
 
@@ -591,9 +609,9 @@ object LunarCalendar {
      * @return 农历节日
      */
     fun getLunarText2(year: Int, month: Int, day: Int, weekDay: Int): String {
-        val termText: String = getSolarTerm(year, month, day)
+        val termText: String = getSolarTerm(year, month, day)       //节气
 
-        val solar = gregorianFestival(year, month, day, weekDay)
+        val solar = gregorianFestival(year, month, day, weekDay, termText)       //中国，日本 节日
         if (!TextUtils.isEmpty(solar)) return "%$solar"
 
         val lunar = LunarUtil.solarToLunar(year, month, day)
@@ -613,7 +631,7 @@ object LunarCalendar {
      * @param day   日
      * @return 返回24节气
      */
-    private fun getSolarTerm(year: Int, month: Int, day: Int): String {
+    fun getSolarTerm(year: Int, month: Int, day: Int): String {
         if (!SOLAR_TERMS.containsKey(year)) {
             SOLAR_TERMS[year] = SolarTermUtil.getSolarTerms(year)
         }

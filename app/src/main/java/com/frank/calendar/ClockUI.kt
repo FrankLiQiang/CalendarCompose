@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import com.frank.calendar.LunarCalendar.getSolarTerm
 import com.frank.calendar.ui.theme.CalendarTheme
 import com.frank.calendar.ui.theme.MyTheme
 import com.frank.calendar.ui.theme.monthOffset
@@ -30,6 +31,7 @@ var nongliDate = ""
 var newCurrentDate = -1
 var currentDateNum = -2
 var dateColor = true
+var nongliDateColor = true
 var toDate: LocalDateTime = now
 var wantDate: LocalDateTime = now
 
@@ -108,7 +110,7 @@ fun ClockUI(event: () -> Unit) {
                 }
             },
             fontSize = textSize2,
-            color = textColor,
+            color = if (nongliDateColor) Color.Red else textColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
@@ -165,7 +167,7 @@ fun getCurrentDate(): String {
     } else {
         val wk = nowWeek()
         dayOfMonth = now.dayOfMonth
-        dateColor = !wk.startsWith("星期")
+        dateColor = wk.length > 5
         gongliDate = "${nowDate()}  $wk"
         currentDateNum = newCurrentDate
         isRedraw = 1 - isRedraw
@@ -204,12 +206,11 @@ val nowDate: () -> String = {
 }
 
 val nowWeek: () -> String = {
-    val solar = LunarCalendar.gregorianFestival(now.year, now.monthValue, now.dayOfMonth, now.dayOfWeek.value)
-    solar.ifEmpty {
-        val day: Int = now.dayOfWeek.value
-        val weekString = "一二三四五六日"
-        "星期${weekString.substring(day - 1, day)}"
-    }
+    val termText: String = getSolarTerm(now.year, now.monthValue, now.dayOfMonth)       //节气
+    val solar = LunarCalendar.gregorianFestival(now.year, now.monthValue, now.dayOfMonth, now.dayOfWeek.value, termText)
+    val day: Int = now.dayOfWeek.value
+    val weekString = "一二三四五六日"
+    "$solar 星期${weekString.substring(day - 1, day)} $termText"
 }
 
 @Preview()

@@ -13,6 +13,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -60,7 +61,7 @@ var dateArray = Array(42) { -1 }
 var nongliArray = Array(42) { "" }
 var sixDaysArray = Array(42) { "" }
 var tbDaysArray = Array(42) { "" }
-var isRedraw by mutableStateOf(1)
+var isRedraw by mutableIntStateOf(1)
 var now: LocalDateTime = LocalDateTime.now()
 lateinit var sharedPreferences: SharedPreferences
 
