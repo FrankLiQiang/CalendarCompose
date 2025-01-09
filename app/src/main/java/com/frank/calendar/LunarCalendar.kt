@@ -421,7 +421,7 @@ object LunarCalendar {
                     }
                 }
             }
-            if (solar.isEmpty() && text == "0505") {
+            if (solar.isEmpty() && text == "0506") {
                 if (beforeDay.dayOfWeek.value == 1 || beforeDay.dayOfWeek.value == 2 || beforeDay.dayOfWeek.value == 3) {
                     solar = "振替"
                 }
