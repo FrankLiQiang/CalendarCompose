@@ -17,10 +17,11 @@ package com.frank.calendar
 
 import android.content.Context
 import android.text.TextUtils
-import android.util.Log
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * 农历计算相关
@@ -41,6 +42,7 @@ object LunarCalendar {
         DAY_STR = context.resources.getStringArray(R.array.lunar_str)
         SPECIAL_FESTIVAL_STR = context.resources.getStringArray(R.array.special_festivals)
         SOLAR_CALENDAR = context.resources.getStringArray(R.array.solar_festival)
+        CHINA_CALENDAR = context.resources.getStringArray(R.array.china_festival)
     }
 
     /**
@@ -97,9 +99,14 @@ object LunarCalendar {
     private var SPECIAL_FESTIVAL_STR: Array<String>? = null
 
     /**
-     * 公历节日
+     * 日本节日
      */
     private var SOLAR_CALENDAR: Array<String>? = null
+
+    /**
+     * 中国节日
+     */
+    private var CHINA_CALENDAR: Array<String>? = null
 
     /**
      * 返回传统农历节日
@@ -386,7 +393,7 @@ object LunarCalendar {
      * @param day   公历日期
      * @return 公历节日
      */
-    fun gregorianFestival(month: Int, day: Int, week: Int): String {
+    fun gregorianFestival(year: Int, month: Int, day: Int, week: Int): String {
         val text = getString(month, day)
         var solar = ""
         for (aMSolarCalendar in SOLAR_CALENDAR!!) {
@@ -395,6 +402,37 @@ object LunarCalendar {
                 break
             }
         }
+
+        //振替休日
+        if (solar.isEmpty()) {
+            val currentDay = LocalDateTime.of(year,month, day, 0, 0, 0,0)
+            var beforeDay = currentDay.plusDays(-1)
+            val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
+            val textB = beforeDay.format(formatter).substring(4,8)
+            for (aMSolarCalendar in SOLAR_CALENDAR!!) {
+                if (aMSolarCalendar.contains(textB)) {
+                    if (beforeDay.dayOfWeek.value == 7) {
+                        solar = "振替"
+                        break
+                    }
+                }
+            }
+            if (solar.isEmpty() && text == "0505") {
+                if (beforeDay.dayOfWeek.value == 1 || beforeDay.dayOfWeek.value == 2 || beforeDay.dayOfWeek.value == 3) {
+                    solar = "振替"
+                }
+            }
+        }
+
+        if (solar.isEmpty()) {
+            for (aMSolarCalendar in CHINA_CALENDAR!!) {
+                if (aMSolarCalendar.contains(text)) {
+                    solar = aMSolarCalendar.replace(text, "")
+                    break
+                }
+            }
+        }
+
         if (solar.isEmpty() && week == 1) {
             if (month == 1 && day >= 8 && day <= 14) {
                 solar = "成人"
@@ -555,7 +593,7 @@ object LunarCalendar {
     fun getLunarText2(year: Int, month: Int, day: Int, weekDay: Int): String {
         val termText: String = getSolarTerm(year, month, day)
 
-        val solar = gregorianFestival(month, day, weekDay)
+        val solar = gregorianFestival(year, month, day, weekDay)
         if (!TextUtils.isEmpty(solar)) return "%$solar"
 
         val lunar = LunarUtil.solarToLunar(year, month, day)

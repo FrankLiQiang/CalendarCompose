@@ -61,39 +61,36 @@
     <string-array name="solar_festival" tools:ignore="InconsistentArrays">
         <item>0101元旦</item>
         <item>0211建国記念</item>
-        <item>0212振替休日</item>
-        <item>0214情人节</item>
         <item>0223天皇诞辰</item>
-        <item>0308妇女节</item>
-        <item>0312植树节</item>
         <item>0320春分</item>
-        <item>0315消权益日</item>
-        <item>0401愚人节</item>
-        <item>0422地球日</item>
         <item>0429昭和の日</item>
-        <item>0501劳动节</item>
         <item>0503憲法記念日</item>
         <item>0504緑日みどり</item>
         <item>0505儿童节</item>
-        <item>0506振替休日</item>
+        <item>0811山日</item>
+        <item>0923秋分</item>
+        <item>1103文化の日</item>
+        <item>1123感恩节</item>
+    </string-array>
+
+    <string-array name="china_festival" tools:ignore="InconsistentArrays">
+        <item>0214情人节</item>
+        <item>0308妇女节</item>
+        <item>0312植树节</item>
+        <item>0315消权益日</item>
+        <item>0401愚人节</item>
+        <item>0422地球日</item>
+        <item>0501劳动节</item>
         <item>0521老公生日</item>
         <item>0601儿童节</item>
         <item>0701建党节</item>
         <item>0716老婆生日</item>
         <item>0801建军节</item>
-        <item>0811山日</item>
-        <item>0812振替休日</item>
         <item>0825女儿生日</item>
         <item>0910教师节</item>
-        <item>0922秋分</item>
-        <item>0923振替休日</item>
         <item>0928儿子生日</item>
         <item>1001国庆节</item>
-        <item>1031万圣节</item>
-        <item>1103文化の日</item>
-        <item>1104振替休日</item>
         <item>1111光棍节</item>
-        <item>1123感恩节</item>
         <item>1224平安夜</item>
         <item>1225圣诞节</item>
     </string-array>
