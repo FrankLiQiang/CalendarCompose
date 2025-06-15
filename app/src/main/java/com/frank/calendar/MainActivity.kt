@@ -90,6 +90,13 @@ class MainActivity : ComponentActivity() {
                         year_name = jp_year_name()
                         date = getCurrentDate()
                         isRed = dateColor
+
+                        now = LocalDateTime.now()
+                        textColor = if (now.hour in 7..22) {
+                            Color(0xFF018786)
+                        } else {
+                            DarkGray
+                        }
                     } catch (e: Exception) {
                         e.toString()
                     }
