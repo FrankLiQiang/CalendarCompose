@@ -92,10 +92,11 @@ class MainActivity : ComponentActivity() {
                         isRed = dateColor
 
                         now = LocalDateTime.now()
-                        textColor = if (now.hour in 7..22) {
-                            Color(0xFF018786)
-                        } else {
-                            DarkGray
+                        if (now.hour == 7 && now.minute == 0) {
+                            textColor = Color(0xFF018786)
+                        }
+                        if (now.hour == 23 && now.minute == 0) {
+                            textColor = DarkGray
                         }
                     } catch (e: Exception) {
                         e.toString()
