@@ -7,6 +7,7 @@ import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.SystemClock
+import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,6 +19,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -34,6 +36,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.Timer
 import java.util.TimerTask
@@ -70,13 +73,14 @@ var nongliArray = Array(42) { "" }
 var sixDaysArray = Array(42) { "" }
 var tbDaysArray = Array(42) { "" }
 var isRedraw by mutableIntStateOf(1)
+var currentTimeState by mutableLongStateOf(1)
 var now: LocalDateTime = LocalDateTime.now()
 lateinit var sharedPreferences: SharedPreferences
 
 class MainActivity : ComponentActivity() {
     private val currentTime = MutableLiveData(0L)
     private var timerStartedAt = 0L
-    private var timerRunning = false
+    private var timerRunning = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -188,36 +192,36 @@ class MainActivity : ComponentActivity() {
     }
 
 
-private fun toggle() {
-    if (timerRunning) stopTimer()
-    else startTimer()
-}
+    private fun toggle() {
+        if (timerRunning) stopTimer()
+        else startTimer()
+    }
 
-private fun startTimer() {
-    lifecycleScope.launch {
-        timerStartedAt = SystemClock.elapsedRealtime()
-        timerRunning = true
-        while (timerRunning) {
-            currentTime.value = SystemClock.elapsedRealtime() - timerStartedAt
-            delay(16)
+    private fun startTimer() {
+        lifecycleScope.launch {
+            timerStartedAt = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli()
+            timerRunning = true
+            while (timerRunning) {
+                currentTimeState = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli() - timerStartedAt
+                delay(16)
+            }
         }
     }
-}
 
-private fun stopTimer() {
-    currentTime.value = 0
-    timerRunning = false
-    timerStartedAt = 0
-}
-
-
-@Composable
-fun ActivityView() {
-    Box {
-        StopWatch(
-            modifier = Modifier.clickable { toggle() },
-//            currentTime = currentTime,
-        )
+    private fun stopTimer() {
+        currentTimeState = 0
+        timerRunning = false
+        timerStartedAt = 0
     }
-}
+
+
+    @Composable
+    fun ActivityView() {
+        Box {
+            StopWatch(
+                modifier = Modifier.clickable { toggle() },
+//            currentTime = currentTime,
+            )
+        }
+    }
 }

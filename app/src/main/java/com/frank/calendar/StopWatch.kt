@@ -25,6 +25,7 @@ import com.frank.calendar.extensions.degreesToRadians
 import com.frank.calendar.extensions.isDivisible
 import com.frank.calendar.extensions.toHms
 import com.frank.calendar.extensions.toRange0To360
+import java.time.ZoneOffset
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -50,8 +51,7 @@ fun StopWatch(
     modifier: Modifier = Modifier,
 //    currentTime: MutableLiveData<Long>,
 ) {
-//    val currentTimeState by currentTime.observeAsState(0L)
-
+    // 将 LocalDateTime 转换为自 1970 年 1 月 1 日以来的毫秒数
     val textMeasure = rememberTextMeasurer()
     val hourInterval = NOTCH_COUNT / 12
 
@@ -125,7 +125,7 @@ fun StopWatch(
 
         //timer text
         val tr = textMeasure.measure(
-            AnnotatedString("currentTimeState.toHms()"),
+            AnnotatedString(currentTimeState.toHms()),
             style = TextStyle(
                 fontSize = 24.sp,
                 color = Colors.WHITE.value
@@ -141,8 +141,7 @@ fun StopWatch(
 
         //big rotating hand
         rotate(
-//            currentTimeState.toRange0To360() + 270f,
-            270f,
+            currentTimeState.toRange0To360() + 270f,
             pivot = Offset(
                 centerX,
                 centerY
