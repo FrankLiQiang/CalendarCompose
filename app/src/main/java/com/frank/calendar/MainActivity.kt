@@ -73,14 +73,16 @@ var nongliArray = Array(42) { "" }
 var sixDaysArray = Array(42) { "" }
 var tbDaysArray = Array(42) { "" }
 var isRedraw by mutableIntStateOf(1)
-var currentTimeState by mutableLongStateOf(1)
+var hourState by mutableLongStateOf(1)
+var minuteState by mutableLongStateOf(1)
+var secondState by mutableLongStateOf(1)
 var now: LocalDateTime = LocalDateTime.now()
 lateinit var sharedPreferences: SharedPreferences
 
 class MainActivity : ComponentActivity() {
     private val currentTime = MutableLiveData(0L)
     private var timerStartedAt = 0L
-    private var timerRunning = true
+    private var timerRunning = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,6 +95,7 @@ class MainActivity : ComponentActivity() {
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         sharedPreferences = getPreferences(Context.MODE_PRIVATE)
+        startTimer()
 //        setContent {
 //            LunarCalendar.init(this)
 //            readToDate()
@@ -192,34 +195,24 @@ class MainActivity : ComponentActivity() {
     }
 
 
-    private fun toggle() {
-        if (timerRunning) stopTimer()
-        else startTimer()
-    }
-
     private fun startTimer() {
         lifecycleScope.launch {
             timerStartedAt = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli()
             timerRunning = true
             while (timerRunning) {
-                currentTimeState = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli() - timerStartedAt
+                hourState = LocalDateTime.now().hour * 5 * 1000L + LocalDateTime.now().minute * 5000L / 60 + LocalDateTime.now().second * 5000 / 3600   //小时
+                minuteState = LocalDateTime.now().minute * 1000L + LocalDateTime.now().second * 1000 / 60    //分钟
+                secondState = LocalDateTime.now().second * 1000 + LocalDateTime.now().nano / 1_000_000L      //秒
                 delay(16)
             }
         }
     }
 
-    private fun stopTimer() {
-        currentTimeState = 0
-        timerRunning = false
-        timerStartedAt = 0
-    }
-
-
     @Composable
     fun ActivityView() {
         Box {
             StopWatch(
-                modifier = Modifier.clickable { toggle() },
+                modifier = Modifier,
 //            currentTime = currentTime,
             )
         }

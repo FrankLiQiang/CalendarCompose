@@ -5,8 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-//import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -20,12 +18,9 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
-import androidx.lifecycle.MutableLiveData
 import com.frank.calendar.extensions.degreesToRadians
 import com.frank.calendar.extensions.isDivisible
-import com.frank.calendar.extensions.toHms
 import com.frank.calendar.extensions.toRange0To360
-import java.time.ZoneOffset
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -49,9 +44,7 @@ const val ROTATING_HAND_EXTENSION = 100f
 @Composable
 fun StopWatch(
     modifier: Modifier = Modifier,
-//    currentTime: MutableLiveData<Long>,
 ) {
-    // 将 LocalDateTime 转换为自 1970 年 1 月 1 日以来的毫秒数
     val textMeasure = rememberTextMeasurer()
     val hourInterval = NOTCH_COUNT / 12
 
@@ -104,8 +97,9 @@ fun StopWatch(
                 val p2 =
                     centerY + 0.8f * circleRadius * sin(circlePerimeterAngle.degreesToRadians())
 
-                val s = if (notchNumber == 0) "60"
-                else (notchNumber.div(hourInterval).times(5)).toString()
+                val s = if (notchNumber == 0) "12"
+//                else (notchNumber.div(hourInterval).times(1)).toString()
+                else notchNumber.div(hourInterval).toString()
                 val tr = textMeasure.measure(
                     AnnotatedString(s),
                     style = TextStyle(
@@ -125,7 +119,7 @@ fun StopWatch(
 
         //timer text
         val tr = textMeasure.measure(
-            AnnotatedString(currentTimeState.toHms()),
+            AnnotatedString("Li Qiang"),
             style = TextStyle(
                 fontSize = 24.sp,
                 color = Colors.WHITE.value
@@ -141,7 +135,40 @@ fun StopWatch(
 
         //big rotating hand
         rotate(
-            currentTimeState.toRange0To360() + 270f,
+            hourState.toRange0To360() + 270f,
+            pivot = Offset(
+                centerX,
+                centerY
+            )
+        ) {
+            drawRect(
+                color = Colors.WHITE.value,
+                topLeft = Offset(
+                    centerX - ROTATING_HAND_EXTENSION,
+                    centerY - ROTATING_HAND_WIDTH
+                ),
+                size = Size(circleRadius * 3 / 5 + ROTATING_HAND_EXTENSION, ROTATING_HAND_WIDTH * 2),
+            )
+        }
+
+        rotate(
+            minuteState.toRange0To360() + 270f,
+            pivot = Offset(
+                centerX,
+                centerY
+            )
+        ) {
+            drawRect(
+                color = Colors.WHITE.value,
+                topLeft = Offset(
+                    centerX - ROTATING_HAND_EXTENSION,
+                    centerY - ROTATING_HAND_WIDTH / 2
+                ),
+                size = Size(circleRadius * 3 / 4 + ROTATING_HAND_EXTENSION, ROTATING_HAND_WIDTH),
+            )
+        }
+        rotate(
+            secondState.toRange0To360() + 270f,
             pivot = Offset(
                 centerX,
                 centerY
@@ -156,7 +183,6 @@ fun StopWatch(
                 size = Size(circleRadius + ROTATING_HAND_EXTENSION, ROTATING_HAND_WIDTH),
             )
         }
-
         //center stroke circle
         drawCircle(
             color = Colors.YELLOW.value,
