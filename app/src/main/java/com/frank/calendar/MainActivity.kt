@@ -14,14 +14,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
@@ -29,10 +30,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import com.frank.calendar.ui.theme.CalendarTheme
+import com.frank.calendar.ui.theme.datePickerState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.Timer
 import java.util.TimerTask
@@ -188,6 +191,7 @@ class MainActivity : ComponentActivity() {
     }
 
 
+    @OptIn(ExperimentalMaterial3Api::class)
     private fun startTimer() {
         lifecycleScope.launch {
             timerRunning = true
@@ -198,11 +202,13 @@ class MainActivity : ComponentActivity() {
                     LocalDateTime.now().minute * 1000L + LocalDateTime.now().second * 1000 / 60    //分钟
                 secondState =
                     LocalDateTime.now().second * 1000 + LocalDateTime.now().nano / 1_000_000L      //秒
+                isRedraw = 1 - isRedraw
                 delay(16)
             }
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun ActivityView() {
         startTimer()
@@ -226,7 +232,18 @@ class MainActivity : ComponentActivity() {
                 modifier = Modifier
                     .weight(1f)
             ) {
-                Text("Item 1", color = Color.White, modifier = Modifier.align(Alignment.Center))
+                if (isRedraw == 0) {
+                    datePickerState =
+                        rememberDatePickerState(
+                            initialSelectedDateMillis = LocalDateTime.now().toLocalDate()
+                                .atStartOfDay(ZoneOffset.ofHours(0)).toInstant().toEpochMilli()
+                        )
+                }
+                DatePicker(
+                    title = null,
+                    state = datePickerState,
+                    showModeToggle = false,
+                )
             }
         }
     }
