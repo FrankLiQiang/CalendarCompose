@@ -2,8 +2,11 @@ package com.frank.calendar
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -144,10 +147,10 @@ fun StopWatch(
             drawRect(
                 color = Colors.WHITE.value,
                 topLeft = Offset(
-                    centerX - ROTATING_HAND_EXTENSION,
+                    centerX,
                     centerY - ROTATING_HAND_WIDTH
                 ),
-                size = Size(circleRadius * 3 / 5 + ROTATING_HAND_EXTENSION, ROTATING_HAND_WIDTH * 2),
+                size = Size(circleRadius * 3 / 5, ROTATING_HAND_WIDTH * 2),
             )
         }
 
@@ -161,10 +164,10 @@ fun StopWatch(
             drawRect(
                 color = Colors.WHITE.value,
                 topLeft = Offset(
-                    centerX - ROTATING_HAND_EXTENSION,
+                    centerX,
                     centerY - ROTATING_HAND_WIDTH / 2
                 ),
-                size = Size(circleRadius * 3 / 4 + ROTATING_HAND_EXTENSION, ROTATING_HAND_WIDTH),
+                size = Size(circleRadius * 4 / 5, ROTATING_HAND_WIDTH),
             )
         }
         rotate(

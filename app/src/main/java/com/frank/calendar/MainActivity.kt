@@ -14,17 +14,23 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
@@ -80,7 +86,6 @@ var now: LocalDateTime = LocalDateTime.now()
 lateinit var sharedPreferences: SharedPreferences
 
 class MainActivity : ComponentActivity() {
-    private val currentTime = MutableLiveData(0L)
     private var timerStartedAt = 0L
     private var timerRunning = false
 
@@ -95,7 +100,6 @@ class MainActivity : ComponentActivity() {
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         sharedPreferences = getPreferences(Context.MODE_PRIVATE)
-        startTimer()
 //        setContent {
 //            LunarCalendar.init(this)
 //            readToDate()
@@ -210,11 +214,28 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun ActivityView() {
-        Box {
-            StopWatch(
-                modifier = Modifier,
-//            currentTime = currentTime,
-            )
+        startTimer()
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        Row(
+            modifier = Modifier.fillMaxWidth()
+                .background(Color.Black)
+        ) {
+            Box(
+                modifier = Modifier
+                    .padding(26.dp)
+                    .weight(1f)
+            ) {
+                StopWatch(
+                    modifier = Modifier,
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+            ) {
+                Text("Item 1", color = Color.White, modifier = Modifier.align(Alignment.Center))
+            }
         }
     }
 }
