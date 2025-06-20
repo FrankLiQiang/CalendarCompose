@@ -2,11 +2,9 @@ package com.frank.calendar
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -18,12 +16,14 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import com.frank.calendar.extensions.degreesToRadians
 import com.frank.calendar.extensions.isDivisible
 import com.frank.calendar.extensions.toRange0To360
+import com.frank.calendar.ui.theme.CalendarTheme
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -52,7 +52,7 @@ fun StopWatch(
     val hourInterval = NOTCH_COUNT / 12
 
     Canvas(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .background(Colors.BLACK.value)
             .padding(16.dp)
@@ -202,17 +202,15 @@ fun StopWatch(
 }
 
 
-//@Preview(showBackground = true)
-//@Composable
-//fun GreetingPreview() {
-//    MyTheme {
-//        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-//            StopWatch(
-//                modifier = Modifier
-//                    .padding(innerPadding)
-//                    .clickable { },
-//                currentTime = MutableLiveData(10)
-//            )
-//        }
-//    }
-//}
+@Preview(showBackground = true)
+@Composable
+fun GreetingPreview() {
+    CalendarTheme {
+        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+            StopWatch(
+                modifier = Modifier
+                    .padding(innerPadding)
+            )
+        }
+    }
+}

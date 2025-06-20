@@ -6,19 +6,14 @@ import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Bundle
-import android.os.SystemClock
-import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,17 +27,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.frank.calendar.ui.theme.CalendarTheme
-import com.frank.calendar.ui.theme.HorizontalPagerSample
-import com.frank.calendar.ui.theme.SetSettingDialog
-import com.frank.calendar.ui.theme.monthOffset
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.Timer
 import java.util.TimerTask
@@ -86,7 +76,6 @@ var now: LocalDateTime = LocalDateTime.now()
 lateinit var sharedPreferences: SharedPreferences
 
 class MainActivity : ComponentActivity() {
-    private var timerStartedAt = 0L
     private var timerRunning = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -201,12 +190,14 @@ class MainActivity : ComponentActivity() {
 
     private fun startTimer() {
         lifecycleScope.launch {
-            timerStartedAt = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli()
             timerRunning = true
             while (timerRunning) {
-                hourState = LocalDateTime.now().hour * 5 * 1000L + LocalDateTime.now().minute * 5000L / 60 + LocalDateTime.now().second * 5000 / 3600   //小时
-                minuteState = LocalDateTime.now().minute * 1000L + LocalDateTime.now().second * 1000 / 60    //分钟
-                secondState = LocalDateTime.now().second * 1000 + LocalDateTime.now().nano / 1_000_000L      //秒
+                hourState =
+                    LocalDateTime.now().hour * 5 * 1000L + LocalDateTime.now().minute * 5000L / 60 + LocalDateTime.now().second * 5000 / 3600   //小时
+                minuteState =
+                    LocalDateTime.now().minute * 1000L + LocalDateTime.now().second * 1000 / 60    //分钟
+                secondState =
+                    LocalDateTime.now().second * 1000 + LocalDateTime.now().nano / 1_000_000L      //秒
                 delay(16)
             }
         }
@@ -217,7 +208,8 @@ class MainActivity : ComponentActivity() {
         startTimer()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
         Row(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .background(Color.Black)
         ) {
             Box(
