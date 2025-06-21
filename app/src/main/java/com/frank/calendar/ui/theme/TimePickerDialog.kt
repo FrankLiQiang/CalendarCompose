@@ -211,7 +211,6 @@ fun closeDialog() {
 }
 
 fun getDateInfo(timeStamp: Long?, cTime: Int) {
-    Log.i("AAA", "BBB")
     if (oldTimeStamp == timeStamp && oldChooseTime == cTime) {
         return
     }

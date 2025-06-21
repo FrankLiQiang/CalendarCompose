@@ -50,12 +50,6 @@ fun HorizontalPagerSample() {
             maxTextSizeCalendarDate_PORTRAIT = (maxTextSizeCalendarDate_PORTRAIT.value + 12.0f).sp
             maxTextSizeCalendarSix_PORTRAIT = (maxTextSizeCalendarSix_PORTRAIT.value + 12.0f).sp
 
-            Log.i("ABC", "monthOffset = " + monthOffset)
-//        Text(
-//            text = "$monthOffset",
-//            textAlign = TextAlign.Center,
-//            modifier = Modifier.fillMaxSize()
-//        )
             CalendarView()
         }
     }
