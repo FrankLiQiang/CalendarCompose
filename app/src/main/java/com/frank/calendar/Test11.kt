@@ -26,7 +26,7 @@ class Test11 : ComponentActivity() {
     }
     fun getUtcStartOfTodayMillis(): Long {
     return LocalDate.now(ZoneOffset.systemDefault()) // 先用本地时区得到今天
-        .atStartOfDay(ZoneOffset.systemDefault())           // 以UTC 0点为一天的起点
+        .atStartOfDay(ZoneOffset.UTC)           // 以UTC 0点为一天的起点
         .toInstant()
         .toEpochMilli()
     }
