@@ -6,26 +6,18 @@ import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.runtime.remember
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,11 +25,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
-import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
@@ -208,7 +198,6 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
             timerRunning = true
             dayOfMonth0 = LocalDateTime.now().dayOfMonth
-            Log.i("aaa","dayOfMonth0 -------------------------- ")
             while (timerRunning) {
                 hourState =
                     LocalDateTime.now().hour * 5 * 1000L + LocalDateTime.now().minute * 5000L / 60 + LocalDateTime.now().second * 5000 / 3600   //小时
@@ -217,8 +206,7 @@ class MainActivity : ComponentActivity() {
                 secondState =
                     LocalDateTime.now().second * 1000 + LocalDateTime.now().nano / 1_000_000L      //秒
                 if (dayOfMonth0 != LocalDateTime.now().dayOfMonth) {
-                    Log.i("aaa","dayOfMonth0 " + dayOfMonth0.toString())
-                    Log.i("aaa","LocalDateTime.now().dayOfMonth: " + LocalDateTime.now().dayOfMonth)
+                    datePickerState.setSelection(getUtcStartOfTodayMillis())
 
                     dayOfMonth0 = LocalDateTime.now().dayOfMonth
                     isRedraw = 1 - isRedraw
@@ -227,23 +215,23 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    // 获取当天起始时间戳（毫秒）
+    private fun getUtcStartOfTodayMillis(): Long {
+        return LocalDate.now(ZoneOffset.systemDefault()) // 先用本地时区得到今天
+            .atStartOfDay(ZoneOffset.UTC)           // 以UTC 0点为一天的起点
+            .toInstant()
+            .toEpochMilli()
+    }
+
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun ActivityView() {
-        startTimer()
-        var selectedDate by remember { mutableStateOf(System.currentTimeMillis()) }
-        Log.i("aaa", "999999999999999999999")
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-        if (isRedraw > -1) {
-            datePickerState = rememberDatePickerState(
-                initialSelectedDateMillis = selectedDate
-            )
-//            datePickerState =
-//                rememberDatePickerState(
-//                    initialSelectedDateMillis = LocalDateTime.now().toLocalDate()
-//                        .atStartOfDay(ZoneOffset.ofHours(0)).toInstant().toEpochMilli()
-//                )
-        }
+        datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = getUtcStartOfTodayMillis(),
+        )
+        startTimer()
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -276,7 +264,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier
                         .fillMaxSize()
                         .background(Color.Transparent) // 透明背景
-                        .clickable { /* 不执行任何操作，阻止用户选择 */ }
+                        .clickable {}
                 ) {
                 }
             }
