@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.frank.calendar.ui.theme.CalendarTheme
 import com.frank.calendar.ui.theme.isShowSettingDialog
 import com.frank.calendar.ui.theme.jumpToPage
@@ -75,7 +76,7 @@ fun getWeeksOfMonth(): Int {
 }
 
 @Composable
-fun CalendarView() {
+fun CalendarView(navController: NavHostController) {
     if (isRedraw > 100) return
     var textSize by remember("") { mutableStateOf(if (isPort) maxTextSizeTitle_PORTRAIT else maxTextSizeTitle_LANDSCAPE) }
     Column(
@@ -96,7 +97,7 @@ fun CalendarView() {
                     } else {
                         if (isPort) {
                             maxTextSizeTitle_PORTRAIT = textSize
-                            with(sharedPreferences.edit()) {
+                            with(sharedPreferences0.edit()) {
                                 putFloat(
                                     "SHARED_PREFS_CALENDAR_TITLE_P",
                                     maxTextSizeTitle_PORTRAIT.value
@@ -105,7 +106,7 @@ fun CalendarView() {
                             }
                         } else {
                             maxTextSizeTitle_LANDSCAPE = textSize
-                            with(sharedPreferences.edit()) {
+                            with(sharedPreferences0.edit()) {
                                 putFloat(
                                     "SHARED_PREFS_CALENDAR_TITLE_L",
                                     maxTextSizeTitle_LANDSCAPE.value
@@ -123,7 +124,10 @@ fun CalendarView() {
                     .clickable {
                         monthOffset = 0
                         now = LocalDateTime.now()
-                        isClock = !isClock
+                        navController.navigate("double") {
+                            // 清除起始画面
+                            popUpTo("calendar") { inclusive = true }
+                        }
                     })
         }
         if (isPort && monthOffset == 0) {
@@ -181,7 +185,7 @@ fun CalendarPreview() {
             modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
         ) {
 //            ClockUI({ isRed = true })
-            CalendarView()
+//            CalendarView(navController)
         }
     }
 }
@@ -276,7 +280,7 @@ fun Date(
                                 } else {
                                     if (isPort) {
                                         maxTextSizeCalendarSix_PORTRAIT = textSize2
-                                        with(sharedPreferences.edit()) {
+                                        with(sharedPreferences0.edit()) {
                                             putFloat(
                                                 "SHARED_PREFS_SIX_P",
                                                 maxTextSizeCalendarSix_PORTRAIT.value + 3.0f
@@ -285,7 +289,7 @@ fun Date(
                                         }
                                     } else {
                                         maxTextSizeCalendarSix_LANDSCAPE = textSize2
-                                        with(sharedPreferences.edit()) {
+                                        with(sharedPreferences0.edit()) {
                                             putFloat(
                                                 "SHARED_PREFS_SIX_L",
                                                 maxTextSizeCalendarSix_LANDSCAPE.value + 3.0f
@@ -326,7 +330,7 @@ fun Date(
                             } else {
                                 if (isPort) {
                                     maxTextSizeCalendarDate_PORTRAIT = textSize1
-                                    with(sharedPreferences.edit()) {
+                                    with(sharedPreferences0.edit()) {
                                         putFloat(
                                             "SHARED_PREFS_GONG_LI_P",
                                             maxTextSizeCalendarDate_PORTRAIT.value
@@ -335,7 +339,7 @@ fun Date(
                                     }
                                 } else {
                                     maxTextSizeCalendarDate_LANDSCAPE = textSize1
-                                    with(sharedPreferences.edit()) {
+                                    with(sharedPreferences0.edit()) {
                                         putFloat(
                                             "SHARED_PREFS_GONG_LI_L",
                                             maxTextSizeCalendarDate_LANDSCAPE.value

@@ -1,16 +1,19 @@
 package com.frank.calendar.ui.theme
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerState
@@ -29,6 +32,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -67,19 +72,18 @@ val menuItemData = arrayOf(
     "亥 21:00〜23:00"
 )
 var expanded by mutableStateOf(false)
-var chosenDate by mutableStateOf(theTime.toLocalDate())
+//var chosenDate by mutableStateOf(theTime.toLocalDate())
 @OptIn(ExperimentalMaterial3Api::class)
 lateinit var datePickerState: DatePickerState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ShowSettingDialog(
-    onDismiss: () -> Unit,
-    onNegativeClick: () -> Unit,
+fun ShowSettingDialog(
+    event: () -> Unit
 ) {
 
     Dialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = {},
         properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
         Box(
@@ -97,6 +101,14 @@ private fun ShowSettingDialog(
                             .atStartOfDay(ZoneOffset.ofHours(0)).toInstant().toEpochMilli()
                     )
                 getDateInfo(datePickerState.selectedDateMillis, chooseTime)
+                Spacer(modifier = Modifier.height(26.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(), // 使 Row 填满宽度
+                    horizontalArrangement = Arrangement.Center // 水平居中
+                ) {
+                    Text("生辰八字计算", color = Color.Yellow, fontSize = 32.sp)
+                }
+                Spacer(modifier = Modifier.height(26.dp))
                 Box() {
                     DatePicker(
                         title = null,
@@ -141,6 +153,11 @@ private fun ShowSettingDialog(
                     }) {
                         Icon(Icons.Default.Menu, contentDescription = "More options")
                     }
+                    IconButton(onClick = {
+                        event()
+                    }) {
+                        Icon(Icons.Default.Refresh, contentDescription = "More options")
+                    }
                     DropdownMenu(
                         expanded = expanded,
                         onDismissRequest = { expanded = false }
@@ -157,26 +174,30 @@ private fun ShowSettingDialog(
                         }
                     }
                 }
+                Spacer(modifier = Modifier.height(16.dp))
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = sTB,
-                        fontSize = 20.sp
+                        text = sTB.substring(5),
+                        fontSize = 30.sp,
+                        color = Color.Yellow,
                     )
                 }
+                Spacer(modifier = Modifier.height(16.dp))
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = dateInfo,
+                        text = sTB.substring(0, 4) + dateInfo,
                         fontSize = 20.sp
                     )
                 }
+                Spacer(modifier = Modifier.height(16.dp))
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier.fillMaxWidth(),
@@ -192,19 +213,19 @@ private fun ShowSettingDialog(
     }
 }
 
-@Composable
-fun SetSettingDialog() {
-    if (isShowSettingDialog) {
-        ShowSettingDialog(
-            onDismiss = {
-                closeDialog()
-            },
-            onNegativeClick = {
-                closeDialog()
-            },
-        )
-    }
-}
+//@Composable
+//fun SetSettingDialog() {
+//    if (isShowSettingDialog) {
+//        ShowSettingDialog(
+//            onDismiss = {
+//                closeDialog()
+//            },
+//            onNegativeClick = {
+//                closeDialog()
+//            },
+//        )
+//    }
+//}
 
 fun closeDialog() {
     isShowSettingDialog = !isShowSettingDialog

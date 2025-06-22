@@ -22,6 +22,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
@@ -32,19 +33,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.frank.calendar.ui.theme.CalendarTheme
+import com.frank.calendar.ui.theme.HorizontalPagerSample
+import com.frank.calendar.ui.theme.ShowSettingDialog
+import com.frank.calendar.ui.theme.closeDialog
 import com.frank.calendar.ui.theme.datePickerState
+import com.frank.calendar.ui.theme.monthOffset
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
-import java.util.Timer
-import java.util.TimerTask
 
 lateinit var sharedPreferences0: SharedPreferences
-//private var thisTimer: Timer = Timer()
-//private var thisTask: TimerTask? = null
 
 class MainActivity : ComponentActivity() {
     private var timerRunning = false
@@ -59,34 +60,11 @@ class MainActivity : ComponentActivity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         sharedPreferences0 = getPreferences(Context.MODE_PRIVATE)
         readToDate()
+        LunarCalendar.init(this)
 
         @OptIn(ExperimentalMaterial3Api::class)
         @Composable
         fun HomeScreen(navController: NavHostController) {
-            LunarCalendar.init(this)
-//            thisTask = object : TimerTask() {
-//                override fun run() {
-//                    try {
-//                        time = getCurrentTime()
-//                        leftDate = getNongLiDate()
-//                        trunck_branch = main_branch()
-//                        year_name = jp_year_name()
-//                        date = getCurrentDate()
-//                        isRed = dateColor
-//
-//                        now = LocalDateTime.now()
-//                        if (now.hour == 7 && now.minute == 0) {
-//                            textColor = Color(0xFF018786)
-//                        }
-//                        if (now.hour == 23 && now.minute == 0) {
-//                            textColor = DarkGray
-//                        }
-//                    } catch (e: Exception) {
-//                        e.toString()
-//                    }
-//                }
-//            }
-//            thisTimer.schedule(thisTask, 0, 1000)
             CalendarTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -97,7 +75,7 @@ class MainActivity : ComponentActivity() {
                     startTextTimer()
                     ClockUI({leftTimeClicked()}, {
                         timerRunning = false
-                        navController.navigate("double") {
+                        navController.navigate("calendar") {
                             // 清除起始画面
                             popUpTo("text") { inclusive = true }
                         }
@@ -106,11 +84,53 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        @OptIn(ExperimentalMaterial3Api::class)
+        @Composable
+        fun SearchScreen(navController: NavHostController) {
+            CalendarTheme {
+                ShowSettingDialog(
+                    {
+                        navController.navigate("text") {
+                            // 清除起始画面
+                            popUpTo("search") { inclusive = true }
+                        }
+                    }
+                )
+            }
+        }
+
         @Composable
         fun NavHostTime() {
             val navController = rememberNavController()
-            NavHost(navController, startDestination = "double") {
+            NavHost(navController, startDestination = "text") {
                 composable("text") { HomeScreen(navController) }
+                composable("search") {
+                    CalendarTheme {
+                        // A surface container using the 'background' color from the theme
+                        Surface(
+                            modifier = Modifier
+                                .fillMaxSize()
+                        ) {
+                            monthOffset = 0
+                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
+                            SearchScreen(navController)
+                        }
+                    }
+                }
+                composable("calendar") {
+                    startTextTimer()
+                    CalendarTheme {
+                        // A surface container using the 'background' color from the theme
+                        Surface(
+                            modifier = Modifier.background(Color.Black)
+                                .fillMaxSize()
+                        ) {
+                            monthOffset = 0
+                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+                            HorizontalPagerSample(navController)
+                        }
+                    }
+                }
                 composable("double") {
                     CalendarTheme {
                         DoubleView(navController)
@@ -155,7 +175,7 @@ class MainActivity : ComponentActivity() {
                     dayOfMonth0 = LocalDateTime.now().dayOfMonth
                     isRedraw = 1 - isRedraw
                 }
-                delay(16)
+                delay(20)
             }
         }
     }
@@ -208,7 +228,7 @@ class MainActivity : ComponentActivity() {
                     .weight(1f)
                     .clickable {
                         timerRunning = false
-                        navController.navigate("text") {
+                        navController.navigate("search") {
                             // 清除起始画面
                             popUpTo("double") { inclusive = true }
                         }
@@ -220,7 +240,8 @@ class MainActivity : ComponentActivity() {
             }
 
             Box(
-                modifier = Modifier.fillMaxWidth().weight(1.4f),
+                modifier = Modifier.fillMaxWidth().weight(1f),
+                contentAlignment = Alignment.Center // 内容上下居中
             ) {
                 if (isRedraw < 10) {
                     datePickerState = rememberDatePickerState(
@@ -240,7 +261,7 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .background(Color.Transparent) // 透明背景
                         .clickable {
-                            navController.navigate("text") {
+                            navController.navigate("search") {
                                 // 清除起始画面
                                 popUpTo("double") { inclusive = true }
                             }

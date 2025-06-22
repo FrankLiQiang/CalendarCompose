@@ -43,7 +43,7 @@ fun ClockUI(event1: () -> Unit, event2: () -> Unit) {
     var textSize3 by remember("") { mutableStateOf(maxTextSizeGongli) }
     var textSize4 by remember("") { mutableStateOf(maxTextSizeTB) }
     Column(
-        modifier = Modifier.background(MyTheme.colors.background),
+        modifier = Modifier.background(Color.Black),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = time,
@@ -66,7 +66,7 @@ fun ClockUI(event1: () -> Unit, event2: () -> Unit) {
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .weight(1.2f, true)
-                .background(MyTheme.colors.background)
+//                .background(MyTheme.colors.background)
                 .clickable {
                     event2()
 //                    textColor = if (textColor == DarkGray) {
