@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import com.frank.calendar.extensions.degreesToRadians
 import com.frank.calendar.extensions.isDivisible
+import com.frank.calendar.extensions.isDivisible2
 import com.frank.calendar.extensions.toRange0To360
 import com.frank.calendar.ui.theme.CalendarTheme
 import kotlin.math.cos
@@ -34,7 +35,7 @@ enum class Colors(val value: Color) {
     GRAY(Color("#464449".toColorInt())),
 }
 
-const val NOTCH_COUNT = 252
+const val NOTCH_COUNT = 240
 const val PRIMARY_NOTCH_LENGTH = 40F
 const val SECONDARY_NOTCH_LENGTH = 25F
 
@@ -68,6 +69,8 @@ fun StopWatch(
             val rectLength =
                 if (notchNumber.isDivisible(hourInterval))
                     PRIMARY_NOTCH_LENGTH
+                else if (notchNumber.isDivisible2(hourInterval))
+                    (PRIMARY_NOTCH_LENGTH + SECONDARY_NOTCH_LENGTH) / 2
                 else
                     SECONDARY_NOTCH_LENGTH
 

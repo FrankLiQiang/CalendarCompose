@@ -12,6 +12,10 @@ fun Int.isDivisible(divisor: Int): Boolean {
     return divisor != 0 && this % divisor == 0
 }
 
+fun Int.isDivisible2(divisor: Int): Boolean {
+    return divisor != 0 && this % 4 == 0
+}
+
 @SuppressLint("DefaultLocale")
 fun Long.toHms(): String {
     val minutes = this / 60000

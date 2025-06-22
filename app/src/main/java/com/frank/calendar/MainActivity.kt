@@ -142,7 +142,7 @@ class MainActivity : ComponentActivity() {
         @Composable
         fun NavHostTime() {
             val navController = rememberNavController()
-            NavHost(navController, startDestination = "text") {
+            NavHost(navController, startDestination = "double") {
                 composable("text") { HomeScreen(navController) }
                 composable("search") {
                     CalendarTheme {
