@@ -117,9 +117,14 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.background(Color.Black).fillMaxSize()) {
                     NavHost(navController, startDestination = "double") {
                         composable("double") {
-                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+//                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
                             startTimer(lifecycleScope)
-                            DoubleView(navController)
+                            if (isPort) {
+                                DoubleView1(navController)
+                            } else {
+                                DoubleView(navController)
+                            }
                         }
                         composable("text") {
 
@@ -137,7 +142,7 @@ class MainActivity : ComponentActivity() {
                             monthOffset = 0
                             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                             ShowSettingDialog {
-                                navController.navigate("text") {
+                                navController.navigate("double") {
                                     popUpTo("search") { inclusive = true }
                                 }
                             }

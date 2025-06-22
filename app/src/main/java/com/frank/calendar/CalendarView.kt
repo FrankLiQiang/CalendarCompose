@@ -124,7 +124,7 @@ fun CalendarView(navController: NavHostController) {
                     .clickable {
                         monthOffset = 0
                         now = LocalDateTime.now()
-                        navController.navigate("double") {
+                        navController.navigate("search") {
                             // 清除起始画面
                             popUpTo("calendar") { inclusive = true }
                         }

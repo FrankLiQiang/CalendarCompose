@@ -30,6 +30,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -146,7 +147,6 @@ fun StopWatch(
                     centerY + 0.8f * circleRadius * sin(circlePerimeterAngle.degreesToRadians())
 
                 val s = if (notchNumber == 0) "12"
-//                else (notchNumber.div(hourInterval).times(1)).toString()
                 else notchNumber.div(hourInterval).toString()
                 val tr = textMeasure.measure(
                     AnnotatedString(s),
@@ -304,7 +304,7 @@ fun DoubleView(navController: NavHostController) {
                 .weight(1f)
                 .clickable {
                     timerRunning = false
-                    navController.navigate("search") {
+                    navController.navigate("text") {
                         // 清除起始画面
                         popUpTo("double") { inclusive = true }
                     }
@@ -337,7 +337,65 @@ fun DoubleView(navController: NavHostController) {
                     .fillMaxSize()
                     .background(Color.Transparent) // 透明背景
                     .clickable {
-                        navController.navigate("search") {
+                        navController.navigate("text") {
+                            // 清除起始画面
+                            popUpTo("double") { inclusive = true }
+                        }
+                    }
+            ) {
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DoubleView1(navController: NavHostController) {
+    Column (
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.Black)
+    ) {
+        Box(
+            modifier = Modifier
+                .padding(12.dp)
+                .weight(1f)
+                .clickable {
+                    timerRunning = false
+                    navController.navigate("text") {
+                        // 清除起始画面
+                        popUpTo("double") { inclusive = true }
+                    }
+                }
+        ) {
+            StopWatch(
+                modifier = Modifier,
+            )
+        }
+
+        Box(
+            modifier = Modifier.fillMaxWidth().weight(1.4f),
+            contentAlignment = Alignment.Center // 内容上下居中
+        ) {
+            if (isRedraw < 10) {
+                datePickerState = rememberDatePickerState(
+                    initialSelectedDateMillis = getUtcStartOfTodayMillis(),
+                )
+                DatePicker(
+                    modifier = Modifier,
+                    headline = null,
+                    title = null,
+                    state = datePickerState,
+                    showModeToggle = false,
+                )
+            }
+            // 透明覆盖层
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Transparent) // 透明背景
+                    .clickable {
+                        navController.navigate("text") {
                             // 清除起始画面
                             popUpTo("double") { inclusive = true }
                         }
