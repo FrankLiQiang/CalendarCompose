@@ -97,7 +97,7 @@ fun CalendarView(navController: NavHostController) {
                     } else {
                         if (isPort) {
                             maxTextSizeTitle_PORTRAIT = textSize
-                            with(sharedPreferences0.edit()) {
+                            with(sharedPreferences.edit()) {
                                 putFloat(
                                     "SHARED_PREFS_CALENDAR_TITLE_P",
                                     maxTextSizeTitle_PORTRAIT.value
@@ -106,7 +106,7 @@ fun CalendarView(navController: NavHostController) {
                             }
                         } else {
                             maxTextSizeTitle_LANDSCAPE = textSize
-                            with(sharedPreferences0.edit()) {
+                            with(sharedPreferences.edit()) {
                                 putFloat(
                                     "SHARED_PREFS_CALENDAR_TITLE_L",
                                     maxTextSizeTitle_LANDSCAPE.value
@@ -280,7 +280,7 @@ fun Date(
                                 } else {
                                     if (isPort) {
                                         maxTextSizeCalendarSix_PORTRAIT = textSize2
-                                        with(sharedPreferences0.edit()) {
+                                        with(sharedPreferences.edit()) {
                                             putFloat(
                                                 "SHARED_PREFS_SIX_P",
                                                 maxTextSizeCalendarSix_PORTRAIT.value + 3.0f
@@ -289,7 +289,7 @@ fun Date(
                                         }
                                     } else {
                                         maxTextSizeCalendarSix_LANDSCAPE = textSize2
-                                        with(sharedPreferences0.edit()) {
+                                        with(sharedPreferences.edit()) {
                                             putFloat(
                                                 "SHARED_PREFS_SIX_L",
                                                 maxTextSizeCalendarSix_LANDSCAPE.value + 3.0f
@@ -330,7 +330,7 @@ fun Date(
                             } else {
                                 if (isPort) {
                                     maxTextSizeCalendarDate_PORTRAIT = textSize1
-                                    with(sharedPreferences0.edit()) {
+                                    with(sharedPreferences.edit()) {
                                         putFloat(
                                             "SHARED_PREFS_GONG_LI_P",
                                             maxTextSizeCalendarDate_PORTRAIT.value
@@ -339,7 +339,7 @@ fun Date(
                                     }
                                 } else {
                                     maxTextSizeCalendarDate_LANDSCAPE = textSize1
-                                    with(sharedPreferences0.edit()) {
+                                    with(sharedPreferences.edit()) {
                                         putFloat(
                                             "SHARED_PREFS_GONG_LI_L",
                                             maxTextSizeCalendarDate_LANDSCAPE.value

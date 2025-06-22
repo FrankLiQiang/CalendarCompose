@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -22,10 +23,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
@@ -35,7 +42,6 @@ import androidx.navigation.compose.rememberNavController
 import com.frank.calendar.ui.theme.CalendarTheme
 import com.frank.calendar.ui.theme.HorizontalPagerSample
 import com.frank.calendar.ui.theme.ShowSettingDialog
-import com.frank.calendar.ui.theme.closeDialog
 import com.frank.calendar.ui.theme.datePickerState
 import com.frank.calendar.ui.theme.monthOffset
 import kotlinx.coroutines.delay
@@ -45,7 +51,41 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
-lateinit var sharedPreferences0: SharedPreferences
+lateinit var sharedPreferences: SharedPreferences
+lateinit var firstDay: LocalDate
+var dayOfMonth = 1
+var dayOfMonth0 = 1
+var firstDayOfWeek: Int = 0
+val minTextSize = 5.sp
+var maxTextSizeTime = 312.sp
+var maxTextSizeTB = 312.sp
+var maxTextSizeLeftDate = 112.sp
+var maxTextSizeGongli = 112.sp
+var maxTextSizeTitle_LANDSCAPE = 112.sp
+var maxTextSizeCalendarDate_LANDSCAPE = 132.sp
+var maxTextSizeCalendarSix_LANDSCAPE = 132.sp
+var maxTextSizeTitle_PORTRAIT = 112.sp
+var maxTextSizeCalendarDate_PORTRAIT = 132.sp
+var maxTextSizeCalendarSix_PORTRAIT = 132.sp
+var weeksMonth: Int = 5
+var textColor by mutableStateOf(Color(0xFF018786))
+var isPort by mutableStateOf(true)
+var time by mutableStateOf("09:35:23")
+var leftDate by mutableStateOf("")
+var trunck_branch by mutableStateOf("")
+var year_name by mutableStateOf("")
+var date by mutableStateOf("2023年12月08日")
+var isRed by mutableStateOf(false)
+var isClock by mutableStateOf(true)
+var dateArray = Array(42) { -1 }
+var nongliArray = Array(42) { "" }
+var sixDaysArray = Array(42) { "" }
+var tbDaysArray = Array(42) { "" }
+var isRedraw by mutableIntStateOf(1)
+var hourState by mutableLongStateOf(1)
+var minuteState by mutableLongStateOf(1)
+var secondState by mutableLongStateOf(1)
+var now: LocalDateTime = LocalDateTime.now()
 
 class MainActivity : ComponentActivity() {
     private var timerRunning = false
@@ -58,7 +98,7 @@ class MainActivity : ComponentActivity() {
             isPort = true
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        sharedPreferences0 = getPreferences(Context.MODE_PRIVATE)
+        sharedPreferences = getPreferences(Context.MODE_PRIVATE)
         readToDate()
         LunarCalendar.init(this)
 
@@ -112,7 +152,7 @@ class MainActivity : ComponentActivity() {
                                 .fillMaxSize()
                         ) {
                             monthOffset = 0
-                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
+                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                             SearchScreen(navController)
                         }
                     }
@@ -224,7 +264,7 @@ class MainActivity : ComponentActivity() {
         ) {
             Box(
                 modifier = Modifier
-//                    .padding(6.dp)
+                    .padding(6.dp)
                     .weight(1f)
                     .clickable {
                         timerRunning = false
@@ -240,7 +280,7 @@ class MainActivity : ComponentActivity() {
             }
 
             Box(
-                modifier = Modifier.fillMaxWidth().weight(1f),
+                modifier = Modifier.fillMaxWidth().weight(1.2f),
                 contentAlignment = Alignment.Center // 内容上下居中
             ) {
                 if (isRedraw < 10) {
@@ -288,7 +328,7 @@ fun DetailScreen() {
 }
 
 private fun saveTimePerSet() {
-    with(sharedPreferences0.edit()) {
+    with(sharedPreferences.edit()) {
         val df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         putString("SHARED_PREFS_TIME_PER_WORKSET", df.format(toDate))
         commit()
@@ -296,27 +336,27 @@ private fun saveTimePerSet() {
 }
 
 private fun readToDate() {
-    maxTextSizeTime = sharedPreferences0.getFloat("SHARED_PREFS_TIME", 312.0f).sp
-    maxTextSizeTB = sharedPreferences0.getFloat("SHARED_PREFS_TB", 312.0f).sp
-    maxTextSizeLeftDate = sharedPreferences0.getFloat("SHARED_PREFS_LEFT", 112.0f).sp
-    maxTextSizeGongli = sharedPreferences0.getFloat("SHARED_PREFS_WEEK", 112.0f).sp
+    maxTextSizeTime = sharedPreferences.getFloat("SHARED_PREFS_TIME", 312.0f).sp
+    maxTextSizeTB = sharedPreferences.getFloat("SHARED_PREFS_TB", 312.0f).sp
+    maxTextSizeLeftDate = sharedPreferences.getFloat("SHARED_PREFS_LEFT", 112.0f).sp
+    maxTextSizeGongli = sharedPreferences.getFloat("SHARED_PREFS_WEEK", 112.0f).sp
 
     maxTextSizeTitle_LANDSCAPE =
-        sharedPreferences0.getFloat("SHARED_PREFS_CALENDAR_TITLE_L", 112.0f).sp
+        sharedPreferences.getFloat("SHARED_PREFS_CALENDAR_TITLE_L", 112.0f).sp
     maxTextSizeCalendarDate_LANDSCAPE =
-        sharedPreferences0.getFloat("SHARED_PREFS_GONG_LI_L", 132.0f).sp
+        sharedPreferences.getFloat("SHARED_PREFS_GONG_LI_L", 132.0f).sp
     maxTextSizeCalendarSix_LANDSCAPE =
-        sharedPreferences0.getFloat("SHARED_PREFS_SIX_L", 132.0f).sp
+        sharedPreferences.getFloat("SHARED_PREFS_SIX_L", 132.0f).sp
 
     maxTextSizeTitle_PORTRAIT =
-        sharedPreferences0.getFloat("SHARED_PREFS_CALENDAR_TITLE_P", 112.0f).sp
+        sharedPreferences.getFloat("SHARED_PREFS_CALENDAR_TITLE_P", 112.0f).sp
     maxTextSizeCalendarDate_PORTRAIT =
-        sharedPreferences0.getFloat("SHARED_PREFS_GONG_LI_P", 132.0f).sp
+        sharedPreferences.getFloat("SHARED_PREFS_GONG_LI_P", 132.0f).sp
     maxTextSizeCalendarSix_PORTRAIT =
-        sharedPreferences0.getFloat("SHARED_PREFS_SIX_P", 132.0f).sp
+        sharedPreferences.getFloat("SHARED_PREFS_SIX_P", 132.0f).sp
 
     val df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     val defaultDate = df.format(LocalDateTime.now())
-    val highScore = sharedPreferences0.getString("SHARED_PREFS_TIME_PER_WORKSET", defaultDate)
+    val highScore = sharedPreferences.getString("SHARED_PREFS_TIME_PER_WORKSET", defaultDate)
     toDate = LocalDateTime.parse(highScore, df)
 }

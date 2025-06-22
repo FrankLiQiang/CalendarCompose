@@ -12,7 +12,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.DarkGray
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -20,7 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.frank.calendar.LunarCalendar.getSolarTerm
 import com.frank.calendar.ui.theme.CalendarTheme
-import com.frank.calendar.ui.theme.MyTheme
 import com.frank.calendar.ui.theme.monthOffset
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -54,7 +52,7 @@ fun ClockUI(event1: () -> Unit, event2: () -> Unit) {
                     textSize = (textSize.value - 1.0F).sp
                 } else {
                     maxTextSizeTime = textSize
-                    with(sharedPreferences0.edit()) {
+                    with(sharedPreferences.edit()) {
                         putFloat("SHARED_PREFS_TIME", maxTextSizeTime.value)
                         commit()
                     }
@@ -84,7 +82,7 @@ fun ClockUI(event1: () -> Unit, event2: () -> Unit) {
                     textSize4 = (textSize4.value - 1.0F).sp
                 } else {
                     maxTextSizeTB = textSize4
-                    with(sharedPreferences0.edit()) {
+                    with(sharedPreferences.edit()) {
                         putFloat("SHARED_PREFS_TB", maxTextSizeTB.value)
                         commit()
                     }
@@ -104,7 +102,7 @@ fun ClockUI(event1: () -> Unit, event2: () -> Unit) {
                     textSize2 = (textSize2.value - 1.0F).sp
                 } else {
                     maxTextSizeLeftDate = textSize2
-                    with(sharedPreferences0.edit()) {
+                    with(sharedPreferences.edit()) {
                         putFloat("SHARED_PREFS_LEFT", maxTextSizeLeftDate.value)
                         commit()
                     }
@@ -125,7 +123,7 @@ fun ClockUI(event1: () -> Unit, event2: () -> Unit) {
                     textSize3 = (textSize3.value - 1.0F).sp
                 } else {
                     maxTextSizeGongli = textSize3
-                    with(sharedPreferences0.edit()) {
+                    with(sharedPreferences.edit()) {
                         putFloat("SHARED_PREFS_WEEK", maxTextSizeGongli.value)
                         commit()
                     }
