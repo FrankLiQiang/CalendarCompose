@@ -1,6 +1,5 @@
 package com.frank.calendar.extensions
 
-import android.annotation.SuppressLint
 import kotlin.math.PI
 
 // Function to convert degrees to radians
@@ -14,15 +13,6 @@ fun Int.isDivisible(divisor: Int): Boolean {
 
 fun Int.isDivisible2(divisor: Int): Boolean {
     return divisor != 0 && this % 4 == 0
-}
-
-@SuppressLint("DefaultLocale")
-fun Long.toHms(): String {
-    val minutes = this / 60000
-    val seconds = (this % 60000) / 1000
-    val milliseconds = (this % 1000) / 10
-
-    return String.format("%02d:%02d:%02d", minutes, seconds, milliseconds)
 }
 
 fun Long.toRange0To360(): Float {

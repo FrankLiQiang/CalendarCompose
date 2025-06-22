@@ -1,11 +1,45 @@
+/*The MIT License (MIT)
+
+Copyright (c) 2016 Danylyk Dmytro
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+//https://github.com/amit-bhandari/Stopwatch-Jetpack-Compose?tab=readme-ov-file
+//https://github.com/amit-bhandari/Stopwatch-Jetpack-Compose.git
+//https://amit-bhandari.github.io/posts/jetpack-compose-custom-view/
+
 package com.frank.calendar
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -20,11 +54,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
+import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.navigation.NavHostController
 import com.frank.calendar.extensions.degreesToRadians
 import com.frank.calendar.extensions.isDivisible
 import com.frank.calendar.extensions.isDivisible2
 import com.frank.calendar.extensions.toRange0To360
 import com.frank.calendar.ui.theme.CalendarTheme
+import com.frank.calendar.ui.theme.datePickerState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -214,6 +256,94 @@ fun GreetingPreview() {
                 modifier = Modifier
                     .padding(innerPadding)
             )
+        }
+    }
+}
+
+fun getUtcStartOfTodayMillis(): Long {
+    return LocalDate.now(ZoneOffset.systemDefault()) // 先用本地时区得到今天
+        .atStartOfDay(ZoneOffset.UTC)           // 以UTC 0点为一天的起点
+        .toInstant()
+        .toEpochMilli()
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+fun startTimer(lifecycleScope: LifecycleCoroutineScope) {
+    lifecycleScope.launch {
+        timerRunning = true
+        dayOfMonth0 = LocalDateTime.now().dayOfMonth
+        while (timerRunning) {
+            hourState =
+                LocalDateTime.now().hour * 5 * 1000L + LocalDateTime.now().minute * 5000L / 60 + LocalDateTime.now().second * 5000 / 3600   //小时
+            minuteState =
+                LocalDateTime.now().minute * 1000L + LocalDateTime.now().second * 1000 / 60    //分钟
+            secondState =
+                LocalDateTime.now().second * 1000 + LocalDateTime.now().nano / 1_000_000L      //秒
+            if (dayOfMonth0 != LocalDateTime.now().dayOfMonth && LocalDateTime.now().second == 5) {
+                datePickerState.setSelection(getUtcStartOfTodayMillis())
+
+                dayOfMonth0 = LocalDateTime.now().dayOfMonth
+                isRedraw = 1 - isRedraw
+            }
+            delay(20)
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DoubleView(navController: NavHostController) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.Black)
+    ) {
+        Box(
+            modifier = Modifier
+                .padding(6.dp)
+                .weight(1f)
+                .clickable {
+                    timerRunning = false
+                    navController.navigate("search") {
+                        // 清除起始画面
+                        popUpTo("double") { inclusive = true }
+                    }
+                }
+        ) {
+            StopWatch(
+                modifier = Modifier,
+            )
+        }
+
+        Box(
+            modifier = Modifier.fillMaxWidth().weight(1.2f),
+            contentAlignment = Alignment.Center // 内容上下居中
+        ) {
+            if (isRedraw < 10) {
+                datePickerState = rememberDatePickerState(
+                    initialSelectedDateMillis = getUtcStartOfTodayMillis(),
+                )
+                DatePicker(
+                    modifier = Modifier,
+                    headline = null,
+                    title = null,
+                    state = datePickerState,
+                    showModeToggle = false,
+                )
+            }
+            // 透明覆盖层
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Transparent) // 透明背景
+                    .clickable {
+                        navController.navigate("search") {
+                            // 清除起始画面
+                            popUpTo("double") { inclusive = true }
+                        }
+                    }
+            ) {
+            }
         }
     }
 }

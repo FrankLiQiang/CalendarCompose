@@ -3,6 +3,7 @@ package com.frank.calendar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -17,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.core.content.edit
 import com.frank.calendar.LunarCalendar.getSolarTerm
 import com.frank.calendar.ui.theme.CalendarTheme
 import com.frank.calendar.ui.theme.monthOffset
@@ -33,6 +35,13 @@ var nongliDateColor = true
 var toDate: LocalDateTime = now
 var wantDate: LocalDateTime = now
 
+fun saveTimePerSet() {
+    sharedPreferences.edit(commit = true) {
+        val df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        putString("SHARED_PREFS_TIME_PER_WORKSET", df.format(toDate))
+    }
+}
+
 @Composable
 fun ClockUI(event1: () -> Unit, event2: () -> Unit) {
 
@@ -41,7 +50,7 @@ fun ClockUI(event1: () -> Unit, event2: () -> Unit) {
     var textSize3 by remember("") { mutableStateOf(maxTextSizeGongli) }
     var textSize4 by remember("") { mutableStateOf(maxTextSizeTB) }
     Column(
-        modifier = Modifier.background(Color.Black),
+        modifier = Modifier.background(Color.Black).fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = time,
@@ -62,9 +71,7 @@ fun ClockUI(event1: () -> Unit, event2: () -> Unit) {
             color = textColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .weight(1.2f, true)
-//                .background(MyTheme.colors.background)
+            modifier = Modifier.weight(1.2f, true)
                 .clickable {
                     event2()
 //                    textColor = if (textColor == DarkGray) {
@@ -113,7 +120,7 @@ fun ClockUI(event1: () -> Unit, event2: () -> Unit) {
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
-                .clickable { event1() }
+                .clickable {event1()}
                 .weight(0.3f, true))
         Text(text = date,
             maxLines = 1,
