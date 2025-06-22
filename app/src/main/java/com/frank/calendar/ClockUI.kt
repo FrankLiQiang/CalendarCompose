@@ -36,7 +36,7 @@ var toDate: LocalDateTime = now
 var wantDate: LocalDateTime = now
 
 @Composable
-fun ClockUI(event: () -> Unit) {
+fun ClockUI(event1: () -> Unit, event2: () -> Unit) {
 
     var textSize by remember("") { mutableStateOf(maxTextSizeTime) }
     var textSize2 by remember("") { mutableStateOf(maxTextSizeLeftDate) }
@@ -54,7 +54,7 @@ fun ClockUI(event: () -> Unit) {
                     textSize = (textSize.value - 1.0F).sp
                 } else {
                     maxTextSizeTime = textSize
-                    with(sharedPreferences.edit()) {
+                    with(sharedPreferences0.edit()) {
                         putFloat("SHARED_PREFS_TIME", maxTextSizeTime.value)
                         commit()
                     }
@@ -68,11 +68,12 @@ fun ClockUI(event: () -> Unit) {
                 .weight(1.2f, true)
                 .background(MyTheme.colors.background)
                 .clickable {
-                    textColor = if (textColor == DarkGray) {
-                        Color(0xFF018786)
-                    } else {
-                        DarkGray
-                    }
+                    event2()
+//                    textColor = if (textColor == DarkGray) {
+//                        Color(0xFF018786)
+//                    } else {
+//                        DarkGray
+//                    }
                 })
         Text(
             text = "$trunck_branch ($year_name)",
@@ -83,7 +84,7 @@ fun ClockUI(event: () -> Unit) {
                     textSize4 = (textSize4.value - 1.0F).sp
                 } else {
                     maxTextSizeTB = textSize4
-                    with(sharedPreferences.edit()) {
+                    with(sharedPreferences0.edit()) {
                         putFloat("SHARED_PREFS_TB", maxTextSizeTB.value)
                         commit()
                     }
@@ -103,7 +104,7 @@ fun ClockUI(event: () -> Unit) {
                     textSize2 = (textSize2.value - 1.0F).sp
                 } else {
                     maxTextSizeLeftDate = textSize2
-                    with(sharedPreferences.edit()) {
+                    with(sharedPreferences0.edit()) {
                         putFloat("SHARED_PREFS_LEFT", maxTextSizeLeftDate.value)
                         commit()
                     }
@@ -114,7 +115,7 @@ fun ClockUI(event: () -> Unit) {
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
-                .clickable { event() }
+                .clickable { event1() }
                 .weight(0.3f, true))
         Text(text = date,
             maxLines = 1,
@@ -124,7 +125,7 @@ fun ClockUI(event: () -> Unit) {
                     textSize3 = (textSize3.value - 1.0F).sp
                 } else {
                     maxTextSizeGongli = textSize3
-                    with(sharedPreferences.edit()) {
+                    with(sharedPreferences0.edit()) {
                         putFloat("SHARED_PREFS_WEEK", maxTextSizeGongli.value)
                         commit()
                     }
@@ -217,6 +218,7 @@ val nowWeek: () -> String = {
 @Composable
 fun PreviewMessageListScreenDark() {
     CalendarTheme(darkTheme = false) {
-        ClockUI({})
+        ClockUI({}, {})
     }
 }
+

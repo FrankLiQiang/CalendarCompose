@@ -17,20 +17,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.DarkGray
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.frank.calendar.ui.theme.CalendarTheme
 import com.frank.calendar.ui.theme.datePickerState
 import kotlinx.coroutines.delay
@@ -42,12 +39,48 @@ import java.time.format.DateTimeFormatter
 import java.util.Timer
 import java.util.TimerTask
 
-lateinit var sharedPreferences0: SharedPreferences
-//private var thisTimer: Timer = Timer()
-//private var thisTask: TimerTask? = null
 
-class MainActivity : ComponentActivity() {
+lateinit var firstDay: LocalDate
+var dayOfMonth = 1
+var dayOfMonth0 = 1
+var firstDayOfWeek: Int = 0
+val minTextSize = 5.sp
+var maxTextSizeTime = 312.sp
+var maxTextSizeTB = 312.sp
+var maxTextSizeLeftDate = 112.sp
+var maxTextSizeGongli = 112.sp
+var maxTextSizeTitle_LANDSCAPE = 112.sp
+var maxTextSizeCalendarDate_LANDSCAPE = 132.sp
+var maxTextSizeCalendarSix_LANDSCAPE = 132.sp
+var maxTextSizeTitle_PORTRAIT = 112.sp
+var maxTextSizeCalendarDate_PORTRAIT = 132.sp
+var maxTextSizeCalendarSix_PORTRAIT = 132.sp
+var weeksMonth: Int = 5
+private var thisTimer: Timer = Timer()
+private var thisTask: TimerTask? = null
+var textColor by mutableStateOf(Color(0xFF018786))
+var isPort by mutableStateOf(true)
+var time by mutableStateOf("09:35:23")
+var leftDate by mutableStateOf("")
+var trunck_branch by mutableStateOf("")
+var year_name by mutableStateOf("")
+var date by mutableStateOf("2023年12月08日")
+var isRed by mutableStateOf(false)
+var isClock by mutableStateOf(true)
+var dateArray = Array(42) { -1 }
+var nongliArray = Array(42) { "" }
+var sixDaysArray = Array(42) { "" }
+var tbDaysArray = Array(42) { "" }
+var isRedraw by mutableIntStateOf(1)
+var hourState by mutableLongStateOf(1)
+var minuteState by mutableLongStateOf(1)
+var secondState by mutableLongStateOf(1)
+var now: LocalDateTime = LocalDateTime.now()
+lateinit var sharedPreferences: SharedPreferences
+
+class MainActivity0 : ComponentActivity() {
     private var timerRunning = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val orientation = resources.configuration.orientation
@@ -57,13 +90,11 @@ class MainActivity : ComponentActivity() {
             isPort = true
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        sharedPreferences0 = getPreferences(Context.MODE_PRIVATE)
-        readToDate()
-
-        @OptIn(ExperimentalMaterial3Api::class)
-        @Composable
-        fun HomeScreen(navController: NavHostController) {
-            LunarCalendar.init(this)
+        sharedPreferences = getPreferences(Context.MODE_PRIVATE)
+//        setContent {
+//            LunarCalendar.init(this)
+//            readToDate()
+//
 //            thisTask = object : TimerTask() {
 //                override fun run() {
 //                    try {
@@ -86,42 +117,29 @@ class MainActivity : ComponentActivity() {
 //                    }
 //                }
 //            }
-//            thisTimer.schedule(thisTask, 0, 1000)
-            CalendarTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-                    startTextTimer()
-                    ClockUI({leftTimeClicked()}, {
-                        timerRunning = false
-                        navController.navigate("double") {
-                            // 清除起始画面
-                            popUpTo("text") { inclusive = true }
-                        }
-                    })
-                }
-            }
-        }
-
-        @Composable
-        fun NavHostTime() {
-            val navController = rememberNavController()
-            NavHost(navController, startDestination = "double") {
-                composable("text") { HomeScreen(navController) }
-                composable("double") {
-                    CalendarTheme {
-                        DoubleView(navController)
-                    }
-                }
-            }
-        }
-
+//            thisTimer.scheduleAtFixedRate(thisTask, 0, 1000)
+//            CalendarTheme {
+//                // A surface container using the 'background' color from the theme
+//                Surface(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .background(Color.White),
+//                ) {
+//                    if (isClock) {
+//                        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+//                        ClockUI(::leftTimeClicked)
+//                    } else {
+//                        monthOffset = 0
+//                        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+//                        HorizontalPagerSample()
+//                    }
+//                    SetSettingDialog()
+//                }
+//            }
+//        }
         setContent {
-            MyApp {
-                NavHostTime()
+            CalendarTheme {
+                ActivityView()
             }
         }
     }
@@ -136,6 +154,41 @@ class MainActivity : ComponentActivity() {
         )
         dpd.show()
     }
+
+    private fun saveTimePerSet() {
+        with(sharedPreferences.edit()) {
+            val df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            putString("SHARED_PREFS_TIME_PER_WORKSET", df.format(toDate))
+            commit()
+        }
+    }
+
+    private fun readToDate1() {
+        maxTextSizeTime = sharedPreferences.getFloat("SHARED_PREFS_TIME", 312.0f).sp
+        maxTextSizeTB = sharedPreferences.getFloat("SHARED_PREFS_TB", 312.0f).sp
+        maxTextSizeLeftDate = sharedPreferences.getFloat("SHARED_PREFS_LEFT", 112.0f).sp
+        maxTextSizeGongli = sharedPreferences.getFloat("SHARED_PREFS_WEEK", 112.0f).sp
+
+        maxTextSizeTitle_LANDSCAPE =
+            sharedPreferences.getFloat("SHARED_PREFS_CALENDAR_TITLE_L", 112.0f).sp
+        maxTextSizeCalendarDate_LANDSCAPE =
+            sharedPreferences.getFloat("SHARED_PREFS_GONG_LI_L", 132.0f).sp
+        maxTextSizeCalendarSix_LANDSCAPE =
+            sharedPreferences.getFloat("SHARED_PREFS_SIX_L", 132.0f).sp
+
+        maxTextSizeTitle_PORTRAIT =
+            sharedPreferences.getFloat("SHARED_PREFS_CALENDAR_TITLE_P", 112.0f).sp
+        maxTextSizeCalendarDate_PORTRAIT =
+            sharedPreferences.getFloat("SHARED_PREFS_GONG_LI_P", 132.0f).sp
+        maxTextSizeCalendarSix_PORTRAIT =
+            sharedPreferences.getFloat("SHARED_PREFS_SIX_P", 132.0f).sp
+
+        val df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val defaultDate = df.format(LocalDateTime.now())
+        val highScore = sharedPreferences.getString("SHARED_PREFS_TIME_PER_WORKSET", defaultDate)
+        toDate = LocalDateTime.parse(highScore, df)
+    }
+
 
     @OptIn(ExperimentalMaterial3Api::class)
     private fun startTimer() {
@@ -160,30 +213,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    private fun startTextTimer() {
-        lifecycleScope.launch {
-            timerRunning = true
-            while (timerRunning) {
-                time = getCurrentTime()
-                leftDate = getNongLiDate()
-                trunck_branch = main_branch()
-                year_name = jp_year_name()
-                date = getCurrentDate()
-                isRed = dateColor
-
-                now = LocalDateTime.now()
-                if (now.hour == 7 && now.minute == 0) {
-                    textColor = Color(0xFF018786)
-                }
-                if (now.hour == 23 && now.minute == 0) {
-                    textColor = DarkGray
-                }
-                delay(1000)
-            }
-        }
-    }
-
     // 获取当天起始时间戳（毫秒）
     private fun getUtcStartOfTodayMillis(): Long {
         return LocalDate.now(ZoneOffset.systemDefault()) // 先用本地时区得到今天
@@ -194,7 +223,7 @@ class MainActivity : ComponentActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun DoubleView(navController: NavHostController) {
+    fun ActivityView() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
         startTimer()
         Row(
@@ -206,13 +235,6 @@ class MainActivity : ComponentActivity() {
                 modifier = Modifier
 //                    .padding(6.dp)
                     .weight(1f)
-                    .clickable {
-                        timerRunning = false
-                        navController.navigate("text") {
-                            // 清除起始画面
-                            popUpTo("double") { inclusive = true }
-                        }
-                    }
             ) {
                 StopWatch(
                     modifier = Modifier,
@@ -239,63 +261,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier
                         .fillMaxSize()
                         .background(Color.Transparent) // 透明背景
-                        .clickable {
-                            navController.navigate("text") {
-                                // 清除起始画面
-                                popUpTo("double") { inclusive = true }
-                            }
-                        }
+                        .clickable {}
                 ) {
                 }
             }
         }
     }
-}
-
-@Composable
-fun MyApp(content: @Composable () -> Unit) {
-    MaterialTheme {
-        Surface {
-            content()
-        }
-    }
-}
-
-@Composable
-fun DetailScreen() {
-    Text("Detail Screen")
-}
-
-private fun saveTimePerSet() {
-    with(sharedPreferences0.edit()) {
-        val df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        putString("SHARED_PREFS_TIME_PER_WORKSET", df.format(toDate))
-        commit()
-    }
-}
-
-private fun readToDate() {
-    maxTextSizeTime = sharedPreferences0.getFloat("SHARED_PREFS_TIME", 312.0f).sp
-    maxTextSizeTB = sharedPreferences0.getFloat("SHARED_PREFS_TB", 312.0f).sp
-    maxTextSizeLeftDate = sharedPreferences0.getFloat("SHARED_PREFS_LEFT", 112.0f).sp
-    maxTextSizeGongli = sharedPreferences0.getFloat("SHARED_PREFS_WEEK", 112.0f).sp
-
-    maxTextSizeTitle_LANDSCAPE =
-        sharedPreferences0.getFloat("SHARED_PREFS_CALENDAR_TITLE_L", 112.0f).sp
-    maxTextSizeCalendarDate_LANDSCAPE =
-        sharedPreferences0.getFloat("SHARED_PREFS_GONG_LI_L", 132.0f).sp
-    maxTextSizeCalendarSix_LANDSCAPE =
-        sharedPreferences0.getFloat("SHARED_PREFS_SIX_L", 132.0f).sp
-
-    maxTextSizeTitle_PORTRAIT =
-        sharedPreferences0.getFloat("SHARED_PREFS_CALENDAR_TITLE_P", 112.0f).sp
-    maxTextSizeCalendarDate_PORTRAIT =
-        sharedPreferences0.getFloat("SHARED_PREFS_GONG_LI_P", 132.0f).sp
-    maxTextSizeCalendarSix_PORTRAIT =
-        sharedPreferences0.getFloat("SHARED_PREFS_SIX_P", 132.0f).sp
-
-    val df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-    val defaultDate = df.format(LocalDateTime.now())
-    val highScore = sharedPreferences0.getString("SHARED_PREFS_TIME_PER_WORKSET", defaultDate)
-    toDate = LocalDateTime.parse(highScore, df)
 }
