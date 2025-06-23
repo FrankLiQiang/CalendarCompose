@@ -40,6 +40,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -279,7 +280,7 @@ fun startTimer(lifecycleScope: LifecycleCoroutineScope) {
                 LocalDateTime.now().minute * 1000L + LocalDateTime.now().second * 1000 / 60    //分钟
             secondState =
                 LocalDateTime.now().second * 1000 + LocalDateTime.now().nano / 1_000_000L      //秒
-            if (dayOfMonth0 != LocalDateTime.now().dayOfMonth && LocalDateTime.now().second == 5) {
+            if (dayOfMonth0 != LocalDateTime.now().dayOfMonth) {
                 datePickerState.setSelection(getUtcStartOfTodayMillis())
 
                 dayOfMonth0 = LocalDateTime.now().dayOfMonth
@@ -319,7 +320,7 @@ fun DoubleView(navController: NavHostController) {
             modifier = Modifier.fillMaxWidth().weight(1.2f),
             contentAlignment = Alignment.Center // 内容上下居中
         ) {
-            if (isRedraw < 10) {
+            key(isRedraw) {
                 datePickerState = rememberDatePickerState(
                     initialSelectedDateMillis = getUtcStartOfTodayMillis(),
                 )
@@ -377,7 +378,7 @@ fun DoubleView1(navController: NavHostController) {
             modifier = Modifier.fillMaxWidth().weight(1.4f),
             contentAlignment = Alignment.Center // 内容上下居中
         ) {
-            if (isRedraw < 10) {
+            key(isRedraw) {
                 datePickerState = rememberDatePickerState(
                     initialSelectedDateMillis = getUtcStartOfTodayMillis(),
                 )
