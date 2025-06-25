@@ -103,7 +103,8 @@ class MainActivity : ComponentActivity() {
                     }, toDate.year, toDate.monthValue - 1, toDate.dayOfMonth
                 )
                 dpd.show()},
-                {timerRunning = false
+                {
+//                    timerRunning = false
                 navController.navigate("calendar") {
                     popUpTo("text") { inclusive = true }
                 }
@@ -113,13 +114,14 @@ class MainActivity : ComponentActivity() {
         @Composable
         fun NavHostTime() {
             val navController = rememberNavController()
+            startTimer(lifecycleScope)
             CalendarTheme {
                 Surface(modifier = Modifier.background(Color.Black).fillMaxSize()) {
-                    NavHost(navController, startDestination = "double") {
+                    NavHost(navController, startDestination = "calendar") {
                         composable("double") {
 //                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
                             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
-                            startTimer(lifecycleScope)
+//                            startTimer(lifecycleScope)
                             if (isPort) {
                                 DoubleView1(navController)
                             } else {

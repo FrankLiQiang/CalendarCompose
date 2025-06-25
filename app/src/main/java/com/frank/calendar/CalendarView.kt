@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.frank.calendar.ui.theme.CalendarTheme
+import com.frank.calendar.ui.theme.firstOffset
 import com.frank.calendar.ui.theme.isShowSettingDialog
 import com.frank.calendar.ui.theme.jumpToPage
 import com.frank.calendar.ui.theme.monthOffset
@@ -239,13 +240,15 @@ fun Date(
                         monthOffset = ChronoUnit.MONTHS
                             .between(currentDay, wantDate)
                             .toInt()
-                        jumpToPage(monthOffset + Int.MAX_VALUE / 2 + 2)
+                        jumpToPage(monthOffset + firstOffset)
+                        isRedraw = 1 - isRedraw
                     }, wantDate.year, wantDate.monthValue - 1, wantDate.dayOfMonth
                 )
                 dpd.show()
             } else if (dayOfMonth == dateVal && monthOffset != 0) {
                 monthOffset = 0
-                jumpToPage(Int.MAX_VALUE / 2 + 2)
+                jumpToPage(firstOffset)
+                isRedraw = 1 - isRedraw
             }
         }) {
         Row(

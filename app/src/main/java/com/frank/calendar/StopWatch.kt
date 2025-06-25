@@ -304,7 +304,7 @@ fun DoubleView(navController: NavHostController) {
                 .padding(6.dp)
                 .weight(1f)
                 .clickable {
-                    timerRunning = false
+//                    timerRunning = false
                     navController.navigate("text") {
                         // 清除起始画面
                         popUpTo("double") { inclusive = true }
@@ -362,7 +362,7 @@ fun DoubleView1(navController: NavHostController) {
                 .padding(12.dp)
                 .weight(1f)
                 .clickable {
-                    timerRunning = false
+//                    timerRunning = false
                     navController.navigate("text") {
                         // 清除起始画面
                         popUpTo("double") { inclusive = true }
