@@ -13,21 +13,21 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
@@ -39,7 +39,6 @@ import com.frank.calendar.ui.theme.CalendarTheme
 import com.frank.calendar.ui.theme.HorizontalPagerSample
 import com.frank.calendar.ui.theme.monthOffset
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -71,7 +70,6 @@ var trunck_branch by mutableStateOf("")
 var year_name by mutableStateOf("")
 var date by mutableStateOf("2023年12月08日")
 var isRed by mutableStateOf(false)
-var isClock by mutableStateOf(true)
 var dateArray = Array(42) { -1 }
 var nongliArray = Array(42) { "" }
 var sixDaysArray = Array(42) { "" }
@@ -102,9 +100,11 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             startTimer(lifecycleScope)
             CalendarTheme {
-                Surface(modifier = Modifier
-                    .background(Color.Black)
-                    .fillMaxSize()) {
+                Surface(
+                    modifier = Modifier
+                        .background(Color.Black)
+                        .fillMaxSize()
+                ) {
                     NavHost(navController, startDestination = "double") {
                         composable("double") {
                             startTextTimer()
@@ -170,15 +170,13 @@ private fun readToDate() {
         sharedPreferences.getFloat("SHARED_PREFS_CALENDAR_TITLE_L", 112.0f).sp
     maxTextSizeCalendarDate_LANDSCAPE =
         sharedPreferences.getFloat("SHARED_PREFS_GONG_LI_L", 132.0f).sp
-    maxTextSizeCalendarSix_LANDSCAPE =
-        sharedPreferences.getFloat("SHARED_PREFS_SIX_L", 132.0f).sp
+    maxTextSizeCalendarSix_LANDSCAPE = sharedPreferences.getFloat("SHARED_PREFS_SIX_L", 132.0f).sp
 
     maxTextSizeTitle_PORTRAIT =
         sharedPreferences.getFloat("SHARED_PREFS_CALENDAR_TITLE_P", 112.0f).sp
     maxTextSizeCalendarDate_PORTRAIT =
         sharedPreferences.getFloat("SHARED_PREFS_GONG_LI_P", 132.0f).sp
-    maxTextSizeCalendarSix_PORTRAIT =
-        sharedPreferences.getFloat("SHARED_PREFS_SIX_P", 132.0f).sp
+    maxTextSizeCalendarSix_PORTRAIT = sharedPreferences.getFloat("SHARED_PREFS_SIX_P", 132.0f).sp
 
     val df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     val defaultDate = df.format(LocalDateTime.now())
@@ -189,33 +187,33 @@ private fun readToDate() {
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun HorizontalPagerWithFloatingButton(navController: NavHostController) {
-    // 创建 PagerState，用于控制和观察 HorizontalPager 的状态
-    val pagerState = rememberPagerState()
-    val coroutineScope = rememberCoroutineScope()
-
     Box(modifier = Modifier.fillMaxSize()) {
         HorizontalPagerSample(false, navController)
-        // 悬浮按钮放在 Box 的上层
-        FloatingActionButton(
+        TextButton(
             onClick = {
-            },
-            modifier = Modifier
-                .align(Alignment.TopStart) // 固定在左上角
-                .padding(16.dp), // 添加边距
-            containerColor = MaterialTheme.colorScheme.primary
+                //Toast.makeText(context, "跳转到指定月份", Toast.LENGTH_SHORT).show()
+            }, modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(top = if (isPort) 90.dp else 10.dp, start = 16.dp)
         ) {
-            Text("+") // 悬浮按钮的内容
+            Text(
+                text = "Today", modifier = Modifier, fontSize = 25.sp,
+                color = Color(0xFF40A9FF), // 明亮蓝色
+                fontWeight = FontWeight.Bold
+            )
         }
-
-        FloatingActionButton(
+        TextButton(
             onClick = {
-            },
-            modifier = Modifier
-                .align(Alignment.TopEnd) // 固定在右上角
-                .padding(16.dp), // 添加边距
-            containerColor = MaterialTheme.colorScheme.primary
+                //Toast.makeText(context, "跳转到指定月份", Toast.LENGTH_SHORT).show()
+            }, modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = if (isPort) 90.dp else 10.dp, end = 16.dp)
         ) {
-            Text("+") // 悬浮按钮的内容
+            Text(
+                text = "Go to", modifier = Modifier, fontSize = 25.sp,
+                color = Color(0xFF40A9FF), // 明亮蓝色
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }
@@ -229,8 +227,7 @@ fun VerticalText(text: String) {
         // 将字符串拆分成字符，并逐一显示
         text.forEach { char ->
             Text(
-                text = char.toString(),
-                fontSize = 24.sp, // 设置字体大小
+                text = char.toString(), fontSize = 24.sp, // 设置字体大小
                 modifier = Modifier.padding(vertical = 2.dp) // 每个字符之间的间距
             )
         }
@@ -240,8 +237,7 @@ fun VerticalText(text: String) {
 @Composable
 fun VerticalTextExample() {
     Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center // 整体居中
+        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center // 整体居中
     ) {
         VerticalText("竖直排列")
     }
