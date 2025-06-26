@@ -70,6 +70,7 @@ val menuItemData = arrayOf(
     "亥 21:00〜23:00"
 )
 var expanded by mutableStateOf(false)
+
 //var chosenDate by mutableStateOf(theTime.toLocalDate())
 @OptIn(ExperimentalMaterial3Api::class)
 lateinit var datePickerState: DatePickerState
@@ -121,7 +122,9 @@ fun ShowSettingDialog(
                 ) {
 
                     IconButton(onClick = {
-                        datePickerState.setSelection(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(9)) * 1000)
+                        datePickerState.setSelection(
+                            LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(9)) * 1000
+                        )
                     }) {
                         Icon(Icons.Default.DateRange, contentDescription = "More options")
                     }

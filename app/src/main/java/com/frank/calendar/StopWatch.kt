@@ -19,10 +19,11 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-*/
+
 //https://github.com/amit-bhandari/Stopwatch-Jetpack-Compose?tab=readme-ov-file
 //https://github.com/amit-bhandari/Stopwatch-Jetpack-Compose.git
 //https://amit-bhandari.github.io/posts/jetpack-compose-custom-view/
+*/
 
 package com.frank.calendar
 
@@ -303,13 +304,6 @@ fun DoubleView(navController: NavHostController) {
             modifier = Modifier
                 .padding(6.dp)
                 .weight(1f)
-                .clickable {
-//                    timerRunning = false
-                    navController.navigate("text") {
-                        // 清除起始画面
-                        popUpTo("double") { inclusive = true }
-                    }
-                }
         ) {
             StopWatch(
                 modifier = Modifier,
@@ -317,7 +311,9 @@ fun DoubleView(navController: NavHostController) {
         }
 
         Box(
-            modifier = Modifier.fillMaxWidth().weight(1.2f),
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1.2f),
             contentAlignment = Alignment.Center // 内容上下居中
         ) {
             key(isRedraw) {
@@ -336,14 +332,7 @@ fun DoubleView(navController: NavHostController) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Transparent) // 透明背景
-                    .clickable {
-                        navController.navigate("text") {
-                            // 清除起始画面
-                            popUpTo("double") { inclusive = true }
-                        }
-                    }
-            ) {
+                    .clickable {}) {
             }
         }
     }
@@ -352,7 +341,7 @@ fun DoubleView(navController: NavHostController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DoubleView1(navController: NavHostController) {
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.Black)
@@ -361,21 +350,14 @@ fun DoubleView1(navController: NavHostController) {
             modifier = Modifier
                 .padding(12.dp)
                 .weight(1f)
-                .clickable {
-//                    timerRunning = false
-                    navController.navigate("text") {
-                        // 清除起始画面
-                        popUpTo("double") { inclusive = true }
-                    }
-                }
         ) {
-            StopWatch(
-                modifier = Modifier,
-            )
+            StopWatch(modifier = Modifier)
         }
 
         Box(
-            modifier = Modifier.fillMaxWidth().weight(1.4f),
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1.4f),
             contentAlignment = Alignment.Center // 内容上下居中
         ) {
             key(isRedraw) {
@@ -394,14 +376,7 @@ fun DoubleView1(navController: NavHostController) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Transparent) // 透明背景
-                    .clickable {
-                        navController.navigate("text") {
-                            // 清除起始画面
-                            popUpTo("double") { inclusive = true }
-                        }
-                    }
-            ) {
+                    .clickable {}) {
             }
         }
     }

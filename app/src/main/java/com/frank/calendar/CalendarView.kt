@@ -89,7 +89,8 @@ fun CalendarView(navController: NavHostController) {
                 .weight(if (isPort) 0.7f else 1.2f),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = if (isPort) nowDate() else nowDate() + "  " + nowWeek() + if (monthOffset == 0) "  $time" else "",
+            Text(
+                text = if (isPort) nowDate() else nowDate() + "  " + nowWeek() + if (monthOffset == 0) "  $time" else "",
                 maxLines = 1,
                 fontSize = textSize,
                 onTextLayout = {
@@ -120,16 +121,8 @@ fun CalendarView(navController: NavHostController) {
                 color = Color(0xFF018786),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(6.dp)
-                    .clickable {
-                        monthOffset = 0
-                        now = LocalDateTime.now()
-                        navController.navigate("search") {
-                            // 清除起始画面
-                            popUpTo("calendar") { inclusive = true }
-                        }
-                    })
+                modifier = Modifier.padding(6.dp)
+            )
         }
         if (isPort && monthOffset == 0) {
             Text(
@@ -139,11 +132,7 @@ fun CalendarView(navController: NavHostController) {
                 color = Color(0xFF018786),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .weight(0.7f)
-                    .clickable {
-                        isShowSettingDialog = true
-                    }
+                modifier = Modifier.weight(0.7f)
             )
         }
         if (!isPort) {
@@ -185,7 +174,6 @@ fun CalendarPreview() {
         Surface(
             modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
         ) {
-//            ClockUI({ isRed = true })
 //            CalendarView(navController)
         }
     }
@@ -222,35 +210,36 @@ fun Date(
 //        theColor2 = Color.Magenta
         theColor2 = Color(0xFF88FF33)
     }
-    Box(modifier = modifier
-        .clickable {
-            if (dateVal == -1) {
-                val dpd = DatePickerDialog(
-                    context, { _, year, month, day ->
-                        wantDate = LocalDateTime.of(year, month + 1, 1, 0, 0, 0, 0)
-                        val currentDay = LocalDateTime.of(
-                            LocalDateTime.now().year,
-                            LocalDateTime.now().month,
-                            1,
-                            0,
-                            0,
-                            0,
-                            0
-                        )
-                        monthOffset = ChronoUnit.MONTHS
-                            .between(currentDay, wantDate)
-                            .toInt()
-                        jumpToPage(monthOffset + firstOffset)
-                        isRedraw = 1 - isRedraw
-                    }, wantDate.year, wantDate.monthValue - 1, wantDate.dayOfMonth
-                )
-                dpd.show()
-            } else if (dayOfMonth == dateVal && monthOffset != 0) {
-                monthOffset = 0
-                jumpToPage(firstOffset)
-                isRedraw = 1 - isRedraw
-            }
-        }) {
+    Box(
+        modifier = modifier
+            .clickable {
+                if (dateVal == -1) {
+                    val dpd = DatePickerDialog(
+                        context, { _, year, month, day ->
+                            wantDate = LocalDateTime.of(year, month + 1, 1, 0, 0, 0, 0)
+                            val currentDay = LocalDateTime.of(
+                                LocalDateTime.now().year,
+                                LocalDateTime.now().month,
+                                1,
+                                0,
+                                0,
+                                0,
+                                0
+                            )
+                            monthOffset = ChronoUnit.MONTHS
+                                .between(currentDay, wantDate)
+                                .toInt()
+                            jumpToPage(monthOffset + firstOffset)
+                            isRedraw = 1 - isRedraw
+                        }, wantDate.year, wantDate.monthValue - 1, wantDate.dayOfMonth
+                    )
+                    dpd.show()
+                } else if (dayOfMonth == dateVal && monthOffset != 0) {
+                    monthOffset = 0
+                    jumpToPage(firstOffset)
+                    isRedraw = 1 - isRedraw
+                }
+            }) {
         Row(
             Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically
         ) {

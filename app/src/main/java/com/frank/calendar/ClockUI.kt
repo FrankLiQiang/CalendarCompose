@@ -1,7 +1,6 @@
 package com.frank.calendar
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
@@ -43,17 +42,20 @@ fun saveTimePerSet() {
 }
 
 @Composable
-fun ClockUI(event1: () -> Unit, event2: () -> Unit) {
+fun ClockUI() {
 
     var textSize by remember("") { mutableStateOf(maxTextSizeTime) }
     var textSize2 by remember("") { mutableStateOf(maxTextSizeLeftDate) }
     var textSize3 by remember("") { mutableStateOf(maxTextSizeGongli) }
     var textSize4 by remember("") { mutableStateOf(maxTextSizeTB) }
     Column(
-        modifier = Modifier.background(Color.Black).fillMaxSize(),
+        modifier = Modifier
+            .background(Color.Black)
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = time,
+        Text(
+            text = time,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             onTextLayout = {
@@ -72,14 +74,7 @@ fun ClockUI(event1: () -> Unit, event2: () -> Unit) {
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.weight(1.2f, true)
-                .clickable {
-                    event2()
-//                    textColor = if (textColor == DarkGray) {
-//                        Color(0xFF018786)
-//                    } else {
-//                        DarkGray
-//                    }
-                })
+        )
         Text(
             text = "$trunck_branch ($year_name)",
             maxLines = 1,
@@ -101,7 +96,8 @@ fun ClockUI(event1: () -> Unit, event2: () -> Unit) {
             modifier = Modifier
                 .weight(0.3f, true)
         )
-        Text(text = leftDate,
+        Text(
+            text = leftDate,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             onTextLayout = {
@@ -119,10 +115,10 @@ fun ClockUI(event1: () -> Unit, event2: () -> Unit) {
             color = if (nongliDateColor) Color.Red else textColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .clickable {event1()}
-                .weight(0.3f, true))
-        Text(text = date,
+            modifier = Modifier.weight(0.3f, true)
+        )
+        Text(
+            text = date,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             onTextLayout = {
@@ -140,12 +136,7 @@ fun ClockUI(event1: () -> Unit, event2: () -> Unit) {
             color = if (isRed) Color(0xFFBB86FC) else textColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .weight(0.5f, true)
-                .clickable {
-                    monthOffset = 0
-                    isClock = !isClock
-                }
+            modifier = Modifier.weight(0.5f, true)
         )
     }
 }
@@ -213,7 +204,13 @@ val nowDate: () -> String = {
 
 val nowWeek: () -> String = {
     val termText: String = getSolarTerm(now.year, now.monthValue, now.dayOfMonth)       //节气
-    val solar = LunarCalendar.gregorianFestival(now.year, now.monthValue, now.dayOfMonth, now.dayOfWeek.value, termText)
+    val solar = LunarCalendar.gregorianFestival(
+        now.year,
+        now.monthValue,
+        now.dayOfMonth,
+        now.dayOfWeek.value,
+        termText
+    )
     val day: Int = now.dayOfWeek.value
     val weekString = "一二三四五六日"
     "$solar 星期${weekString.substring(day - 1, day)} $termText"
@@ -223,7 +220,7 @@ val nowWeek: () -> String = {
 @Composable
 fun PreviewMessageListScreenDark() {
     CalendarTheme(darkTheme = false) {
-        ClockUI({}, {})
+        ClockUI()
     }
 }
 

@@ -408,10 +408,10 @@ object LunarCalendar {
 
         //振替休日
         if (solar.isEmpty()) {
-            val currentDay = LocalDateTime.of(year,month, day, 0, 0, 0,0)
+            val currentDay = LocalDateTime.of(year, month, day, 0, 0, 0, 0)
             val beforeDay = currentDay.plusDays(-1)
             val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
-            val textB = beforeDay.format(formatter).substring(4,8)
+            val textB = beforeDay.format(formatter).substring(4, 8)
             for (aMSolarCalendar in SOLAR_CALENDAR!!) {
                 if (aMSolarCalendar.contains(textB)) {
                     if (beforeDay.dayOfWeek.value == 7) {
@@ -427,7 +427,8 @@ object LunarCalendar {
             }
             if (solar.isEmpty()) {
                 //节气
-                val termText: String = getSolarTerm(beforeDay.year, beforeDay.monthValue, beforeDay.dayOfMonth)
+                val termText: String =
+                    getSolarTerm(beforeDay.year, beforeDay.monthValue, beforeDay.dayOfMonth)
                 if (termText == "春分" || termText == "秋分") {
                     if (beforeDay.dayOfWeek.value == 7) {
                         solar = "振替"
@@ -457,7 +458,7 @@ object LunarCalendar {
                 solar = "海日"
             }
             if (month == 9 && day >= 15 && day <= 21) {
-                solar= "敬老"
+                solar = "敬老"
             }
         }
         return solar
@@ -589,7 +590,7 @@ object LunarCalendar {
             val y1 = YearName!![i].substring(2)
             val y2 = YearName!![i + 1].substring(2)
             if (y1 <= text && text < y2) {
-                yearName = YearName!![i].substring(0,2)
+                yearName = YearName!![i].substring(0, 2)
                 val startYear = YearName!![i].substring(2, 6)
                 val ys = year - startYear.toInt() + 1
                 yearNum = " ${ys} 年"

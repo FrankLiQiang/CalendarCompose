@@ -1,27 +1,34 @@
 package com.frank.calendar
 
-import android.app.DatePickerDialog
 import android.content.SharedPreferences
-import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
@@ -30,8 +37,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.frank.calendar.ui.theme.CalendarTheme
 import com.frank.calendar.ui.theme.HorizontalPagerSample
-import com.frank.calendar.ui.theme.ShowSettingDialog
 import com.frank.calendar.ui.theme.monthOffset
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -89,65 +97,23 @@ class MainActivity : ComponentActivity() {
         readToDate()
         LunarCalendar.init(this)
 
-        @OptIn(ExperimentalMaterial3Api::class)
-        @Composable
-        fun TextClock(navController: NavHostController) {
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-            startTextTimer()
-            ClockUI({
-                val dpd = DatePickerDialog(
-                    this, { _, year, month, day ->
-                        toDate = LocalDateTime.of(year, month + 1, day, 0, 0, 0, 0)
-                        saveTimePerSet()
-                        currentDateNum = -1
-                    }, toDate.year, toDate.monthValue - 1, toDate.dayOfMonth
-                )
-                dpd.show()},
-                {
-//                    timerRunning = false
-                navController.navigate("calendar") {
-                    popUpTo("text") { inclusive = true }
-                }
-            })
-        }
-
         @Composable
         fun NavHostTime() {
             val navController = rememberNavController()
             startTimer(lifecycleScope)
             CalendarTheme {
-                Surface(modifier = Modifier.background(Color.Black).fillMaxSize()) {
-                    NavHost(navController, startDestination = "calendar") {
+                Surface(modifier = Modifier
+                    .background(Color.Black)
+                    .fillMaxSize()) {
+                    NavHost(navController, startDestination = "double") {
                         composable("double") {
-//                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
-//                            startTimer(lifecycleScope)
-                            if (isPort) {
-                                DoubleView1(navController)
-                            } else {
-                                DoubleView(navController)
-                            }
-                        }
-                        composable("text") {
-
-                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
                             startTextTimer()
-                            TextClock(navController)
+                            monthOffset = 0
+                            HorizontalPagerSample(true, navController)
                         }
                         composable("calendar") {
                             startTextTimer()
-                            monthOffset = 0
-                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
-                            HorizontalPagerSample(navController)
-                        }
-                        composable("search") {
-                            monthOffset = 0
-                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                            ShowSettingDialog {
-                                navController.navigate("double") {
-                                    popUpTo("search") { inclusive = true }
-                                }
-                            }
+                            HorizontalPagerWithFloatingButton(navController)
                         }
                     }
                 }
@@ -218,4 +184,65 @@ private fun readToDate() {
     val defaultDate = df.format(LocalDateTime.now())
     val highScore = sharedPreferences.getString("SHARED_PREFS_TIME_PER_WORKSET", defaultDate)
     toDate = LocalDateTime.parse(highScore, df)
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun HorizontalPagerWithFloatingButton(navController: NavHostController) {
+    // 创建 PagerState，用于控制和观察 HorizontalPager 的状态
+    val pagerState = rememberPagerState()
+    val coroutineScope = rememberCoroutineScope()
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        HorizontalPagerSample(false, navController)
+        // 悬浮按钮放在 Box 的上层
+        FloatingActionButton(
+            onClick = {
+            },
+            modifier = Modifier
+                .align(Alignment.TopStart) // 固定在左上角
+                .padding(16.dp), // 添加边距
+            containerColor = MaterialTheme.colorScheme.primary
+        ) {
+            Text("+") // 悬浮按钮的内容
+        }
+
+        FloatingActionButton(
+            onClick = {
+            },
+            modifier = Modifier
+                .align(Alignment.TopEnd) // 固定在右上角
+                .padding(16.dp), // 添加边距
+            containerColor = MaterialTheme.colorScheme.primary
+        ) {
+            Text("+") // 悬浮按钮的内容
+        }
+    }
+}
+
+@Composable
+fun VerticalText(text: String) {
+    Column(
+        modifier = Modifier.fillMaxHeight(), // 让文字按列排列
+        horizontalAlignment = Alignment.CenterHorizontally // 水平居中对齐
+    ) {
+        // 将字符串拆分成字符，并逐一显示
+        text.forEach { char ->
+            Text(
+                text = char.toString(),
+                fontSize = 24.sp, // 设置字体大小
+                modifier = Modifier.padding(vertical = 2.dp) // 每个字符之间的间距
+            )
+        }
+    }
+}
+
+@Composable
+fun VerticalTextExample() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center // 整体居中
+    ) {
+        VerticalText("竖直排列")
+    }
 }

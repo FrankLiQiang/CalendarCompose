@@ -3,6 +3,8 @@ package com.frank.calendar.ui.theme
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
@@ -31,7 +33,7 @@ var firstOffset = 0
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HorizontalPagerSample(navController: NavHostController) {
+fun HorizontalPagerSample(isToday: Boolean, navController: NavHostController) {
 
     val pagerState = rememberPagerState(pageCount = {
         Int.MAX_VALUE
@@ -51,11 +53,11 @@ fun HorizontalPagerSample(navController: NavHostController) {
         state = pagerState,
         modifier = Modifier.background(Color.Black),
     ) { page ->
-        Log.i("aaab", "HorizontalPager")
-        if (page != 0) {
-            if (firstOffset == 0) {
-                firstOffset = page
-            }
+        if (page == 0) {
+            return@HorizontalPager
+        }
+
+        if (isToday) {
             when (page % 4) {
                 0 -> {
                     if (isPort) {
@@ -64,33 +66,45 @@ fun HorizontalPagerSample(navController: NavHostController) {
                         DoubleView(navController)
                     }
                 }
+
                 1 -> {
-                    ClockUI({},{})
+                    ClockUI()
                 }
+
                 2 -> {
-                    maxTextSizeCalendarDate_LANDSCAPE = (maxTextSizeCalendarDate_LANDSCAPE.value + 12.0f).sp
-                    maxTextSizeCalendarSix_LANDSCAPE = (maxTextSizeCalendarSix_LANDSCAPE.value + 12.0f).sp
-                    maxTextSizeCalendarDate_PORTRAIT = (maxTextSizeCalendarDate_PORTRAIT.value + 12.0f).sp
-                    maxTextSizeCalendarSix_PORTRAIT = (maxTextSizeCalendarSix_PORTRAIT.value + 12.0f).sp
+                    maxTextSizeCalendarDate_LANDSCAPE =
+                        (maxTextSizeCalendarDate_LANDSCAPE.value + 12.0f).sp
+                    maxTextSizeCalendarSix_LANDSCAPE =
+                        (maxTextSizeCalendarSix_LANDSCAPE.value + 12.0f).sp
+                    maxTextSizeCalendarDate_PORTRAIT =
+                        (maxTextSizeCalendarDate_PORTRAIT.value + 12.0f).sp
+                    maxTextSizeCalendarSix_PORTRAIT =
+                        (maxTextSizeCalendarSix_PORTRAIT.value + 12.0f).sp
                     CalendarView(navController)
                 }
+
                 3 -> {
-                    Text("Settings")
+                    Text(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clickable {
+                                navController.navigate("calendar") {}
+                            },
+                        text = "Settings"
+                    )
                 }
             }
+        } else {
+            if (firstOffset == 0) {
+                firstOffset = page
+            }
+            monthOffset = page - firstOffset
+            maxTextSizeCalendarDate_LANDSCAPE = (maxTextSizeCalendarDate_LANDSCAPE.value + 12.0f).sp
+            maxTextSizeCalendarSix_LANDSCAPE = (maxTextSizeCalendarSix_LANDSCAPE.value + 12.0f).sp
+            maxTextSizeCalendarDate_PORTRAIT = (maxTextSizeCalendarDate_PORTRAIT.value + 12.0f).sp
+            maxTextSizeCalendarSix_PORTRAIT = (maxTextSizeCalendarSix_PORTRAIT.value + 12.0f).sp
+            CalendarView(navController)
         }
-//
-//        if (page != 0) {
-//            monthOffset = page - firstOffset
-////            Text("monthOffset = " + monthOffset + "\n   page = " + page + "\n   firstOffset = " + firstOffset)
-////            Log.i("aaab", "1 monthOffset = " + monthOffset + "   page = " + page + "   firstOffset = " + firstOffset)
-//
-//            maxTextSizeCalendarDate_LANDSCAPE = (maxTextSizeCalendarDate_LANDSCAPE.value + 12.0f).sp
-//            maxTextSizeCalendarSix_LANDSCAPE = (maxTextSizeCalendarSix_LANDSCAPE.value + 12.0f).sp
-//            maxTextSizeCalendarDate_PORTRAIT = (maxTextSizeCalendarDate_PORTRAIT.value + 12.0f).sp
-//            maxTextSizeCalendarSix_PORTRAIT = (maxTextSizeCalendarSix_PORTRAIT.value + 12.0f).sp
-//            CalendarView(navController)
-//        }
     }
 
     LaunchedEffect(key1 = UInt, block = {
