@@ -52,9 +52,14 @@ var dayOfMonth0 = 1
 var firstDayOfWeek: Int = 0
 val minTextSize = 5.sp
 var maxTextSizeTime = 312.sp
+var maxTextSizeTimeA = 312.sp
+var maxTextSizeTime1A = 32.sp
 var maxTextSizeTB = 312.sp
+var maxTextSizeTBA = 312.sp
 var maxTextSizeLeftDate = 112.sp
+var maxTextSizeLeftDateA = 112.sp
 var maxTextSizeGongli = 112.sp
+var maxTextSizeGongliA = 112.sp
 var maxTextSizeTitle_LANDSCAPE = 112.sp
 var maxTextSizeCalendarDate_LANDSCAPE = 132.sp
 var maxTextSizeCalendarSix_LANDSCAPE = 132.sp
@@ -107,12 +112,10 @@ class MainActivity : ComponentActivity() {
                 ) {
                     NavHost(navController, startDestination = "double") {
                         composable("double") {
-                            startTextTimer()
                             monthOffset = 0
                             HorizontalPagerSample(true, navController)
                         }
                         composable("calendar") {
-                            startTextTimer()
                             HorizontalPagerWithFloatingButton(navController)
                         }
                     }
@@ -126,28 +129,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    fun startTextTimer() {
-        lifecycleScope.launch {
-            timerRunning = true
-            while (timerRunning) {
-                time = getCurrentTime()
-                leftDate = getNongLiDate()
-                trunck_branch = main_branch()
-                year_name = jp_year_name()
-                date = getCurrentDate()
-                isRed = dateColor
-
-                now = LocalDateTime.now()
-                if (now.hour == 7 && now.minute == 0) {
-                    textColor = Color(0xFF018786)
-                }
-                if (now.hour == 23 && now.minute == 0) {
-                    textColor = DarkGray
-                }
-                delay(1000)
-            }
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        timerRunning = false
     }
 }
 
@@ -162,9 +146,14 @@ fun MyApp(content: @Composable () -> Unit) {
 
 private fun readToDate() {
     maxTextSizeTime = sharedPreferences.getFloat("SHARED_PREFS_TIME", 312.0f).sp
+    maxTextSizeTimeA = sharedPreferences.getFloat("SHARED_PREFS_TIMEA", 312.0f).sp
+    maxTextSizeTime1A = sharedPreferences.getFloat("SHARED_PREFS_TIME1A", 32.0f).sp
     maxTextSizeTB = sharedPreferences.getFloat("SHARED_PREFS_TB", 312.0f).sp
+    maxTextSizeTBA = sharedPreferences.getFloat("SHARED_PREFS_TBA", 312.0f).sp
     maxTextSizeLeftDate = sharedPreferences.getFloat("SHARED_PREFS_LEFT", 112.0f).sp
+    maxTextSizeLeftDateA = sharedPreferences.getFloat("SHARED_PREFS_LEFTA", 112.0f).sp
     maxTextSizeGongli = sharedPreferences.getFloat("SHARED_PREFS_WEEK", 112.0f).sp
+    maxTextSizeGongliA = sharedPreferences.getFloat("SHARED_PREFS_WEEKA", 112.0f).sp
 
     maxTextSizeTitle_LANDSCAPE =
         sharedPreferences.getFloat("SHARED_PREFS_CALENDAR_TITLE_L", 112.0f).sp

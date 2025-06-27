@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.frank.calendar.CalendarView
 import com.frank.calendar.ClockUI
+import com.frank.calendar.ClockUIV
 import com.frank.calendar.DoubleView
 import com.frank.calendar.DoubleView1
 import com.frank.calendar.isPort
@@ -68,7 +69,11 @@ fun HorizontalPagerSample(isToday: Boolean, navController: NavHostController) {
                 }
 
                 1 -> {
-                    ClockUI()
+                    if (isPort) {
+                        ClockUIV()
+                    } else {
+                        ClockUI()
+                    }
                 }
 
                 2 -> {

@@ -47,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.DarkGray
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.text.AnnotatedString
@@ -169,7 +170,7 @@ fun StopWatch(
 
         //timer text
         val tr = textMeasure.measure(
-            AnnotatedString("Li Qiang"),
+            AnnotatedString(time),
             style = TextStyle(
                 fontSize = 24.sp,
                 color = Colors.WHITE.value
@@ -274,6 +275,7 @@ fun startTimer(lifecycleScope: LifecycleCoroutineScope) {
     lifecycleScope.launch {
         timerRunning = true
         dayOfMonth0 = LocalDateTime.now().dayOfMonth
+        var tmp = 0
         while (timerRunning) {
             hourState =
                 LocalDateTime.now().hour * 5 * 1000L + LocalDateTime.now().minute * 5000L / 60 + LocalDateTime.now().second * 5000 / 3600   //小时
@@ -287,6 +289,29 @@ fun startTimer(lifecycleScope: LifecycleCoroutineScope) {
                 dayOfMonth0 = LocalDateTime.now().dayOfMonth
                 isRedraw = 1 - isRedraw
             }
+
+            if (tmp == 0) {
+                time = getCurrentTime()
+                leftDate = getNongLiDate()
+                trunck_branch = main_branch()
+                year_name = jp_year_name()
+                date = getCurrentDate()
+                isRed = dateColor
+
+                now = LocalDateTime.now()
+                if (now.hour == 7 && now.minute == 0) {
+                    textColor = Color(0xFF018786)
+                }
+                if (now.hour == 23 && now.minute == 0) {
+                    textColor = DarkGray
+                }
+            }
+
+            tmp++
+            if (tmp == 50) {
+                tmp = 0
+            }
+
             delay(20)
         }
     }

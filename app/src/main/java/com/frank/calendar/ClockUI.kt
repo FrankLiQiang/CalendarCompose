@@ -2,7 +2,9 @@ package com.frank.calendar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.edit
 import com.frank.calendar.LunarCalendar.getSolarTerm
@@ -138,6 +141,154 @@ fun ClockUI() {
             fontWeight = FontWeight.Bold,
             modifier = Modifier.weight(0.5f, true)
         )
+    }
+}
+
+@Composable
+fun ClockUIV() {
+
+    var textSizeA by remember("") { mutableStateOf(maxTextSizeTimeA) }
+    var textSize1A by remember("") { mutableStateOf(maxTextSizeTime1A) }
+    var textSize2A by remember("") { mutableStateOf(maxTextSizeLeftDateA) }
+    var textSize3A by remember("") { mutableStateOf(maxTextSizeGongliA) }
+    var textSize4A by remember("") { mutableStateOf(maxTextSizeTBA) }
+    Column(
+        modifier = Modifier
+            .background(Color.Black)
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = trunck_branch.substring(0, 4) + "  ($year_name)",
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            onTextLayout = {
+                if (it.hasVisualOverflow && textSize1A > minTextSize) {
+                    textSize1A = (textSize1A.value - 1.0F).sp
+                } else {
+                    maxTextSizeTime1A = textSize1A
+                    with(sharedPreferences.edit()) {
+                        putFloat("SHARED_PREFS_TIME1A", maxTextSizeTime1A.value)
+                        commit()
+                    }
+                }
+            },
+            fontSize = textSize1A,
+            color = textColor,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.weight(0.13f, true)
+        )
+        Spacer(modifier = Modifier.weight(0.2f, true))
+        Text(
+            text = time,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            onTextLayout = {
+                if (it.hasVisualOverflow && textSizeA > minTextSize) {
+                    textSizeA = (textSizeA.value - 1.0F).sp
+                } else {
+                    maxTextSizeTimeA = textSizeA
+                    with(sharedPreferences.edit()) {
+                        putFloat("SHARED_PREFS_TIMEA", maxTextSizeTimeA.value)
+                        commit()
+                    }
+                }
+            },
+            fontSize = textSizeA,
+            color = textColor,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.weight(1.6f, true)
+        )
+        Text(
+            text = date.substring(12),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            onTextLayout = {
+                if (it.hasVisualOverflow && textSize3A > minTextSize) {
+                    textSize3A = (textSize3A.value - 1.0F).sp
+                } else {
+                    maxTextSizeGongliA = textSize3A
+                    with(sharedPreferences.edit()) {
+                        putFloat("SHARED_PREFS_WEEKA", maxTextSizeGongliA.value)
+                        commit()
+                    }
+                }
+            },
+            fontSize = textSize3A,
+            color = if (isRed) Color(0xFFBB86FC) else textColor,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.weight(0.7f, true)
+        )
+        Spacer(modifier = Modifier.weight(0.1f, true))
+        Text(
+            text = trunck_branch.substring(5),
+            maxLines = 1,
+            fontSize = textSize4A,
+            onTextLayout = {
+                if (it.hasVisualOverflow && textSize4A > minTextSize) {
+                    textSize4A = (textSize4A.value - 1.0F).sp
+                } else {
+                    maxTextSizeTBA = textSize4A
+                    with(sharedPreferences.edit()) {
+                        putFloat("SHARED_PREFS_TBA", maxTextSizeTBA.value)
+                        commit()
+                    }
+                }
+            },
+            color = textColor,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .weight(0.18f, true)
+        )
+        Spacer(modifier = Modifier.weight(0.09f, true))
+        Text(
+            text = leftDate,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            onTextLayout = {
+                if (it.hasVisualOverflow && textSize2A > minTextSize) {
+                    textSize2A = (textSize2A.value - 1.0F).sp
+                } else {
+                    maxTextSizeLeftDateA = textSize2A
+                    with(sharedPreferences.edit()) {
+                        putFloat("SHARED_PREFS_LEFTA", maxTextSizeLeftDateA.value)
+                        commit()
+                    }
+                }
+            },
+            fontSize = textSize2A,
+            color = if (nongliDateColor) Color.Red else textColor,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.weight(0.18f, true)
+        )
+        Spacer(modifier = Modifier.weight(0.09f, true))
+        Text(
+            text = date.substring(0, 11),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            onTextLayout = {
+                if (it.hasVisualOverflow && textSize3A > minTextSize) {
+                    textSize3A = (textSize3A.value - 1.0F).sp
+                } else {
+                    maxTextSizeGongliA = textSize3A
+                    with(sharedPreferences.edit()) {
+                        putFloat("SHARED_PREFS_WEEKA", maxTextSizeGongliA.value)
+                        commit()
+                    }
+                }
+            },
+            fontSize = textSize3A,
+            color = if (isRed) Color(0xFFBB86FC) else textColor,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.weight(0.27f, true)
+        )
+        Spacer(modifier = Modifier.weight(0.09f, true))
     }
 }
 
