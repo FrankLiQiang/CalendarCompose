@@ -1,7 +1,5 @@
 package com.frank.calendar
 
-import android.app.DatePickerDialog
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,7 +20,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -32,14 +29,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.frank.calendar.ui.theme.CalendarTheme
-import com.frank.calendar.ui.theme.firstOffset
 import com.frank.calendar.ui.theme.isShowSettingDialog
-import com.frank.calendar.ui.theme.jumpToPage
 import com.frank.calendar.ui.theme.monthOffset
-import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalAdjusters
 
 fun getNongLi(dayNum: Int, weekDay: Int): String {
@@ -77,6 +69,8 @@ fun getWeeksOfMonth(): Int {
     }
     return ret / 7 + if (ret % 7 == 0) 1 else 2
 }
+val arr: Array<String> = arrayOf("S", "M", "T", "W", "T", "F", "S")
+val defaultColor = Color(0xFF018786)
 
 @Composable
 fun CalendarView() {
@@ -132,33 +126,47 @@ fun CalendarView() {
                 color = Color(0xFF018786),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(0.7f)
+                modifier = Modifier.weight(0.5f)
             )
         }
         if (!isPort) {
             isShowSettingDialog = false
         }
         weeksMonth = getWeeksOfMonth()
-        Row(Modifier.height(if (isPort) 15.dp else 27.dp)) {}
+//        Row(Modifier.height(if (isPort) 15.dp else 27.dp)) {}
         var d = 0
-        for (i in 0 until weeksMonth) {
-            Row(Modifier.weight(1.0f), verticalAlignment = Alignment.CenterVertically) {
-                for (j in 0..6) {
-                    if (!isPort) {
-                        Row(Modifier.width(7.dp)) {}
+        for (i in -1 until weeksMonth) {
+            if (i == -1) {
+                Row(Modifier.weight(0.4f), verticalAlignment = Alignment.Bottom) {
+                    for (j in 0..6) {
+                        Box(
+                            modifier = Modifier.weight(1f),
+//                                .fillMaxHeight(), // 或 fillMaxSize()
+                            contentAlignment = Alignment.BottomCenter// .Center
+                        ) {
+                            Text(text = arr[j], color = defaultColor)
+                        }
                     }
-                    Date(
-                        Modifier.weight(1.0f),
-                        dateArray[d],
-                        nongliArray[d],
-                        sixDaysArray[d],
-                        tbDaysArray[d]
-                    )
-                    d++
+                }
+            } else {
+                Row(Modifier.weight(1.0f).padding(start = 4.dp, end = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+                    for (j in 0..6) {
+                        if (!isPort) {
+                            Row(Modifier.width(7.dp)) {}
+                        }
+                        Date(
+                            Modifier.weight(1.0f),
+                            dateArray[d],
+                            nongliArray[d],
+                            sixDaysArray[d],
+                            tbDaysArray[d]
+                        )
+                        d++
+                    }
                 }
             }
-//            Row(Modifier.height(if (isPort) 22.dp else 0.dp)) {}
         }
+//            Row(Modifier.height(if (isPort) 22.dp else 0.dp)) {}
     }
 }
 
@@ -182,15 +190,13 @@ fun CalendarPreview() {
 fun Date(modifier: Modifier, dateVal: Int, nongLi0: String, sixDays: String, tb_day: String
 ) {
     if (isRedraw > 100) return
-    val context = LocalContext.current
     var nongLi = nongLi0
     var textSize1 by remember("") { mutableStateOf(if (isPort) maxTextSizeCalendarDate_PORTRAIT else maxTextSizeCalendarDate_LANDSCAPE) }
     var sixTextSizePort by remember("") { mutableStateOf(maxTextSizeCalendarSix_PORTRAIT) }
     var sixTextSize by remember("") { mutableStateOf(maxTextSizeCalendarSix_LANDSCAPE) }
-    val defaultColor = Color(0xFF018786)
     val todayColor = Color.White
-    var theColor1 = Color(0xFF018786)
-    var theColor2 = Color(0xFF018786)
+    var theColor1 = defaultColor
+    var theColor2 = defaultColor
     if (nongLi.startsWith("*")) {
         nongLi = nongLi.substring(1)
         theColor2 = Color.Red
@@ -204,10 +210,9 @@ fun Date(modifier: Modifier, dateVal: Int, nongLi0: String, sixDays: String, tb_
 //        theColor2 = Color.Magenta
         theColor2 = Color(0xFF88FF33)
     }
-
     fun getBuildAnnotatedString(): AnnotatedString {
         return if (isPort) buildAnnotatedString {
-            withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal) todayColor else theColor2)) { // 设置第一部分颜色
+            withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal) todayColor else if (theColor1 == Color.Red) theColor1 else theColor2)) { // 设置第一部分颜色
                 append(nongLi.subSequence(0, 2).toString() + "\n")
             }
             withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal) todayColor else defaultColor)) {
@@ -216,23 +221,17 @@ fun Date(modifier: Modifier, dateVal: Int, nongLi0: String, sixDays: String, tb_
         }
         else {
             buildAnnotatedString {
-                withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal) todayColor else theColor2)) {
+                withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal) todayColor else if (theColor1 == Color.Red) theColor1 else theColor2)) {
                     append(nongLi.substring(0, 1))
                 }
                 withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal) todayColor else defaultColor)) {
-                    append(tb_day.substring(0, 1))
+                    append(tb_day.substring(0, 1) + sixDays.substring(0, 1) + "\n")
                 }
-                withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal) todayColor else defaultColor)) {
-                    append(sixDays.substring(0, 1) + "\n")
-                }
-                withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal) todayColor else theColor2)) {
+                withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal) todayColor else if (theColor1 == Color.Red) theColor1 else theColor2)) {
                     append(nongLi.substring(1, 2))
                 }
                 withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal) todayColor else defaultColor)) {
-                    append(tb_day.substring(1, 2))
-                }
-                withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal) todayColor else defaultColor)) {
-                    append(sixDays.substring(1, 2))
+                    append(tb_day.substring(1, 2) + sixDays.substring(1, 2))
                 }
             }
         }
@@ -329,7 +328,7 @@ fun Date(modifier: Modifier, dateVal: Int, nongLi0: String, sixDays: String, tb_
                             }
                         },
                         fontSize = textSize1,
-                        color = if (dayOfMonth == dateVal) todayColor else theColor1,
+                        color = if (dayOfMonth == dateVal) todayColor else defaultColor,
                         textAlign = if (isPort) TextAlign.Center else TextAlign.Right,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.fillMaxSize()
