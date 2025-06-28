@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -158,6 +159,7 @@ fun ClockUIV() {
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.weight(0.2f, true))
         Text(
             text = trunck_branch.substring(0, 4) + "  ($year_name)",
             maxLines = 1,
@@ -177,9 +179,30 @@ fun ClockUIV() {
             color = textColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.weight(0.13f, true)
+            modifier = Modifier.weight(0.18f, true)
         )
-        Spacer(modifier = Modifier.weight(0.2f, true))
+        Text(
+            text = leftDate,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            onTextLayout = {
+                if (it.hasVisualOverflow && textSize2A > minTextSize) {
+                    textSize2A = (textSize2A.value - 1.0F).sp
+                } else {
+                    maxTextSizeLeftDateA = textSize2A
+                    with(sharedPreferences.edit()) {
+                        putFloat("SHARED_PREFS_LEFTA", maxTextSizeLeftDateA.value)
+                        commit()
+                    }
+                }
+            },
+            fontSize = textSize2A,
+            color = if (nongliDateColor) Color.Red else textColor,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.weight(0.2f, true)
+        )
+        Spacer(modifier = Modifier.weight(0.3f, true))
         Text(
             text = time,
             maxLines = 1,
@@ -199,8 +222,9 @@ fun ClockUIV() {
             color = textColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.weight(1.6f, true)
+            modifier = Modifier.padding(25.dp).weight(1.1f, true)
         )
+        Spacer(modifier = Modifier.weight(0.1f, true))
         Text(
             text = date.substring(12),
             maxLines = 1,
@@ -222,33 +246,10 @@ fun ClockUIV() {
             fontWeight = FontWeight.Bold,
             modifier = Modifier.weight(0.7f, true)
         )
-        Spacer(modifier = Modifier.weight(0.1f, true))
         Text(
             text = trunck_branch.substring(5),
             maxLines = 1,
-            fontSize = textSize4A,
-            onTextLayout = {
-                if (it.hasVisualOverflow && textSize4A > minTextSize) {
-                    textSize4A = (textSize4A.value - 1.0F).sp
-                } else {
-                    maxTextSizeTBA = textSize4A
-                    with(sharedPreferences.edit()) {
-                        putFloat("SHARED_PREFS_TBA", maxTextSizeTBA.value)
-                        commit()
-                    }
-                }
-            },
-            color = textColor,
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .weight(0.18f, true)
-        )
-        Spacer(modifier = Modifier.weight(0.09f, true))
-        Text(
-            text = leftDate,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
+            fontSize = textSize2A,
             onTextLayout = {
                 if (it.hasVisualOverflow && textSize2A > minTextSize) {
                     textSize2A = (textSize2A.value - 1.0F).sp
@@ -260,13 +261,13 @@ fun ClockUIV() {
                     }
                 }
             },
-            fontSize = textSize2A,
-            color = if (nongliDateColor) Color.Red else textColor,
+            color = textColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.weight(0.18f, true)
+            modifier = Modifier
+                .weight(0.2f, true)
         )
-        Spacer(modifier = Modifier.weight(0.09f, true))
+        Spacer(modifier = Modifier.weight(0.1f, true))
         Text(
             text = date.substring(0, 11),
             maxLines = 1,
@@ -286,9 +287,9 @@ fun ClockUIV() {
             color = if (isRed) Color(0xFFBB86FC) else textColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.weight(0.27f, true)
+            modifier = Modifier.padding(3.dp) .weight(0.35f, true)
         )
-        Spacer(modifier = Modifier.weight(0.09f, true))
+        Spacer(modifier = Modifier.weight(0.1f, true))
     }
 }
 
