@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
@@ -69,11 +68,12 @@ fun getWeeksOfMonth(): Int {
     }
     return ret / 7 + if (ret % 7 == 0) 1 else 2
 }
+
 val arr: Array<String> = arrayOf("S", "M", "T", "W", "T", "F", "S")
 val defaultColor = Color(0xFF018786)
 
 @Composable
-fun CalendarView() {
+fun CalendarView(isToday: Boolean) {
     if (isRedraw > 100) return
     var textSize by remember("") { mutableStateOf(if (isPort) maxTextSizeTitle_PORTRAIT else maxTextSizeTitle_LANDSCAPE) }
     Column(
@@ -85,7 +85,8 @@ fun CalendarView() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = if (isPort) nowDate() else nowDate() + "  " + nowWeek() + if (monthOffset == 0) "  $time" else "",
+                text = if (isToday) if (isPort) nowDate() else nowDate() + "  " + nowWeek() + if (monthOffset == 0) "  $time" else ""
+                else nowDate().substring(0, 8),
                 maxLines = 1,
                 fontSize = textSize,
                 onTextLayout = {
@@ -118,7 +119,7 @@ fun CalendarView() {
                 modifier = Modifier.padding(6.dp)
             )
         }
-        if (isPort && monthOffset == 0) {
+        if (isPort && monthOffset == 0 && isToday) {
             Text(
                 text = time,
                 maxLines = 1,
@@ -149,12 +150,18 @@ fun CalendarView() {
                     }
                 }
             } else {
-                Row(Modifier.weight(1.0f).padding(start = 4.dp, end = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    Modifier
+                        .weight(1.0f)
+                        .padding(start = 4.dp, end = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     for (j in 0..6) {
                         if (!isPort) {
                             Row(Modifier.width(7.dp)) {}
                         }
                         Date(
+                            isToday = isToday,
                             Modifier.weight(1.0f),
                             dateArray[d],
                             nongliArray[d],
@@ -181,13 +188,19 @@ fun CalendarPreview() {
         Surface(
             modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
         ) {
-            CalendarView()
+            CalendarView(true)
         }
     }
 }
 
 @Composable
-fun Date(modifier: Modifier, dateVal: Int, nongLi0: String, sixDays: String, tb_day: String
+fun Date(
+    isToday: Boolean,
+    modifier: Modifier,
+    dateVal: Int,
+    nongLi0: String,
+    sixDays: String,
+    tb_day: String
 ) {
     if (isRedraw > 100) return
     var nongLi = nongLi0
@@ -212,25 +225,25 @@ fun Date(modifier: Modifier, dateVal: Int, nongLi0: String, sixDays: String, tb_
     }
     fun getBuildAnnotatedString(): AnnotatedString {
         return if (isPort) buildAnnotatedString {
-            withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal) todayColor else if (theColor1 == Color.Red) theColor1 else theColor2)) { // 设置第一部分颜色
+            withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal && isToday) todayColor else if (theColor1 == Color.Red) theColor1 else theColor2)) { // 设置第一部分颜色
                 append(nongLi.subSequence(0, 2).toString() + "\n")
             }
-            withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal) todayColor else defaultColor)) {
+            withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal && isToday) todayColor else defaultColor)) {
                 append(tb_day + "\n" + sixDays)
             }
         }
         else {
             buildAnnotatedString {
-                withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal) todayColor else if (theColor1 == Color.Red) theColor1 else theColor2)) {
+                withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal && isToday) todayColor else if (theColor1 == Color.Red) theColor1 else theColor2)) {
                     append(nongLi.substring(0, 1))
                 }
-                withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal) todayColor else defaultColor)) {
+                withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal && isToday) todayColor else defaultColor)) {
                     append(tb_day.substring(0, 1) + sixDays.substring(0, 1) + "\n")
                 }
-                withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal) todayColor else if (theColor1 == Color.Red) theColor1 else theColor2)) {
+                withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal && isToday) todayColor else if (theColor1 == Color.Red) theColor1 else theColor2)) {
                     append(nongLi.substring(1, 2))
                 }
-                withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal) todayColor else defaultColor)) {
+                withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal && isToday) todayColor else defaultColor)) {
                     append(tb_day.substring(1, 2) + sixDays.substring(1, 2))
                 }
             }
@@ -328,7 +341,7 @@ fun Date(modifier: Modifier, dateVal: Int, nongLi0: String, sixDays: String, tb_
                             }
                         },
                         fontSize = textSize1,
-                        color = if (dayOfMonth == dateVal) todayColor else defaultColor,
+                        color = if (dayOfMonth == dateVal && isToday) todayColor else defaultColor,
                         textAlign = if (isPort) TextAlign.Center else TextAlign.Right,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.fillMaxSize()

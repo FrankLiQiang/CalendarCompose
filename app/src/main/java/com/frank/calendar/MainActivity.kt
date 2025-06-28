@@ -1,6 +1,8 @@
 package com.frank.calendar
 
+import android.R.attr.contentDescription
 import android.app.DatePickerDialog
+import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
@@ -13,7 +15,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.rounded.ArrowForward
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -26,8 +34,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.DarkGray
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,8 +51,6 @@ import com.frank.calendar.ui.theme.firstOffset
 import com.frank.calendar.ui.theme.jumpToPage
 import com.frank.calendar.ui.theme.monthOffset
 import com.google.accompanist.pager.ExperimentalPagerApi
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -182,22 +188,34 @@ private fun readToDate() {
 @Composable
 fun HorizontalPagerWithFloatingButton(navController: NavHostController) {
     val c = LocalContext.current
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier.fillMaxSize(), //contentAlignment = Alignment.TopEnd
+    ) {
         HorizontalPagerSample(false, navController)
-        TextButton(
+
+        // 左上角按钮
+        IconButton(
             onClick = {
-                //Toast.makeText(context, "跳转到指定月份", Toast.LENGTH_SHORT).show()
-            }, modifier = Modifier
+                navController.popBackStack()
+            },
+            modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(top = if (isPort) 90.dp else 10.dp, start = 16.dp)
+                .size(80.dp)
+                .padding(10.dp)
+                .background(
+                    color = defaultColor.copy(alpha = 0.4f), // 半透明黑色背景
+                    CircleShape
+                )
+                .shadow(4.dp, CircleShape)
         ) {
-            Text(
-                text = "Today", modifier = Modifier, fontSize = 25.sp,
-                color = Color(0xFF40A9FF), // 明亮蓝色
-                fontWeight = FontWeight.Bold
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "关闭",
+                tint = Color.White
             )
         }
-        TextButton(
+
+        IconButton(
             onClick = {
                 val dpd = DatePickerDialog(
                     c, { _, year, month, day ->
@@ -209,16 +227,29 @@ fun HorizontalPagerWithFloatingButton(navController: NavHostController) {
                         jumpToPage(monthOffset + firstOffset)
                         isRedraw = 1 - isRedraw
                     }, wantDate.year, wantDate.monthValue - 1, wantDate.dayOfMonth
-                )
+                ).apply {
+                    setButton(DialogInterface.BUTTON_NEUTRAL, "回到今天") { _, _ ->
+                        monthOffset = 0
+                        jumpToPage(firstOffset)
+                        isRedraw = 1 - isRedraw
+                    }
+                }
                 dpd.show()
-            }, modifier = Modifier
+            },
+            modifier = Modifier
+                .size(80.dp)
+                .padding(10.dp)
                 .align(Alignment.TopEnd)
-                .padding(top = if (isPort) 90.dp else 10.dp, end = 16.dp)
+                .background(
+                    color = defaultColor.copy(alpha = 0.4f), // 半透明黑色背景
+                    shape = CircleShape
+                )
+                .shadow(4.dp, shape = CircleShape)
         ) {
-            Text(
-                text = "Go to", modifier = Modifier, fontSize = 25.sp,
-                color = Color(0xFF40A9FF), // 明亮蓝色
-                fontWeight = FontWeight.Bold
+            Icon(
+                imageVector = Icons.Rounded.ArrowForward,
+                contentDescription = contentDescription.toString(),
+                tint = defaultColor
             )
         }
     }

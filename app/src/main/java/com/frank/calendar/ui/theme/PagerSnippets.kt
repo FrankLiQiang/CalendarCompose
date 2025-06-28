@@ -85,7 +85,7 @@ fun HorizontalPagerSample(isToday: Boolean, navController: NavHostController) {
                         (maxTextSizeCalendarDate_PORTRAIT.value + 12.0f).sp
                     maxTextSizeCalendarSix_PORTRAIT =
                         (maxTextSizeCalendarSix_PORTRAIT.value + 12.0f).sp
-                    CalendarView()
+                    CalendarView(true)
                 }
 
                 3 -> {
@@ -108,7 +108,7 @@ fun HorizontalPagerSample(isToday: Boolean, navController: NavHostController) {
             maxTextSizeCalendarSix_LANDSCAPE = (maxTextSizeCalendarSix_LANDSCAPE.value + 12.0f).sp
             maxTextSizeCalendarDate_PORTRAIT = (maxTextSizeCalendarDate_PORTRAIT.value + 12.0f).sp
             maxTextSizeCalendarSix_PORTRAIT = (maxTextSizeCalendarSix_PORTRAIT.value + 12.0f).sp
-            CalendarView()
+            CalendarView(false)
         }
     }
 
