@@ -1,11 +1,12 @@
 package com.frank.calendar
 
 import android.app.DatePickerDialog
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,12 +22,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -77,7 +79,7 @@ fun getWeeksOfMonth(): Int {
 }
 
 @Composable
-fun CalendarView(navController: NavHostController) {
+fun CalendarView() {
     if (isRedraw > 100) return
     var textSize by remember("") { mutableStateOf(if (isPort) maxTextSizeTitle_PORTRAIT else maxTextSizeTitle_LANDSCAPE) }
     Column(
@@ -85,8 +87,7 @@ fun CalendarView(navController: NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
-            Modifier
-                .weight(if (isPort) 0.7f else 1.2f),
+            Modifier.weight(if (isPort) 0.7f else 1.2f),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -101,8 +102,7 @@ fun CalendarView(navController: NavHostController) {
                             maxTextSizeTitle_PORTRAIT = textSize
                             with(sharedPreferences.edit()) {
                                 putFloat(
-                                    "SHARED_PREFS_CALENDAR_TITLE_P",
-                                    maxTextSizeTitle_PORTRAIT.value
+                                    "SHARED_PREFS_CALENDAR_TITLE_P", maxTextSizeTitle_PORTRAIT.value
                                 )
                                 commit()
                             }
@@ -145,10 +145,9 @@ fun CalendarView(navController: NavHostController) {
             Row(Modifier.weight(1.0f), verticalAlignment = Alignment.CenterVertically) {
                 for (j in 0..6) {
                     if (!isPort) {
-                        Row(Modifier.width(17.dp)) {}
+                        Row(Modifier.width(7.dp)) {}
                     }
                     Date(
-                        j,
                         Modifier.weight(1.0f),
                         dateArray[d],
                         nongliArray[d],
@@ -174,29 +173,24 @@ fun CalendarPreview() {
         Surface(
             modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
         ) {
-//            CalendarView(navController)
+            CalendarView()
         }
     }
 }
 
 @Composable
-fun Date(
-    weekId: Int,
-    modifier: Modifier,
-    dateVal: Int,
-    nongLi0: String,
-    sixDays: String,
-    tb_day: String
+fun Date(modifier: Modifier, dateVal: Int, nongLi0: String, sixDays: String, tb_day: String
 ) {
     if (isRedraw > 100) return
     val context = LocalContext.current
     var nongLi = nongLi0
     var textSize1 by remember("") { mutableStateOf(if (isPort) maxTextSizeCalendarDate_PORTRAIT else maxTextSizeCalendarDate_LANDSCAPE) }
-    var textSize2 by remember("") { mutableStateOf(if (isPort) maxTextSizeCalendarSix_PORTRAIT else maxTextSizeCalendarSix_LANDSCAPE) }
+    var sixTextSizePort by remember("") { mutableStateOf(maxTextSizeCalendarSix_PORTRAIT) }
+    var sixTextSize by remember("") { mutableStateOf(maxTextSizeCalendarSix_LANDSCAPE) }
+    val defaultColor = Color(0xFF018786)
+    val todayColor = Color.White
     var theColor1 = Color(0xFF018786)
     var theColor2 = Color(0xFF018786)
-    if (weekId == 0 || weekId == 6) theColor1 = Color.Green
-    if (weekId == 0 || weekId == 6) theColor2 = Color.Green
     if (nongLi.startsWith("*")) {
         nongLi = nongLi.substring(1)
         theColor2 = Color.Red
@@ -210,36 +204,42 @@ fun Date(
 //        theColor2 = Color.Magenta
         theColor2 = Color(0xFF88FF33)
     }
-    Box(
-        modifier = modifier
-            .clickable {
-                if (dateVal == -1) {
-                    val dpd = DatePickerDialog(
-                        context, { _, year, month, day ->
-                            wantDate = LocalDateTime.of(year, month + 1, 1, 0, 0, 0, 0)
-                            val currentDay = LocalDateTime.of(
-                                LocalDateTime.now().year,
-                                LocalDateTime.now().month,
-                                1,
-                                0,
-                                0,
-                                0,
-                                0
-                            )
-                            monthOffset = ChronoUnit.MONTHS
-                                .between(currentDay, wantDate)
-                                .toInt()
-                            jumpToPage(monthOffset + firstOffset)
-                            isRedraw = 1 - isRedraw
-                        }, wantDate.year, wantDate.monthValue - 1, wantDate.dayOfMonth
-                    )
-                    dpd.show()
-                } else if (dayOfMonth == dateVal && monthOffset != 0) {
-                    monthOffset = 0
-                    jumpToPage(firstOffset)
-                    isRedraw = 1 - isRedraw
+
+    fun getBuildAnnotatedString(): AnnotatedString {
+        return if (isPort) buildAnnotatedString {
+            withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal) todayColor else theColor2)) { // 设置第一部分颜色
+                append(nongLi.subSequence(0, 2).toString() + "\n")
+            }
+            withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal) todayColor else defaultColor)) {
+                append(tb_day + "\n" + sixDays)
+            }
+        }
+        else {
+            buildAnnotatedString {
+                withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal) todayColor else theColor2)) {
+                    append(nongLi.substring(0, 1))
                 }
-            }) {
+                withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal) todayColor else defaultColor)) {
+                    append(tb_day.substring(0, 1))
+                }
+                withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal) todayColor else defaultColor)) {
+                    append(sixDays.substring(0, 1) + "\n")
+                }
+                withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal) todayColor else theColor2)) {
+                    append(nongLi.substring(1, 2))
+                }
+                withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal) todayColor else defaultColor)) {
+                    append(tb_day.substring(1, 2))
+                }
+                withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal) todayColor else defaultColor)) {
+                    append(sixDays.substring(1, 2))
+                }
+            }
+        }
+    }
+
+
+    Box(modifier = modifier) {
         Row(
             Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically
         ) {
@@ -247,31 +247,22 @@ fun Date(
             fun showSix() {
                 Box(
                     modifier = Modifier
-                        .weight(if (isPort) 1.5f else 0.6f),
+                        .weight(if (isPort) 1.5f else 1.0f)
+                        .fillMaxHeight(),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (dayOfMonth == dateVal && !isPort) {
-                        Image(
-                            painter = painterResource(id = R.drawable.round),
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Fit,
-                            contentDescription = stringResource(id = R.string.app_name),
-                        )
-                    }
                     if (dateVal != -1) {
                         Text(
-                            text = nongLi.subSequence(0, 2)
-                                .toString() + "\n" + tb_day + "\n" + sixDays,
-                            color = theColor2,
-                            fontSize = textSize2,
-                            lineHeight = (textSize2.value + 2).sp,
+                            getBuildAnnotatedString(),
+                            fontSize = if (isPort) sixTextSizePort else sixTextSize,
+                            lineHeight = ((if (isPort) sixTextSizePort else sixTextSize).value + 2).sp,
                             textAlign = TextAlign.Center,
                             onTextLayout = {
-                                if (it.hasVisualOverflow && textSize2 > minTextSize) {
-                                    textSize2 = (textSize2.value - 1.0F).sp
-                                } else {
-                                    if (isPort) {
-                                        maxTextSizeCalendarSix_PORTRAIT = textSize2
+                                if (isPort) {
+                                    if (it.hasVisualOverflow && sixTextSizePort > minTextSize) {
+                                        sixTextSizePort = (sixTextSizePort.value - 1.0F).sp
+                                    } else {
+                                        maxTextSizeCalendarSix_PORTRAIT = sixTextSizePort
                                         with(sharedPreferences.edit()) {
                                             putFloat(
                                                 "SHARED_PREFS_SIX_P",
@@ -279,8 +270,12 @@ fun Date(
                                             )
                                             commit()
                                         }
+                                    }
+                                } else {
+                                    if (it.hasVisualOverflow && sixTextSize > minTextSize) {
+                                        sixTextSize = (sixTextSize.value - 1.0F).sp
                                     } else {
-                                        maxTextSizeCalendarSix_LANDSCAPE = textSize2
+                                        maxTextSizeCalendarSix_LANDSCAPE = sixTextSize
                                         with(sharedPreferences.edit()) {
                                             putFloat(
                                                 "SHARED_PREFS_SIX_L",
@@ -302,17 +297,9 @@ fun Date(
                     modifier = (if (isPort) Modifier
                         .weight(1.0f, true)
                         .align(alignment = Alignment.Bottom)
-                    else Modifier
-                        .weight(1.0f, true)),
-                    contentAlignment = Alignment.Center
+                    else Modifier.weight(1.0f, true)).align(alignment = Alignment.Bottom),
+                    contentAlignment = Alignment.Center,
                 ) {
-                    if (dayOfMonth == dateVal && isPort) {
-                        Image(
-                            painter = painterResource(id = R.drawable.round),
-                            modifier = Modifier.fillMaxSize(),
-                            contentDescription = stringResource(id = R.string.app_name),
-                        )
-                    }
                     Text(
                         text = "$dateVal",
                         maxLines = 1,
@@ -342,7 +329,7 @@ fun Date(
                             }
                         },
                         fontSize = textSize1,
-                        color = theColor1,
+                        color = if (dayOfMonth == dateVal) todayColor else theColor1,
                         textAlign = if (isPort) TextAlign.Center else TextAlign.Right,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.fillMaxSize()
@@ -361,6 +348,7 @@ fun Date(
                 Row(Modifier.weight(2.0f), verticalAlignment = Alignment.CenterVertically) {
                     if (dateVal != -1) {
                         showNum()
+                        Spacer(modifier = Modifier.width(5.dp))
                         showSix()
                     }
                 }

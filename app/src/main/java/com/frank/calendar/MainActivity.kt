@@ -1,5 +1,6 @@
 package com.frank.calendar
 
+import android.app.DatePickerDialog
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
@@ -27,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,6 +39,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.frank.calendar.ui.theme.CalendarTheme
 import com.frank.calendar.ui.theme.HorizontalPagerSample
+import com.frank.calendar.ui.theme.firstOffset
+import com.frank.calendar.ui.theme.jumpToPage
 import com.frank.calendar.ui.theme.monthOffset
 import com.google.accompanist.pager.ExperimentalPagerApi
 import kotlinx.coroutines.delay
@@ -44,6 +48,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 lateinit var sharedPreferences: SharedPreferences
 lateinit var firstDay: LocalDate
@@ -176,6 +181,7 @@ private fun readToDate() {
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun HorizontalPagerWithFloatingButton(navController: NavHostController) {
+    val c = LocalContext.current
     Box(modifier = Modifier.fillMaxSize()) {
         HorizontalPagerSample(false, navController)
         TextButton(
@@ -193,7 +199,18 @@ fun HorizontalPagerWithFloatingButton(navController: NavHostController) {
         }
         TextButton(
             onClick = {
-                //Toast.makeText(context, "跳转到指定月份", Toast.LENGTH_SHORT).show()
+                val dpd = DatePickerDialog(
+                    c, { _, year, month, day ->
+                        wantDate = LocalDateTime.of(year, month + 1, 1, 0, 0, 0, 0)
+                        val currentDay = LocalDateTime.of(
+                            LocalDateTime.now().year, LocalDateTime.now().month, 1, 0, 0, 0, 0
+                        )
+                        monthOffset = ChronoUnit.MONTHS.between(currentDay, wantDate).toInt()
+                        jumpToPage(monthOffset + firstOffset)
+                        isRedraw = 1 - isRedraw
+                    }, wantDate.year, wantDate.monthValue - 1, wantDate.dayOfMonth
+                )
+                dpd.show()
             }, modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(top = if (isPort) 90.dp else 10.dp, end = 16.dp)
