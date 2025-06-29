@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -222,7 +221,9 @@ fun ClockUIV() {
             color = textColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(25.dp).weight(1.1f, true)
+            modifier = Modifier
+                .padding(25.dp)
+                .weight(1.1f, true)
         )
         Spacer(modifier = Modifier.weight(0.1f, true))
         Text(
@@ -287,7 +288,9 @@ fun ClockUIV() {
             color = if (isRed) Color(0xFFBB86FC) else textColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(3.dp) .weight(0.35f, true)
+            modifier = Modifier
+                .padding(3.dp)
+                .weight(0.35f, true)
         )
         Spacer(modifier = Modifier.weight(0.1f, true))
     }

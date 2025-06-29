@@ -29,7 +29,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frank.calendar.ui.theme.CalendarTheme
-import com.frank.calendar.ui.theme.isShowSettingDialog
 import com.frank.calendar.ui.theme.monthOffset
 import java.time.temporal.TemporalAdjusters
 

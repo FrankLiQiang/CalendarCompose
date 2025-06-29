@@ -1,4 +1,4 @@
-package com.frank.calendar.ui.theme
+package com.frank.calendar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -38,9 +38,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.frank.calendar.LunarCalendar
-import com.frank.calendar.LunarUtil
-import com.frank.calendar.defaultColor
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -208,7 +205,7 @@ fun BirthdaySearch(navController: NavHostController) {
                 navController.popBackStack()
             },
             modifier = Modifier
-                .align(Alignment.TopStart)
+                .align(Alignment.TopEnd)
                 .size(80.dp)
                 .padding(10.dp)
                 .background(
@@ -223,6 +220,167 @@ fun BirthdaySearch(navController: NavHostController) {
                 tint = Color.White
             )
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BirthdaySearchL(navController: NavHostController) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            datePickerState =
+                rememberDatePickerState(
+                    initialSelectedDateMillis = theTime.toLocalDate()
+                        .atStartOfDay(ZoneOffset.ofHours(0)).toInstant().toEpochMilli()
+                )
+            getDateInfo(datePickerState.selectedDateMillis, chooseTime)
+            Box(
+                modifier = Modifier.weight(1.0f)
+            ) {
+                DatePicker(
+                    title = null,
+                    headline = null,
+                    state = datePickerState,
+                    showModeToggle = false,
+                )
+            }
+            Box(
+                modifier = Modifier.weight(1.0f),
+                contentAlignment = Alignment.Center // 内容上下居中
+            ) {
+                Column(
+                    modifier = Modifier.padding(top = 30.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(), // 使 Row 填满宽度
+                        horizontalArrangement = Arrangement.Center // 水平居中
+                    ) {
+                        Text("生辰八字计算", color = Color.Yellow, fontSize = 32.sp)
+                    }
+                    Spacer(modifier = Modifier.height(26.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+
+                        IconButton(onClick = {
+                            datePickerState.setSelection(
+                                LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(9)) * 1000
+                            )
+                        }) {
+                            Icon(Icons.Default.DateRange, contentDescription = "More options")
+                        }
+                        Checkbox(
+                            checked = isLunar, onCheckedChange = {
+                                isLunar = !isLunar
+                            }, modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                        Text(
+                            text = "农历",
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                        if (isLunar) {
+                            Checkbox(
+                                checked = isLeap, onCheckedChange = {
+                                    isLeap = !isLeap
+                                }, modifier = Modifier.align(Alignment.CenterVertically)
+                            )
+                            Text(
+                                text = "闰年",
+                                color = Color.LightGray,
+                                modifier = Modifier.align(Alignment.CenterVertically)
+                            )
+                        }
+                        IconButton(onClick = {
+                            expanded = !expanded
+                        }) {
+                            Icon(Icons.Default.Menu, contentDescription = "More options")
+                        }
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            menuItemData.forEachIndexed { index, value ->
+                                DropdownMenuItem(
+                                    text = { Text(value) },
+                                    onClick = {
+                                        chooseTime = index * 2
+                                        getDateInfo(
+                                            datePickerState.selectedDateMillis,
+                                            chooseTime
+                                        )
+                                        expanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = sTB.substring(5),
+                            fontSize = 30.sp,
+                            color = Color.Yellow,
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = sTB.substring(0, 4) + dateInfo,
+                            fontSize = 20.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = sYearName,
+                            fontSize = 20.sp
+                        )
+                    }
+                }
+            }
+        }
+        // 左上角按钮
+        IconButton(
+            onClick = {
+                navController.popBackStack()
+            },
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .size(80.dp)
+                .padding(10.dp)
+                .background(
+                    color = defaultColor.copy(alpha = 0.4f), // 半透明黑色背景
+                    CircleShape
+                )
+                .shadow(4.dp, CircleShape)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "关闭",
+                tint = Color.White
+            )
+        }
+
     }
 }
 

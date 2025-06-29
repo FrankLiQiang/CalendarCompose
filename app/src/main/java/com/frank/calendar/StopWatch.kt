@@ -65,7 +65,6 @@ import com.frank.calendar.extensions.isDivisible
 import com.frank.calendar.extensions.isDivisible2
 import com.frank.calendar.extensions.toRange0To360
 import com.frank.calendar.ui.theme.CalendarTheme
-import com.frank.calendar.ui.theme.datePickerState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
