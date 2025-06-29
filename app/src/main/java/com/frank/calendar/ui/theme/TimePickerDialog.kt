@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.navigation.NavHostController
 import com.frank.calendar.LunarCalendar
 import com.frank.calendar.LunarUtil
 import java.time.Instant
@@ -77,9 +78,7 @@ lateinit var datePickerState: DatePickerState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShowSettingDialog(
-    event: () -> Unit
-) {
+fun ShowSettingDialog(navController: NavHostController) {
 
     Dialog(
         onDismissRequest = {},
@@ -155,7 +154,7 @@ fun ShowSettingDialog(
                         Icon(Icons.Default.Menu, contentDescription = "More options")
                     }
                     IconButton(onClick = {
-                        event()
+                        navController.popBackStack()
                     }) {
                         Icon(Icons.Default.Refresh, contentDescription = "More options")
                     }

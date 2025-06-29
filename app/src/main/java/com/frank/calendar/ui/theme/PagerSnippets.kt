@@ -20,6 +20,7 @@ import com.frank.calendar.ClockUI
 import com.frank.calendar.ClockUIV
 import com.frank.calendar.DoubleView
 import com.frank.calendar.DoubleView1
+import com.frank.calendar.TowTools
 import com.frank.calendar.isPort
 import com.frank.calendar.maxTextSizeCalendarDate_LANDSCAPE
 import com.frank.calendar.maxTextSizeCalendarDate_PORTRAIT
@@ -34,7 +35,7 @@ var firstOffset = 0
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HorizontalPagerSample(isToday: Boolean, navController: NavHostController) {
+fun ClockAndCalendar(isToday: Boolean, navController: NavHostController) {
 
     val pagerState = rememberPagerState(pageCount = {
         Int.MAX_VALUE
@@ -89,14 +90,7 @@ fun HorizontalPagerSample(isToday: Boolean, navController: NavHostController) {
                 }
 
                 3 -> {
-                    Text(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clickable {
-                                navController.navigate("calendar") {}
-                            },
-                        text = "Settings"
-                    )
+                    TowTools(navController)
                 }
             }
         } else {

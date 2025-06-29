@@ -17,7 +17,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.frank.calendar.ui.theme.CalendarTheme
-import com.frank.calendar.ui.theme.HorizontalPagerSample
+import com.frank.calendar.ui.theme.ClockAndCalendar
+import com.frank.calendar.ui.theme.ShowSettingDialog
 import com.frank.calendar.ui.theme.monthOffset
 
 class MainActivity : ComponentActivity() {
@@ -47,10 +48,14 @@ class MainActivity : ComponentActivity() {
                     NavHost(navController, startDestination = "double") {
                         composable("double") {
                             monthOffset = 0
-                            HorizontalPagerSample(true, navController)
+                            ClockAndCalendar(true, navController)
                         }
                         composable("calendar") {
                             PerpetualCalendar(navController)
+                        }
+
+                        composable("birthday") {
+                            ShowSettingDialog(navController)
                         }
                     }
                 }
