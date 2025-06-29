@@ -18,7 +18,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.frank.calendar.ui.theme.CalendarTheme
 import com.frank.calendar.ui.theme.ClockAndCalendar
-import com.frank.calendar.ui.theme.ShowSettingDialog
+import com.frank.calendar.ui.theme.BirthdaySearch
 import com.frank.calendar.ui.theme.monthOffset
 
 class MainActivity : ComponentActivity() {
@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("birthday") {
-                            ShowSettingDialog(navController)
+                            BirthdaySearch(navController)
                         }
                     }
                 }
