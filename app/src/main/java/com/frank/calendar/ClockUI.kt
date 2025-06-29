@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.edit
 import com.frank.calendar.LunarCalendar.getSolarTerm
 import com.frank.calendar.ui.theme.CalendarTheme
-import com.frank.calendar.ui.theme.monthOffset
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit

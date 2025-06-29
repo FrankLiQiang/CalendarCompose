@@ -1,4 +1,4 @@
-package com.frank.calendar.ui.theme
+package com.frank.calendar
 
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -12,17 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.frank.calendar.CalendarView
-import com.frank.calendar.ClockUI
-import com.frank.calendar.ClockUIV
-import com.frank.calendar.DoubleView
-import com.frank.calendar.DoubleView1
-import com.frank.calendar.TowTools
-import com.frank.calendar.isPort
-import com.frank.calendar.maxTextSizeCalendarDate_LANDSCAPE
-import com.frank.calendar.maxTextSizeCalendarDate_PORTRAIT
-import com.frank.calendar.maxTextSizeCalendarSix_LANDSCAPE
-import com.frank.calendar.maxTextSizeCalendarSix_PORTRAIT
 import kotlinx.coroutines.launch
 
 var monthOffset = 0

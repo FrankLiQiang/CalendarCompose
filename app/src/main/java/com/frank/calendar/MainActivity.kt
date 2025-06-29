@@ -17,8 +17,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.frank.calendar.ui.theme.CalendarTheme
-import com.frank.calendar.ui.theme.ClockAndCalendar
-import com.frank.calendar.ui.theme.monthOffset
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +44,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     NavHost(navController, startDestination = "double") {
                         composable("double") {
+                            monthOffset = 0
                             ClockAndCalendar(true, navController)
                         }
                         composable("calendar") {

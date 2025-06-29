@@ -1,16 +1,11 @@
 package com.frank.calendar
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -18,7 +13,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -52,10 +46,12 @@ fun CustomTimePickerDialog(event: (Int) -> Unit) {
             title = {
                 Text(text = oldTime)
             },
-            text = { OldTime(modifier = Modifier, {index->
-                selectedHour = index
-            }
-            ) },
+            text = {
+                OldTime(modifier = Modifier, { index ->
+                    selectedHour = index
+                }
+                )
+            },
             confirmButton = {
                 TextButton(onClick = {
                     showBranchDialog = false
@@ -179,11 +175,17 @@ fun OldTime(
         }
         if (isFirstDraw) {
             isFirstDraw = false
-            val x = findIntersectionWithCircle(centerX, centerY, 1.2f * circleRadius, centerX, centerY - circleRadius)
+            val x = findIntersectionWithCircle(
+                centerX,
+                centerY,
+                1.2f * circleRadius,
+                centerX,
+                centerY - circleRadius
+            )
             drawCircle(
                 color = defaultColor,
                 radius = 50f,
-                center = Offset(x.x,x.y)
+                center = Offset(x.x, x.y)
             )
             drawLine(
                 color = defaultColor,
@@ -198,7 +200,7 @@ fun OldTime(
             drawCircle(
                 color = defaultColor,
                 radius = 50f,
-                center = Offset(x.x,x.y)
+                center = Offset(x.x, x.y)
             )
             drawLine(
                 color = defaultColor,
@@ -226,7 +228,11 @@ fun OldTime(
                     AnnotatedString(s),
                     style = TextStyle(
                         fontSize = 18.sp,
-                        color = if (s == oldTime.substring(0, 1)) Colors.RED.value else Colors.WHITE.value
+                        color = if (s == oldTime.substring(
+                                0,
+                                1
+                            )
+                        ) Colors.RED.value else Colors.WHITE.value
                     )
                 )
                 drawText(

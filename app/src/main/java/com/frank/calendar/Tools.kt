@@ -25,7 +25,6 @@ import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.rounded.ArrowForward
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,10 +38,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.frank.calendar.ui.theme.ClockAndCalendar
-import com.frank.calendar.ui.theme.firstOffset
-import com.frank.calendar.ui.theme.jumpToPage
-import com.frank.calendar.ui.theme.monthOffset
 import com.google.accompanist.pager.ExperimentalPagerApi
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -52,7 +47,9 @@ import java.time.temporal.ChronoUnit
 fun PerpetualCalendar(navController: NavHostController) {
     val c = LocalContext.current
     Box(
-        modifier = Modifier.fillMaxSize(), //contentAlignment = Alignment.TopEnd
+        modifier = Modifier
+            .background(color = Color.Black)
+            .fillMaxSize(),
     ) {
         ClockAndCalendar(false, navController)
 
@@ -103,11 +100,11 @@ fun PerpetualCalendar(navController: NavHostController) {
                 .size(80.dp)
                 .padding(10.dp)
                 .align(Alignment.TopEnd)
-                .background(
-                    color = defaultColor.copy(alpha = 0.4f), // 半透明黑色背景
-                    shape = CircleShape
-                )
-                .shadow(4.dp, shape = CircleShape)
+//                .background(
+//                    color = defaultColor.copy(alpha = 0.4f), // 半透明黑色背景
+//                    shape = CircleShape
+//                )
+//                .shadow(4.dp, shape = CircleShape)
         ) {
             Icon(
                 imageVector = Icons.Rounded.ArrowForward,
@@ -122,7 +119,7 @@ fun PerpetualCalendar(navController: NavHostController) {
 fun TowToolsV(navController: NavHostController) {
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        color = Color.Black
     ) {
         Column(
             modifier = Modifier
