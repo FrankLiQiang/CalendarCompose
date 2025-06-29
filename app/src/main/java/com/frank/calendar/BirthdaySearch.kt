@@ -16,11 +16,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerState
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -55,24 +54,6 @@ var oldTimeStamp = 0L
 var oldChooseTime = 0
 
 
-//val menuItemData = List(100) { "Option ${it + 1}" }
-val menuItemData = arrayOf(
-    "子 23:00〜01:00",
-    "丑 01:00〜03:00",
-    "寅 03:00〜05:00",
-    "卯 05:00〜07:00",
-    "辰 07:00〜09:00",
-    "巳 09:00〜11:00",
-    "午 11:00〜13:00",
-    "未 13:00〜15:00",
-    "申 15:00〜17:00",
-    "酉 17:00〜19:00",
-    "戌 19:00〜21:00",
-    "亥 21:00〜23:00"
-)
-var expanded by mutableStateOf(false)
-
-//var chosenDate by mutableStateOf(theTime.toLocalDate())
 @OptIn(ExperimentalMaterial3Api::class)
 lateinit var datePickerState: DatePickerState
 
@@ -144,24 +125,9 @@ fun BirthdaySearch(navController: NavHostController) {
                     )
                 }
                 IconButton(onClick = {
-                    expanded = !expanded
+                    showBranchDialog = !showBranchDialog
                 }) {
-                    Icon(Icons.Default.Menu, contentDescription = "More options")
-                }
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    menuItemData.forEachIndexed { index, value ->
-                        DropdownMenuItem(
-                            text = { Text(value) },
-                            onClick = {
-                                chooseTime = index * 2
-                                getDateInfo(datePickerState.selectedDateMillis, chooseTime)
-                                expanded = false
-                            }
-                        )
-                    }
+                    Icon(Icons.Default.Person, contentDescription = "More options")
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -219,6 +185,10 @@ fun BirthdaySearch(navController: NavHostController) {
                 contentDescription = "关闭",
                 tint = Color.White
             )
+        }
+        CustomTimePickerDialog { index ->
+            chooseTime = index * 2
+            getDateInfo(datePickerState.selectedDateMillis, chooseTime)
         }
     }
 }
@@ -299,27 +269,9 @@ fun BirthdaySearchL(navController: NavHostController) {
                             )
                         }
                         IconButton(onClick = {
-                            expanded = !expanded
+                            showBranchDialog = !showBranchDialog
                         }) {
-                            Icon(Icons.Default.Menu, contentDescription = "More options")
-                        }
-                        DropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false }
-                        ) {
-                            menuItemData.forEachIndexed { index, value ->
-                                DropdownMenuItem(
-                                    text = { Text(value) },
-                                    onClick = {
-                                        chooseTime = index * 2
-                                        getDateInfo(
-                                            datePickerState.selectedDateMillis,
-                                            chooseTime
-                                        )
-                                        expanded = false
-                                    }
-                                )
-                            }
+                            Icon(Icons.Default.Person, contentDescription = "More options")
                         }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
@@ -380,7 +332,10 @@ fun BirthdaySearchL(navController: NavHostController) {
                 tint = Color.White
             )
         }
-
+        CustomTimePickerDialog { index ->
+            chooseTime = index * 2
+            getDateInfo(datePickerState.selectedDateMillis, chooseTime)
+        }
     }
 }
 

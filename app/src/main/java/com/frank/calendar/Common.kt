@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
@@ -38,6 +39,7 @@ var textColor by mutableStateOf(Color(0xFF018786))
 var isPort by mutableStateOf(true)
 var time by mutableStateOf("09:35:23")
 var oldTime by mutableStateOf("子时")
+var showBranchDialog by mutableStateOf(false)
 var leftDate by mutableStateOf("")
 var trunck_branch by mutableStateOf("")
 var year_name by mutableStateOf("")

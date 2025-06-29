@@ -22,8 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.AnnotatedString
@@ -35,54 +33,39 @@ import androidx.compose.ui.unit.sp
 import com.frank.calendar.LunarCalendar.Branch
 import com.frank.calendar.extensions.degreesToRadians
 import com.frank.calendar.extensions.isDivisible
-import com.frank.calendar.extensions.isDivisible2
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
 @Composable
-fun CustomTimePickerDialog() {
-    var showDialog by remember { mutableStateOf(false) }
-    var selectedHour by remember { mutableStateOf(12) }
-    var selectedMinute by remember { mutableStateOf(30) }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "选择的时间: ${String.format("%02d:%02d", selectedHour, selectedMinute)}",
-            style = MaterialTheme.typography.bodyLarge
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(onClick = { showDialog = true }) {
-            Text(text = "选择时间")
-        }
-    }
-
-    if (showDialog) {
+fun CustomTimePickerDialog(event: (Int) -> Unit) {
+    var selectedHour by remember { mutableStateOf(0) }
+    if (showBranchDialog) {
+        selectedHour = 0
+        oldTime = "子时"
         AlertDialog(
             modifier = Modifier
                 .width(440.dp)
                 .height(440.dp),
-            onDismissRequest = { showDialog = false },
+            onDismissRequest = { showBranchDialog = false },
             title = {
                 Text(text = oldTime)
             },
-            text = { OldTime(modifier = Modifier) },
+            text = { OldTime(modifier = Modifier, {index->
+                selectedHour = index
+            }
+            ) },
             confirmButton = {
-                TextButton(onClick = { showDialog = false }) {
+                TextButton(onClick = {
+                    showBranchDialog = false
+                    event(selectedHour)
+                }) {
                     Text(text = "确定")
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showDialog = false }) {
+                TextButton(onClick = { showBranchDialog = false }) {
                     Text(text = "取消")
                 }
             }
@@ -129,6 +112,7 @@ fun calculateAngle(cx: Float, cy: Float, ix: Float, iy: Float): Float {
 @Composable
 fun OldTime(
     modifier: Modifier = Modifier,
+    event0: (Int) -> Unit
 ) {
     val textMeasure = rememberTextMeasurer()
     val hourInterval = NOTCH_COUNT / 12
@@ -136,6 +120,7 @@ fun OldTime(
     // 用于存储触摸点的位置
     var touchPoint by remember { mutableStateOf<Offset?>(null) }
     var isFirstDraw = true
+    event0(0)
 
     Canvas(
         modifier = Modifier
@@ -222,6 +207,7 @@ fun OldTime(
                 strokeWidth = 10f,
             )
             val tmp = calculateAngle(centerX, centerY, x.x, x.y).toInt() / 30
+            event0(tmp)
             oldTime = Branch?.get((tmp + 1) % 12) ?: ""
             oldTime += "时"
         }

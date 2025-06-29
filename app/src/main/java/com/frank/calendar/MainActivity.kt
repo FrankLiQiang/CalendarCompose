@@ -46,13 +46,11 @@ class MainActivity : ComponentActivity() {
                 ) {
                     NavHost(navController, startDestination = "double") {
                         composable("double") {
-                            monthOffset = 0
                             ClockAndCalendar(true, navController)
                         }
                         composable("calendar") {
                             PerpetualCalendar(navController)
                         }
-
                         composable("birthday") {
                             if (isPort) {
                                 BirthdaySearch(navController)
