@@ -77,6 +77,7 @@ enum class Colors(val value: Color) {
     YELLOW(Color("#ffa00c".toColorInt())),
     BLACK(Color("#000000".toColorInt())),
     WHITE(Color("#ffffff".toColorInt())),
+    RED(Color("#ff0000".toColorInt())),
     GRAY(Color("#464449".toColorInt())),
 }
 

@@ -37,6 +37,7 @@ var weeksMonth: Int = 5
 var textColor by mutableStateOf(Color(0xFF018786))
 var isPort by mutableStateOf(true)
 var time by mutableStateOf("09:35:23")
+var oldTime by mutableStateOf("子时")
 var leftDate by mutableStateOf("")
 var trunck_branch by mutableStateOf("")
 var year_name by mutableStateOf("")
@@ -52,6 +53,8 @@ var minuteState by mutableLongStateOf(1)
 var secondState by mutableLongStateOf(1)
 var now: LocalDateTime = LocalDateTime.now()
 var timerRunning = false
+val arr: Array<String> = arrayOf("S", "M", "T", "W", "T", "F", "S")
+val defaultColor = Color(0xFF018786)
 
 fun readToDate() {
     maxTextSizeTime = sharedPreferences.getFloat("SHARED_PREFS_TIME", 312.0f).sp

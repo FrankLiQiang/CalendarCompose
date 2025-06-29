@@ -68,9 +68,6 @@ fun getWeeksOfMonth(): Int {
     return ret / 7 + if (ret % 7 == 0) 1 else 2
 }
 
-val arr: Array<String> = arrayOf("S", "M", "T", "W", "T", "F", "S")
-val defaultColor = Color(0xFF018786)
-
 @Composable
 fun CalendarView(isToday: Boolean) {
     if (isRedraw > 100) return

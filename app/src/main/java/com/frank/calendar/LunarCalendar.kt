@@ -70,7 +70,7 @@ object LunarCalendar {
     /**
      * 地支
      */
-    private var Branch: Array<String>? = null
+    var Branch: Array<String>? = null
 
     /**
      * 生肖
