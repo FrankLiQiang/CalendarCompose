@@ -150,7 +150,6 @@ fun ClockUIV() {
     var textSize1A by remember("") { mutableStateOf(maxTextSizeTime1A) }
     var textSize2A by remember("") { mutableStateOf(maxTextSizeLeftDateA) }
     var textSize3A by remember("") { mutableStateOf(maxTextSizeGongliA) }
-    var textSize4A by remember("") { mutableStateOf(maxTextSizeTBA) }
     Column(
         modifier = Modifier
             .background(Color.Black)

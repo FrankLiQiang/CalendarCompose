@@ -338,7 +338,7 @@ fun DoubleView(navController: NavHostController) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1.2f),
+                .weight(0.8f),      //平板 0.8  手机 1.2
             contentAlignment = Alignment.Center // 内容上下居中
         ) {
             key(isRedraw) {
@@ -382,7 +382,7 @@ fun DoubleView1(navController: NavHostController) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1.4f),
+                .weight(0.7f),           //平板 0.7  手机 1.4
             contentAlignment = Alignment.Center // 内容上下居中
         ) {
             key(isRedraw) {

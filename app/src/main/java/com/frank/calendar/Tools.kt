@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.rounded.ArrowForward
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -117,6 +118,7 @@ fun PerpetualCalendar(navController: NavHostController) {
 
 @Composable
 fun TowToolsV(navController: NavHostController) {
+    val c = LocalContext.current
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color.Black
@@ -151,6 +153,41 @@ fun TowToolsV(navController: NavHostController) {
 
             OutlinedButton(
                 onClick = {
+                    val dpd = DatePickerDialog(
+                        c, { _, year, month, day ->
+                            toDate = LocalDateTime.of(year, month + 1, day, 0, 0, 0, 0)
+                            nongliDate = "${nongli()}${leftDays()}"
+                            saveTimePerSet()
+                        },
+                        toDate.year, toDate.monthValue - 1, toDate.dayOfMonth
+                    ).apply {
+                        setButton(DialogInterface.BUTTON_NEUTRAL, "取消设置") { _, _ ->
+                            toDate = LocalDateTime.now().minusDays(2)
+                            nongliDate = "${nongli()}${leftDays()}"
+                            saveTimePerSet()
+                        }
+                    }
+                    dpd.show()
+                },
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .height(86.dp)
+                    .padding(8.dp),
+                shape = CircleShape,
+                border = BorderStroke(1.dp, defaultColor)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Star,
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
+                    tint = defaultColor
+                )
+                Spacer(Modifier.width(8.dp))
+                Text("重要日期设置", fontWeight = FontWeight.Bold, fontSize = 20.sp, color = defaultColor)
+            }
+
+            OutlinedButton(
+                onClick = {
                     navController.navigate("birthday") {}
                 },
                 modifier = Modifier
@@ -180,6 +217,7 @@ fun TowToolsV(navController: NavHostController) {
 
 @Composable
 fun TowToolsL(navController: NavHostController) {
+    val c = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxSize()
@@ -207,6 +245,46 @@ fun TowToolsL(navController: NavHostController) {
             )
             Spacer(Modifier.width(8.dp))
             Text("万年历", fontWeight = FontWeight.Bold, fontSize = 20.sp, color = defaultColor)
+        }
+
+        OutlinedButton(
+            onClick = {
+                val dpd = DatePickerDialog(
+                    c, { _, year, month, day ->
+                        toDate = LocalDateTime.of(year, month + 1, day, 0, 0, 0, 0)
+                        nongliDate = "${nongli()}${leftDays()}"
+                        saveTimePerSet()
+                    },
+                    toDate.year, toDate.monthValue - 1, toDate.dayOfMonth
+                ).apply {
+                    setButton(DialogInterface.BUTTON_NEUTRAL, "取消设置") { _, _ ->
+                        toDate = LocalDateTime.now().minusDays(2)
+                        nongliDate = "${nongli()}${leftDays()}"
+                        saveTimePerSet()
+                    }
+                }
+                dpd.show()
+            },
+            modifier = Modifier
+                .width(240.dp)
+                .height(86.dp)
+                .padding(8.dp),
+            shape = CircleShape,
+            border = BorderStroke(1.dp, defaultColor)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Star,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp),
+                tint = defaultColor
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                "重要日期设置",
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = defaultColor
+            )
         }
 
         OutlinedButton(
