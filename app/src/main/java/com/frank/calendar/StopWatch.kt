@@ -42,6 +42,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -50,6 +51,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
@@ -59,7 +61,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.LifecycleCoroutineScope
-import androidx.navigation.NavHostController
 import com.frank.calendar.extensions.degreesToRadians
 import com.frank.calendar.extensions.isDivisible
 import com.frank.calendar.extensions.isDivisible2
@@ -99,14 +100,14 @@ fun StopWatch(
     val hourInterval = NOTCH_COUNT / 12
 
     Canvas(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(Colors.BLACK.value)
             .padding(16.dp)
     ) {
         val centerX = size.width / 2f
         val centerY = size.height / 2f
-        val circleRadius = size.width / 2
+        val circleRadius = if (size.width > size.height) size.height / 2 else size.width / 2
 
         //notches on boundary of circle
         repeat(NOTCH_COUNT) { notchNumber ->
@@ -319,10 +320,10 @@ fun startTimer(lifecycleScope: LifecycleCoroutineScope) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DoubleView(navController: NavHostController) {
+fun DoubleView(keyValue: String) {
     Row(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .background(Color.Black)
     ) {
         Box(
@@ -332,16 +333,17 @@ fun DoubleView(navController: NavHostController) {
         ) {
             StopWatch(
                 modifier = Modifier,
-            )
-        }
 
+
+                )
+        }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.8f),      //平板 0.8  手机 1.2
+                .weight(1.0f),
             contentAlignment = Alignment.Center // 内容上下居中
         ) {
-            key(isRedraw) {
+            key(keyValue) {
                 datePickerState = rememberDatePickerState(
                     initialSelectedDateMillis = getUtcStartOfTodayMillis(),
                 )
@@ -365,28 +367,31 @@ fun DoubleView(navController: NavHostController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DoubleView1(navController: NavHostController) {
+fun DoubleView1(keyValue: String) {
+    val configuration = LocalConfiguration.current
+    val isTablet = remember(configuration) {
+        configuration.screenWidthDp >= 600
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(top = if (isTablet) 50.dp else 2.dp)
             .background(Color.Black)
     ) {
         Box(
             modifier = Modifier
-                .padding(12.dp)
                 .weight(1f)
         ) {
             StopWatch(modifier = Modifier)
         }
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.7f),           //平板 0.7  手机 1.4
+                .weight(1f),
             contentAlignment = Alignment.Center // 内容上下居中
         ) {
-            key(isRedraw) {
-                datePickerState = rememberDatePickerState(
+            key(keyValue) {
+                val datePickerState = rememberDatePickerState(
                     initialSelectedDateMillis = getUtcStartOfTodayMillis(),
                 )
                 DatePicker(

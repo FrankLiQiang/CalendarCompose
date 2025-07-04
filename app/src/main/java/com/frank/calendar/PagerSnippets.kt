@@ -1,6 +1,5 @@
 package com.frank.calendar
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.pager.HorizontalPager
@@ -10,6 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
@@ -48,10 +48,13 @@ fun ClockAndCalendar(isToday: Boolean, navController: NavHostController) {
         if (isToday) {
             when (page % 4) {
                 0 -> {
+                    val configuration = LocalConfiguration.current
+                    val orientation = configuration.orientation
+                    val keyValue = "$orientation-$isRedraw"
                     if (isPort) {
-                        DoubleView1(navController)
+                        DoubleView1(keyValue)
                     } else {
-                        DoubleView(navController)
+                        DoubleView(keyValue)
                     }
                 }
 
@@ -93,8 +96,6 @@ fun ClockAndCalendar(isToday: Boolean, navController: NavHostController) {
     }
 
     LaunchedEffect(key1 = UInt, block = {
-        Log.i("aaab", "LaunchedEffect")
-
         if (pagerState.currentPage == 0) {
             var initPage = Int.MAX_VALUE / 2
             while (initPage % 4 != 0) {
