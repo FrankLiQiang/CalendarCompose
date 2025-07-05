@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 var monthOffset = 0
 lateinit var jumpToPage: (Int) -> Unit
@@ -50,7 +51,7 @@ fun ClockAndCalendar(isToday: Boolean, navController: NavHostController) {
                 0 -> {
                     val configuration = LocalConfiguration.current
                     val orientation = configuration.orientation
-                    val keyValue = "$orientation-$isRedraw"
+                    val keyValue = "$orientation-$isRedraw-$isPort"
                     if (isPort) {
                         DoubleView1(keyValue)
                     } else {

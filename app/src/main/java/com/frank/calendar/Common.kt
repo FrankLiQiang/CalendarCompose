@@ -56,6 +56,7 @@ var now: LocalDateTime = LocalDateTime.now()
 var timerRunning = false
 val arr: Array<String> = arrayOf("S", "M", "T", "W", "T", "F", "S")
 val defaultColor = Color(0xFF018786)
+val todayColor = Color(0xFFFFA00C)
 
 fun readToDate() {
     maxTextSizeTime = sharedPreferences.getFloat("SHARED_PREFS_TIME", 312.0f).sp

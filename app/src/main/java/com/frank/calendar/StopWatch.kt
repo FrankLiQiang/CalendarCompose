@@ -29,17 +29,15 @@ package com.frank.calendar
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.DatePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
@@ -68,9 +66,7 @@ import com.frank.calendar.extensions.toRange0To360
 import com.frank.calendar.ui.theme.CalendarTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -244,7 +240,7 @@ fun StopWatch(
             )
         ) {
             drawRect(
-                color = Colors.YELLOW.value,
+                color = todayColor,
                 topLeft = Offset(
                     centerX - ROTATING_HAND_EXTENSION,
                     centerY - ROTATING_HAND_WIDTH / 2
@@ -279,13 +275,6 @@ fun GreetingPreview() {
             )
         }
     }
-}
-
-fun getUtcStartOfTodayMillis(): Long {
-    return LocalDate.now(ZoneOffset.systemDefault()) // 先用本地时区得到今天
-        .atStartOfDay(ZoneOffset.UTC)           // 以UTC 0点为一天的起点
-        .toInstant()
-        .toEpochMilli()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -352,33 +341,16 @@ fun DoubleView(keyValue: String) {
         ) {
             StopWatch(
                 modifier = Modifier,
-
-
-                )
+            )
         }
         Box(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxHeight()
                 .weight(1.0f),
             contentAlignment = Alignment.Center // 内容上下居中
         ) {
             key(keyValue) {
-                val datePickerState = rememberDatePickerState(
-                    initialSelectedDateMillis = getUtcStartOfTodayMillis(),
-                )
-                DatePicker(
-                    modifier = Modifier,
-                    headline = null,
-                    title = null,
-                    state = datePickerState,
-                    showModeToggle = false,
-                )
-            }
-            // 透明覆盖层
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clickable {}) {
+                CustomCalendar()
             }
         }
     }
@@ -410,22 +382,7 @@ fun DoubleView1(keyValue: String) {
             contentAlignment = Alignment.Center // 内容上下居中
         ) {
             key(keyValue) {
-                val datePickerState = rememberDatePickerState(
-                    initialSelectedDateMillis = getUtcStartOfTodayMillis(),
-                )
-                DatePicker(
-                    modifier = Modifier,
-                    headline = null,
-                    title = null,
-                    state = datePickerState,
-                    showModeToggle = false,
-                )
-            }
-            // 透明覆盖层
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clickable {}) {
+                CustomCalendar()
             }
         }
     }
