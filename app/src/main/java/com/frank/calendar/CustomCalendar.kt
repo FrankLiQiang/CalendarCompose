@@ -38,6 +38,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -81,7 +82,12 @@ fun CustomCalendar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             androidx.compose.material3.Text(
-                "${currentMonth.year}年${currentMonth.month.getDisplayName(TextStyle.SHORT, Locale.CHINA)}",
+                "${currentMonth.year}年${
+                    currentMonth.month.getDisplayName(
+                        TextStyle.SHORT,
+                        Locale.CHINA
+                    )
+                }",
                 color = Color.White,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
@@ -147,18 +153,37 @@ fun CustomCalendar(
                                 val isHighlight = date == highlightDate
                                 Box(
                                     modifier = Modifier
-                                        .size(36.dp)
+                                        .size(66.dp)
                                         .background(
                                             if (isHighlight) todayColor else Color.Transparent,
                                             shape = CircleShape
                                         ),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    androidx.compose.material3.Text(
+//                                    Column(
+//                                        horizontalAlignment = Alignment.CenterHorizontally,
+//                                        modifier = Modifier.fillMaxWidth()
+//                                    ) {
+//                                        // 显示公历日期
+//                                        Text(
+//                                            text = dayNum.toString(),
+//                                            color = Color.White,
+//                                            fontSize = 22.sp
+//                                        )
+//                                        // 显示农历日期
+//                                        Text(
+//                                            text = "初六",
+//                                            color = if (isHighlight)  Color.White else  Color(0xFFAAAAAA),
+//                                            fontSize = 16.sp,
+////                                            modifier = Modifier.padding(top = 4.dp)
+//                                        )
+//                                        // ...下方你的日历内容
+//                                    }
+                                    Text(
                                         text = dayNum.toString(),
                                         color = if (isHighlight) Color.White else Color.LightGray,
                                         fontWeight = if (isHighlight) FontWeight.Bold else FontWeight.Normal,
-                                        fontSize = 18.sp
+                                        fontSize = 24.sp
                                     )
                                 }
                             }
