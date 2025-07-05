@@ -14,9 +14,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,6 +54,23 @@ fun ClockUI() {
     var textSize2 by remember("") { mutableStateOf(maxTextSizeLeftDate) }
     var textSize3 by remember("") { mutableStateOf(maxTextSizeGongli) }
     var textSize4 by remember("") { mutableStateOf(maxTextSizeTB) }
+    fun getDateString(): AnnotatedString {
+        return buildAnnotatedString {
+            withStyle(style = SpanStyle(color = defaultColor)) { // 设置第一部分颜色
+                append(date.substring(0,12))
+            }
+            if (isRed) {
+                withStyle(style = SpanStyle(color = Color(0xFFBB86FC))) { // 设置第一部分颜色
+                    append(date.substring(13, 16))
+                }
+            }
+            withStyle(style = SpanStyle(color = defaultColor)) { // 设置第一部分颜色
+                append(" " + date.substring(date.length - 4))
+            }
+        }
+    }
+
+
     Column(
         modifier = Modifier
             .background(Color.Black)
@@ -120,7 +141,7 @@ fun ClockUI() {
             modifier = Modifier.weight(0.3f, true)
         )
         Text(
-            text = date,
+            text = getDateString(),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             onTextLayout = {
@@ -135,7 +156,6 @@ fun ClockUI() {
                 }
             },
             fontSize = textSize3,
-            color = if (isRed) Color(0xFFBB86FC) else textColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.weight(0.5f, true)
@@ -179,7 +199,7 @@ fun ClockUIV() {
             modifier = Modifier.weight(0.18f, true)
         )
         Text(
-            text = leftDate,
+            text = leftDate.substring(0, 11),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             onTextLayout = {
@@ -194,12 +214,36 @@ fun ClockUIV() {
                 }
             },
             fontSize = textSize2A,
-            color = if (nongliDateColor) Color.Red else textColor,
+            color = defaultColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.weight(0.2f, true)
         )
-        Spacer(modifier = Modifier.weight(0.3f, true))
+        if (leftDate.length > 15) {
+            Text(
+                text = leftDate.substring(11),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                onTextLayout = {
+                    if (it.hasVisualOverflow && textSize2A > minTextSize) {
+                        textSize2A = (textSize2A.value - 1.0F).sp
+                    } else {
+                        maxTextSizeLeftDateA = textSize2A
+                        with(sharedPreferences.edit()) {
+                            putFloat("SHARED_PREFS_LEFTA", maxTextSizeLeftDateA.value)
+                            commit()
+                        }
+                    }
+                },
+                fontSize = textSize2A,
+                color = defaultColor,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(0.2f, true)
+            )
+        } else {
+            Spacer(modifier = Modifier.weight(0.3f, true))
+        }
         Text(
             text = time,
             maxLines = 1,
@@ -223,9 +267,33 @@ fun ClockUIV() {
                 .padding(25.dp)
                 .weight(1.1f, true)
         )
+        if (isRed) {
+            Spacer(modifier = Modifier.weight(0.1f, true))
+            Text(
+                text = date.substring(13, 16),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                onTextLayout = {
+                    if (it.hasVisualOverflow && textSize3A > minTextSize) {
+                        textSize3A = (textSize3A.value - 1.0F).sp
+                    } else {
+                        maxTextSizeGongliA = textSize3A
+                        with(sharedPreferences.edit()) {
+                            putFloat("SHARED_PREFS_WEEKA", maxTextSizeGongliA.value)
+                            commit()
+                        }
+                    }
+                },
+                fontSize = textSize3A,
+                color = Color(0xFFBB86FC),
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(0.7f, true)
+            )
+        }
         Spacer(modifier = Modifier.weight(0.1f, true))
         Text(
-            text = date.substring(12),
+            text = date.substring(date.length - 4),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             onTextLayout = {
@@ -240,7 +308,7 @@ fun ClockUIV() {
                 }
             },
             fontSize = textSize3A,
-            color = if (isRed) Color(0xFFBB86FC) else textColor,
+            color = defaultColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.weight(0.7f, true)
@@ -283,7 +351,7 @@ fun ClockUIV() {
                 }
             },
             fontSize = textSize3A,
-            color = if (isRed) Color(0xFFBB86FC) else textColor,
+            color = defaultColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             modifier = Modifier

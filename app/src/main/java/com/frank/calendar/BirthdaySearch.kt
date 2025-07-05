@@ -58,9 +58,6 @@ var oldChooseTime = 0
 
 
 @OptIn(ExperimentalMaterial3Api::class)
-lateinit var datePickerState: DatePickerState
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BirthdaySearch(navController: NavHostController) {
     Box(
@@ -73,7 +70,7 @@ fun BirthdaySearch(navController: NavHostController) {
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            datePickerState =
+            val datePickerState =
                 rememberDatePickerState(
                     initialSelectedDateMillis = theTime.toLocalDate()
                         .atStartOfDay(ZoneOffset.ofHours(0)).toInstant().toEpochMilli()
@@ -216,7 +213,6 @@ fun BirthdaySearch(navController: NavHostController) {
         }
         CustomTimePickerDialog { index ->
             chooseTime = index * 2
-            getDateInfo(datePickerState.selectedDateMillis, chooseTime)
         }
     }
 }
@@ -232,7 +228,7 @@ fun BirthdaySearchL(navController: NavHostController) {
         Row(
             modifier = Modifier.fillMaxSize()
         ) {
-            datePickerState =
+            val datePickerState =
                 rememberDatePickerState(
                     initialSelectedDateMillis = theTime.toLocalDate()
                         .atStartOfDay(ZoneOffset.ofHours(0)).toInstant().toEpochMilli()
@@ -387,7 +383,6 @@ fun BirthdaySearchL(navController: NavHostController) {
         }
         CustomTimePickerDialog { index ->
             chooseTime = index * 2
-            getDateInfo(datePickerState.selectedDateMillis, chooseTime)
         }
     }
 }

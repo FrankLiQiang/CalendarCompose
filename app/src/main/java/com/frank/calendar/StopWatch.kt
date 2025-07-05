@@ -185,6 +185,23 @@ fun StopWatch(
             )
         )
 
+        if (leftDate.length > 15) {
+            val tr = textMeasure.measure(
+                AnnotatedString(leftDate.substring(15, leftDate.length - 2)),
+                style = TextStyle(
+                    fontSize = 24.sp,
+                    color = Colors.WHITE.value
+                )
+            )
+            drawText(
+                tr,
+                topLeft = Offset(
+                    centerX - tr.size.width / 2,
+                    centerY - circleRadius / 2 //tr.size.height * 2.5f
+                )
+            )
+        }
+
         //big rotating hand
         rotate(
             hourState.toRange0To360() + 270f,
@@ -285,8 +302,6 @@ fun startTimer(lifecycleScope: LifecycleCoroutineScope) {
             secondState =
                 LocalDateTime.now().second * 1000 + LocalDateTime.now().nano / 1_000_000L      //秒
             if (dayOfMonth0 != LocalDateTime.now().dayOfMonth) {
-                datePickerState.setSelection(getUtcStartOfTodayMillis())
-
                 dayOfMonth0 = LocalDateTime.now().dayOfMonth
                 isRedraw = 1 - isRedraw
             }
@@ -348,7 +363,7 @@ fun DoubleView(keyValue: String) {
             contentAlignment = Alignment.Center // 内容上下居中
         ) {
             key(keyValue) {
-                datePickerState = rememberDatePickerState(
+                val datePickerState = rememberDatePickerState(
                     initialSelectedDateMillis = getUtcStartOfTodayMillis(),
                 )
                 DatePicker(
