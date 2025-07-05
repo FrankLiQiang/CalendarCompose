@@ -301,7 +301,7 @@ fun startTimer(lifecycleScope: LifecycleCoroutineScope) {
 
                 now = LocalDateTime.now()
                 if (now.hour == 7 && now.minute == 0) {
-                    textColor = Color(0xFF018786)
+                    textColor = defaultColor
                 }
                 if (now.hour == 23 && now.minute == 0) {
                     textColor = DarkGray
@@ -326,9 +326,13 @@ fun DoubleView(keyValue: String) {
             .fillMaxSize()
             .background(Color.Black)
     ) {
+        val configuration = LocalConfiguration.current
+        val isTablet = remember(configuration) {
+            configuration.screenWidthDp >= 600
+        }
         Box(
             modifier = Modifier
-                .padding(6.dp)
+                .padding(start = if (isTablet) 35.dp else 6.dp)
                 .weight(1f)
         ) {
             StopWatch(
