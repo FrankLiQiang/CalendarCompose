@@ -13,7 +13,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 var monthOffset = 0
 lateinit var jumpToPage: (Int) -> Unit

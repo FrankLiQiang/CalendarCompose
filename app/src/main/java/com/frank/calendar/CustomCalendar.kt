@@ -63,7 +63,6 @@ fun CustomCalendar(
     onDateClick: (LocalDate) -> Unit = {},
 ) {
     var currentMonth by remember { mutableStateOf(YearMonth.now()) }
-    val today = LocalDate.now()
     val daysInMonth = remember(currentMonth) { currentMonth.lengthOfMonth() }
     val firstDayOfWeek = remember(currentMonth) {
         currentMonth.atDay(1).dayOfWeek.value % 7 // 周日为0
@@ -162,25 +161,27 @@ fun CustomCalendar(
                                         ),
                                     contentAlignment = Alignment.Center
                                 ) {
-//                                    Column(
-//                                        horizontalAlignment = Alignment.CenterHorizontally,
-//                                        modifier = Modifier.fillMaxWidth()
-//                                    ) {
-//                                        // 显示公历日期
-//                                        Text(
-//                                            text = dayNum.toString(),
-//                                            color = Color.White,
-//                                            fontSize = 22.sp
-//                                        )
-//                                        // 显示农历日期
-//                                        Text(
-//                                            text = "初六",
-//                                            color = if (isHighlight)  Color.White else  Color(0xFFAAAAAA),
-//                                            fontSize = 16.sp,
-////                                            modifier = Modifier.padding(top = 4.dp)
-//                                        )
-//                                        // ...下方你的日历内容
-//                                    }
+/*
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        // 显示公历日期
+                                        Text(
+                                            text = dayNum.toString(),
+                                            color = Color.White,
+                                            fontSize = 22.sp
+                                        )
+                                        // 显示农历日期
+                                        Text(
+                                            text = "初六",
+                                            color = if (isHighlight)  Color.White else  Color(0xFFAAAAAA),
+                                            fontSize = 16.sp,
+//                                            modifier = Modifier.padding(top = 4.dp)
+                                        )
+                                        // ...下方你的日历内容
+                                    }
+ */
                                     Text(
                                         text = dayNum.toString(),
                                         color = if (isHighlight) Color.White else Color.LightGray,

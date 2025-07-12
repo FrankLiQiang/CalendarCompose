@@ -39,10 +39,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.frank.calendar.LunarCalendar.getSolarTerm
 import com.google.accompanist.pager.ExperimentalPagerApi
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 @OptIn(ExperimentalPagerApi::class)
@@ -159,7 +157,15 @@ fun TowToolsV(navController: NavHostController) {
                         c, { _, year, month, day ->
                             toDate = LocalDateTime.of(year, month + 1, day, 0, 0, 0, 0)
                             now = LocalDateTime.now()
-                            val cNow = LocalDateTime.of(now.year, now.monthValue, now.dayOfMonth, 0, 0, 0, 0)
+                            val cNow = LocalDateTime.of(
+                                now.year,
+                                now.monthValue,
+                                now.dayOfMonth,
+                                0,
+                                0,
+                                0,
+                                0
+                            )
                             iLeftDays = ChronoUnit.DAYS.between(cNow, toDate)
                             leftDays = if (iLeftDays > 0) "  还剩 $iLeftDays 天" else ""
                             saveTimePerSet()
@@ -189,7 +195,12 @@ fun TowToolsV(navController: NavHostController) {
                     tint = defaultColor
                 )
                 Spacer(Modifier.width(8.dp))
-                Text("重要日期设置", fontWeight = FontWeight.Bold, fontSize = 20.sp, color = defaultColor)
+                Text(
+                    "重要日期设置",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = defaultColor
+                )
             }
 
             OutlinedButton(

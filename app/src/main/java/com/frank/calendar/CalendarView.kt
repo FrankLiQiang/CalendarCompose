@@ -1,5 +1,6 @@
 package com.frank.calendar
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -108,7 +110,7 @@ fun CalendarView(isToday: Boolean) {
                         }
                     }
                 },
-                color = Color(0xFF018786),
+                color = defaultColor,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(6.dp)
@@ -119,7 +121,7 @@ fun CalendarView(isToday: Boolean) {
                 text = time,
                 maxLines = 1,
                 fontSize = textSize,
-                color = Color(0xFF018786),
+                color = defaultColor,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(0.5f)
@@ -215,30 +217,29 @@ fun Date(
     }
     if (nongLi.startsWith("@")) {
         nongLi = nongLi.substring(1)
-//        theColor2 = Color.Magenta
         theColor2 = jieqiColor
     }
     fun getBuildAnnotatedString(): AnnotatedString {
         return if (isPort) buildAnnotatedString {
-            withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal && isToday) todayColor else if (theColor1 == Color.Red) theColor1 else theColor2)) { // 设置第一部分颜色
+            withStyle(style = SpanStyle(color = if (theColor1 == Color.Red) theColor1 else theColor2)) { // 设置第一部分颜色
                 append(nongLi.subSequence(0, 2).toString() + "\n")
             }
-            withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal && isToday) todayColor else defaultColor)) {
+            withStyle(style = SpanStyle(color = defaultColor)) {
                 append(tb_day + "\n" + sixDays)
             }
         }
         else {
             buildAnnotatedString {
-                withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal && isToday) todayColor else if (theColor1 == Color.Red) theColor1 else theColor2)) {
+                withStyle(style = SpanStyle(color = if (theColor1 == Color.Red) theColor1 else theColor2)) {
                     append(nongLi.substring(0, 1))
                 }
-                withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal && isToday) todayColor else defaultColor)) {
+                withStyle(style = SpanStyle(color = defaultColor)) {
                     append(tb_day.substring(0, 1) + sixDays.substring(0, 1) + "\n")
                 }
-                withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal && isToday) todayColor else if (theColor1 == Color.Red) theColor1 else theColor2)) {
+                withStyle(style = SpanStyle(color = if (theColor1 == Color.Red) theColor1 else theColor2)) {
                     append(nongLi.substring(1, 2))
                 }
-                withStyle(style = SpanStyle(color = if (dayOfMonth == dateVal && isToday) todayColor else defaultColor)) {
+                withStyle(style = SpanStyle(color = defaultColor)) {
                     append(tb_day.substring(1, 2) + sixDays.substring(1, 2))
                 }
             }
@@ -307,40 +308,50 @@ fun Date(
                     else Modifier.weight(1.0f, true)).align(alignment = Alignment.Bottom),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Text(
-                        text = "$dateVal",
-                        maxLines = 1,
-                        onTextLayout = {
-                            if (it.hasVisualOverflow && textSize1 > minTextSize) {
-                                textSize1 = (textSize1.value - 1.0F).sp
-                            } else {
-                                if (isPort) {
-                                    maxTextSizeCalendarDate_PORTRAIT = textSize1
-                                    with(sharedPreferences.edit()) {
-                                        putFloat(
-                                            "SHARED_PREFS_GONG_LI_P",
-                                            maxTextSizeCalendarDate_PORTRAIT.value
-                                        )
-                                        commit()
-                                    }
+                    val isHighlight = dayOfMonth == dateVal && isToday
+                    Box(
+                        modifier = Modifier
+                            .background(
+                                if (isHighlight) defaultColor else Color.Transparent,
+                                shape = CircleShape
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "$dateVal",
+                            maxLines = 1,
+                            onTextLayout = {
+                                if (it.hasVisualOverflow && textSize1 > minTextSize) {
+                                    textSize1 = (textSize1.value - 1.0F).sp
                                 } else {
-                                    maxTextSizeCalendarDate_LANDSCAPE = textSize1
-                                    with(sharedPreferences.edit()) {
-                                        putFloat(
-                                            "SHARED_PREFS_GONG_LI_L",
-                                            maxTextSizeCalendarDate_LANDSCAPE.value
-                                        )
-                                        commit()
+                                    if (isPort) {
+                                        maxTextSizeCalendarDate_PORTRAIT = textSize1
+                                        with(sharedPreferences.edit()) {
+                                            putFloat(
+                                                "SHARED_PREFS_GONG_LI_P",
+                                                maxTextSizeCalendarDate_PORTRAIT.value
+                                            )
+                                            commit()
+                                        }
+                                    } else {
+                                        maxTextSizeCalendarDate_LANDSCAPE = textSize1
+                                        with(sharedPreferences.edit()) {
+                                            putFloat(
+                                                "SHARED_PREFS_GONG_LI_L",
+                                                maxTextSizeCalendarDate_LANDSCAPE.value
+                                            )
+                                            commit()
+                                        }
                                     }
                                 }
-                            }
-                        },
-                        fontSize = textSize1,
-                        color = if (dayOfMonth == dateVal && isToday) todayColor else defaultColor,
-                        textAlign = if (isPort) TextAlign.Center else TextAlign.Right,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.fillMaxSize()
-                    )
+                            },
+                            fontSize = textSize1,
+                            color = if (dayOfMonth == dateVal && isToday) todayColor else defaultColor,
+                            textAlign = if (isPort) TextAlign.Center else TextAlign.Right,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
                 }
             }
 

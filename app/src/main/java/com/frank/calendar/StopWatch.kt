@@ -39,11 +39,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -253,7 +250,7 @@ fun StopWatch(
         }
         //center stroke circle
         drawCircle(
-            color = Colors.YELLOW.value,
+            color = todayColor,
             radius = 14f,
             center = Offset(centerX, centerY),
             style = Stroke(width = ROTATING_HAND_WIDTH)
@@ -308,9 +305,11 @@ fun startTimer(lifecycleScope: LifecycleCoroutineScope) {
                 now = LocalDateTime.now()
                 if (now.hour == 7 && now.minute == 0) {
                     defaultColor = Color(0xFF018786)
+                    isRedraw = 1 - isRedraw
                 }
                 if (now.hour == 23 && now.minute == 0) {
                     defaultColor = DarkGray
+                    isRedraw = 1 - isRedraw
                 }
             }
 
