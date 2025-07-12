@@ -31,9 +31,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
-var nongliDate = ""
-var newCurrentDate = -1
-var currentDateNum = -2
 var dateColor = true
 var nongliDateColor = true
 var toDate: LocalDateTime = now
@@ -400,27 +397,11 @@ fun ClockUIV() {
 
 fun getCurrentTime(): String {
     now = LocalDateTime.now()
-    newCurrentDate = now.dayOfMonth
-//    val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
     val formatter = DateTimeFormatter.ofPattern("HH:mm")
     return now.format(formatter)
 }
 
-fun getNongLiDate(): String {
-    return if (currentDateNum == newCurrentDate) {
-        nongliDate
-    } else {
-        nongliDate = "${nongli()}$leftDays"
-        nongliDate
-    }
-}
-
 fun getCurrentDate() {
-
-    if (currentDateNum == newCurrentDate) {
-        return
-    }
-    currentDateNum = newCurrentDate
 
     //公立年月日
     now = LocalDateTime.now()       //.plusMonths(monthOffset.toLong())
@@ -445,50 +426,6 @@ fun getCurrentDate() {
     lunarFestival = LunarCalendar.getLunarText(now.year, now.monthValue, now.dayOfMonth)
     sixDay = LunarCalendar.getSixDay(now.year, now.monthValue, now.dayOfMonth)
     character = LunarCalendar.getMainBranch(now.year, now.monthValue, now.dayOfMonth, now.hour)
-}
-
-val nongli: () -> String = {
-    "农历 ${
-        LunarCalendar.getLunarText(
-            now.year,
-            now.monthValue,
-            now.dayOfMonth
-        )
-    }  ${LunarCalendar.getSixDay(now.year, now.monthValue, now.dayOfMonth)}"
-}
-
-val main_branch: () -> String = {
-    LunarCalendar.getMainBranch(now.year, now.monthValue, now.dayOfMonth, now.hour)
-}
-
-val jp_year_name: () -> String = {
-    LunarCalendar.getYearName(now.year, now.monthValue, now.dayOfMonth)
-}
-
-val leftDays11: () -> String = {
-    val cNow = LocalDateTime.of(now.year, now.monthValue, now.dayOfMonth, 0, 0, 0, 0)
-    val leftDays = ChronoUnit.DAYS.between(cNow, toDate)
-    if (leftDays > 0) "  还剩 $leftDays 天" else ""
-}
-
-val nowDate: () -> String = {
-    now = LocalDateTime.now().plusMonths(monthOffset.toLong())
-    val formatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日")
-    now.format(formatter)
-}
-
-val nowWeek: () -> String = {
-    val termText0: String = getSolarTerm(now.year, now.monthValue, now.dayOfMonth)       //节气
-    val solar = LunarCalendar.gregorianFestival(
-        now.year,
-        now.monthValue,
-        now.dayOfMonth,
-        now.dayOfWeek.value,
-        termText0
-    )
-    val day: Int = now.dayOfWeek.value
-    val weekString = "一二三四五六日"
-    "$solar 星期${weekString.substring(day - 1, day)} $termText"
 }
 
 @Preview()

@@ -281,7 +281,7 @@ fun GreetingPreview() {
 fun startTimer(lifecycleScope: LifecycleCoroutineScope) {
     lifecycleScope.launch {
         timerRunning = true
-        dayOfMonth0 = LocalDateTime.now().dayOfMonth
+        dayOfMonth0 = -1
         var tmp = 0
         while (timerRunning) {
             hourState =
@@ -292,15 +292,12 @@ fun startTimer(lifecycleScope: LifecycleCoroutineScope) {
                 LocalDateTime.now().second * 1000 + LocalDateTime.now().nano / 1_000_000L      //秒
             if (dayOfMonth0 != LocalDateTime.now().dayOfMonth) {
                 dayOfMonth0 = LocalDateTime.now().dayOfMonth
+                getCurrentDate()
                 isRedraw = 1 - isRedraw
             }
 
             if (tmp == 0) {
                 time = getCurrentTime()
-                leftDate = getNongLiDate()
-                trunck_branch = main_branch()
-                year_name = jp_year_name()
-                getCurrentDate()
                 isRed = dateColor
                 now = LocalDateTime.now()
                 if (now.hour == 7 && now.minute == 0) {

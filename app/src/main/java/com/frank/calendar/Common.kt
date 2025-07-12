@@ -44,8 +44,6 @@ var isPort by mutableStateOf(true)
 var time by mutableStateOf("09:35:23")
 var oldTime by mutableStateOf("子时")
 var showBranchDialog by mutableStateOf(false)
-var leftDate by mutableStateOf("")
-var trunck_branch by mutableStateOf("")
 
 //日期相关数据
 var date by mutableStateOf("2023年12月08日")     //公立年月日
