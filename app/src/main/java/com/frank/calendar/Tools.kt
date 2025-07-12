@@ -39,8 +39,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.frank.calendar.LunarCalendar.getSolarTerm
 import com.google.accompanist.pager.ExperimentalPagerApi
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 @OptIn(ExperimentalPagerApi::class)
@@ -156,14 +158,18 @@ fun TowToolsV(navController: NavHostController) {
                     val dpd = DatePickerDialog(
                         c, { _, year, month, day ->
                             toDate = LocalDateTime.of(year, month + 1, day, 0, 0, 0, 0)
-                            nongliDate = "${nongli()}${leftDays()}"
+                            now = LocalDateTime.now()
+                            val cNow = LocalDateTime.of(now.year, now.monthValue, now.dayOfMonth, 0, 0, 0, 0)
+                            iLeftDays = ChronoUnit.DAYS.between(cNow, toDate)
+                            leftDays = if (iLeftDays > 0) "  还剩 $iLeftDays 天" else ""
                             saveTimePerSet()
                         },
                         toDate.year, toDate.monthValue - 1, toDate.dayOfMonth
                     ).apply {
                         setButton(DialogInterface.BUTTON_NEUTRAL, "取消设置") { _, _ ->
                             toDate = LocalDateTime.now().minusDays(2)
-                            nongliDate = "${nongli()}${leftDays()}"
+                            leftDays = ""
+                            iLeftDays = 0
                             saveTimePerSet()
                         }
                     }
@@ -252,14 +258,12 @@ fun TowToolsL(navController: NavHostController) {
                 val dpd = DatePickerDialog(
                     c, { _, year, month, day ->
                         toDate = LocalDateTime.of(year, month + 1, day, 0, 0, 0, 0)
-                        nongliDate = "${nongli()}${leftDays()}"
                         saveTimePerSet()
                     },
                     toDate.year, toDate.monthValue - 1, toDate.dayOfMonth
                 ).apply {
                     setButton(DialogInterface.BUTTON_NEUTRAL, "取消设置") { _, _ ->
                         toDate = LocalDateTime.now().minusDays(2)
-                        nongliDate = "${nongli()}${leftDays()}"
                         saveTimePerSet()
                     }
                 }

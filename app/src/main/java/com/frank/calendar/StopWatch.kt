@@ -39,8 +39,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -181,9 +184,9 @@ fun StopWatch(
             )
         )
 
-        if (leftDate.length > 15) {
+        if (iLeftDays > 0) {
             val tr = textMeasure.measure(
-                AnnotatedString(leftDate.substring(15, leftDate.length - 2)),
+                AnnotatedString(iLeftDays.toString()),
                 style = TextStyle(
                     fontSize = 24.sp,
                     color = Colors.WHITE.value
@@ -300,15 +303,14 @@ fun startTimer(lifecycleScope: LifecycleCoroutineScope) {
                 leftDate = getNongLiDate()
                 trunck_branch = main_branch()
                 year_name = jp_year_name()
-                date = getCurrentDate()
+                getCurrentDate()
                 isRed = dateColor
-
                 now = LocalDateTime.now()
                 if (now.hour == 7 && now.minute == 0) {
-                    textColor = defaultColor
+                    defaultColor = Color(0xFF018786)
                 }
                 if (now.hour == 23 && now.minute == 0) {
-                    textColor = DarkGray
+                    defaultColor = DarkGray
                 }
             }
 

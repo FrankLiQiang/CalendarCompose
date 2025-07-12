@@ -427,9 +427,9 @@ object LunarCalendar {
             }
             if (solar.isEmpty()) {
                 //节气
-                val termText: String =
+                val termText0: String =
                     getSolarTerm(beforeDay.year, beforeDay.monthValue, beforeDay.dayOfMonth)
-                if (termText == "春分" || termText == "秋分") {
+                if (termText0 == "春分" || termText0 == "秋分") {
                     if (beforeDay.dayOfWeek.value == 7) {
                         solar = "振替"
                     }
@@ -525,9 +525,15 @@ object LunarCalendar {
         //年干支
         val lichun = solarTerm[0].subSequence(0, 8).toString()
         yearTb = if (text < lichun) {
-            "(" + Animal!![(year - 4) % 12] + "年) " + Trunk!![(year - 4) % 10] + Branch!![(year - 4) % 12]
+            Trunk!![(year - 4) % 10] + Branch!![(year - 4) % 12]
         } else {
-            "(" + Animal!![(year - 3) % 12] + "年) " + Trunk!![(year - 3) % 10] + Branch!![(year - 3) % 12]
+            Trunk!![(year - 3) % 10] + Branch!![(year - 3) % 12]
+        }
+
+        AnimalYear = if (text < lichun) {
+            "(" + Animal!![(year - 4) % 12] + "年) "
+        } else {
+            "(" + Animal!![(year - 3) % 12] + "年) "
         }
 
         //月干支
@@ -609,9 +615,9 @@ object LunarCalendar {
      * @return 农历节日
      */
     fun getLunarText2(year: Int, month: Int, day: Int, weekDay: Int): String {
-        val termText: String = getSolarTerm(year, month, day)       //节气
+        val termText0: String = getSolarTerm(year, month, day)       //节气
 
-        val solar = gregorianFestival(year, month, day, weekDay, termText)       //中国，日本 节日
+        val solar = gregorianFestival(year, month, day, weekDay, termText0)       //中国，日本 节日
         if (!TextUtils.isEmpty(solar)) return "%$solar"
 
         val lunar = LunarUtil.solarToLunar(year, month, day)
@@ -619,7 +625,7 @@ object LunarCalendar {
         if (!TextUtils.isEmpty(festival)) return "*$festival"
 
         if (lunar[2] == 1) return numToChineseMonth(lunar[1], lunar[0])
-        if (!TextUtils.isEmpty(termText)) return "@" + termText
+        if (!TextUtils.isEmpty(termText0)) return "@" + termText0
         return DAY_STR!![lunar[2] - 1]
     }
 

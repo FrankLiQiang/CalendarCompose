@@ -19,14 +19,18 @@ var dayOfMonth0 = 1
 var firstDayOfWeek: Int = 0
 val minTextSize = 5.sp
 var maxTextSizeTime = 312.sp
-var maxTextSizeTimeA = 312.sp
-var maxTextSizeTime1A = 32.sp
+var maxYearTextSize = 312.sp
+var maxSixdayTextSize = 32.sp
 var maxTextSizeTB = 312.sp
-var maxTextSizeTBA = 312.sp
 var maxTextSizeLeftDate = 112.sp
-var maxTextSizeLeftDateA = 112.sp
+var maxLeftdaysTextSize = 112.sp
 var maxTextSizeGongli = 112.sp
-var maxTextSizeGongliA = 112.sp
+var maxTimeTextSize = 312.sp
+var maxFestivalDateTextSize = 212.sp
+var maxWeekdayTextSize = 212.sp
+var maxJieqiTextSize = 212.sp
+var maxCharacterTextSize = 212.sp
+var maxDateTextSize = 212.sp
 var maxTextSizeTitle_LANDSCAPE = 112.sp
 var maxTextSizeCalendarDate_LANDSCAPE = 132.sp
 var maxTextSizeCalendarSix_LANDSCAPE = 132.sp
@@ -41,8 +45,21 @@ var oldTime by mutableStateOf("子时")
 var showBranchDialog by mutableStateOf(false)
 var leftDate by mutableStateOf("")
 var trunck_branch by mutableStateOf("")
-var year_name by mutableStateOf("")
-var date by mutableStateOf("2023年12月08日")
+
+//日期相关数据
+var date by mutableStateOf("2023年12月08日")     //公立年月日
+var weekDay by mutableStateOf("")               //星期几
+var termText by mutableStateOf("")              //节气
+var festival by mutableStateOf("")              //中日公立节日
+var lunarFestival by mutableStateOf("")         //中国农历节日
+var AnimalYear by mutableStateOf("")            //生肖
+var year_name by mutableStateOf("")             //日本年号
+var character by mutableStateOf("")             //八字
+var sixDay by mutableStateOf("")                //六曜
+var leftDays by mutableStateOf("")              //剩余天数
+var iLeftDays: Long by mutableStateOf(0)              //剩余天数
+
+
 var isRed by mutableStateOf(false)
 var dateArray = Array(42) { -1 }
 var nongliArray = Array(42) { "" }
@@ -55,19 +72,25 @@ var secondState by mutableLongStateOf(1)
 var now: LocalDateTime = LocalDateTime.now()
 var timerRunning = false
 val arr: Array<String> = arrayOf("S", "M", "T", "W", "T", "F", "S")
-val defaultColor = Color(0xFF018786)
+var defaultColor = Color(0xFF018786)
+val jieqiColor = Color(0xFF88FF33)
 val todayColor = Color(0xFFFFA00C)
 
 fun readToDate() {
     maxTextSizeTime = sharedPreferences.getFloat("SHARED_PREFS_TIME", 312.0f).sp
-    maxTextSizeTimeA = sharedPreferences.getFloat("SHARED_PREFS_TIMEA", 312.0f).sp
-    maxTextSizeTime1A = sharedPreferences.getFloat("SHARED_PREFS_TIME1A", 32.0f).sp
     maxTextSizeTB = sharedPreferences.getFloat("SHARED_PREFS_TB", 312.0f).sp
-    maxTextSizeTBA = sharedPreferences.getFloat("SHARED_PREFS_TBA", 312.0f).sp
     maxTextSizeLeftDate = sharedPreferences.getFloat("SHARED_PREFS_LEFT", 112.0f).sp
-    maxTextSizeLeftDateA = sharedPreferences.getFloat("SHARED_PREFS_LEFTA", 112.0f).sp
     maxTextSizeGongli = sharedPreferences.getFloat("SHARED_PREFS_WEEK", 112.0f).sp
-    maxTextSizeGongliA = sharedPreferences.getFloat("SHARED_PREFS_WEEKA", 112.0f).sp
+
+    maxYearTextSize = sharedPreferences.getFloat("SHARED_PREFS_MAX_YEAR_TEXT_SIZE", 312.0f).sp
+    maxSixdayTextSize = sharedPreferences.getFloat("SHARED_PREFS_SIX_DAY", 32.0f).sp
+    maxLeftdaysTextSize = sharedPreferences.getFloat("SHARED_PREFS_LEFT_DAYS", 112.0f).sp
+    maxTimeTextSize = sharedPreferences.getFloat("SHARED_PREFS_MAX_TEXT_SIZE_TIME", 312.0f).sp
+    maxFestivalDateTextSize = sharedPreferences.getFloat("SHARED_PREFS_FESTIVAL", 212.0f).sp
+    maxWeekdayTextSize = sharedPreferences.getFloat("SHARED_PREFS_WEEK_DAY", 212.0f).sp
+    maxJieqiTextSize = sharedPreferences.getFloat("SHARED_PREFS_JIEQI", 212.0f).sp
+    maxCharacterTextSize = sharedPreferences.getFloat("SHARED_PREFS_CHARACTER", 212.0f).sp
+    maxDateTextSize = sharedPreferences.getFloat("SHARED_PREFS_DATE", 212.0f).sp
 
     maxTextSizeTitle_LANDSCAPE =
         sharedPreferences.getFloat("SHARED_PREFS_CALENDAR_TITLE_L", 112.0f).sp

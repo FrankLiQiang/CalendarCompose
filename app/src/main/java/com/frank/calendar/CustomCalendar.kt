@@ -35,6 +35,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -93,6 +94,7 @@ fun CustomCalendar(
                 fontWeight = FontWeight.Bold
             )
         }
+        Row(modifier = Modifier.height(30.dp)) {}
         // 月份导航
 //        Row(
 //            modifier = Modifier
@@ -141,19 +143,19 @@ fun CustomCalendar(
                     for (dayOfWeek in 0..6) {
                         val dayNum = week * 7 + dayOfWeek - firstDayOfWeek + 1
                         if (dayNum in 1..daysInMonth) {
-                            val date = currentMonth.atDay(dayNum)
+                            val theDate = currentMonth.atDay(dayNum)
                             Box(
                                 modifier = Modifier
                                     .weight(1f)
                                     .aspectRatio(1f)
                                     .padding(2.dp)
-                                    .clickable { onDateClick(date) },
+                                    .clickable { onDateClick(theDate) },
                                 contentAlignment = Alignment.Center
                             ) {
-                                val isHighlight = date == highlightDate
+                                val isHighlight = theDate == highlightDate
                                 Box(
                                     modifier = Modifier
-                                        .size(66.dp)
+                                        .size(46.dp)
                                         .background(
                                             if (isHighlight) todayColor else Color.Transparent,
                                             shape = CircleShape

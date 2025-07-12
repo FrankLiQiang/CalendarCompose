@@ -31,7 +31,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
-var gongliDate = ""
 var nongliDate = ""
 var newCurrentDate = -1
 var currentDateNum = -2
@@ -50,26 +49,43 @@ fun saveTimePerSet() {
 @Composable
 fun ClockUI() {
 
-    var textSize by remember("") { mutableStateOf(maxTextSizeTime) }
-    var textSize2 by remember("") { mutableStateOf(maxTextSizeLeftDate) }
-    var textSize3 by remember("") { mutableStateOf(maxTextSizeGongli) }
-    var textSize4 by remember("") { mutableStateOf(maxTextSizeTB) }
+    var timeTextSize by remember("") { mutableStateOf(maxTextSizeTime) }
+    var tbTextSize by remember("") { mutableStateOf(maxTextSizeTB) }
+    var leftTextSize by remember("") { mutableStateOf(maxTextSizeLeftDate) }
+    var dateTextSize by remember("") { mutableStateOf(maxTextSizeGongli) }
+
     fun getDateString(): AnnotatedString {
         return buildAnnotatedString {
             withStyle(style = SpanStyle(color = defaultColor)) { // 设置第一部分颜色
-                append(date.substring(0,12))
+                append(date)
             }
             if (isRed) {
                 withStyle(style = SpanStyle(color = Color(0xFFBB86FC))) { // 设置第一部分颜色
-                    append(date.substring(13, 16))
+                    append(festival)
                 }
             }
             withStyle(style = SpanStyle(color = defaultColor)) { // 设置第一部分颜色
-                append(" " + date.substring(date.length - 4))
+                append(" $weekDay")
+            }
+            withStyle(style = SpanStyle(color = jieqiColor)) { // 设置第一部分颜色
+                append(" $termText")
             }
         }
     }
 
+    fun getNongliDate(): AnnotatedString {
+        return buildAnnotatedString {
+            withStyle(style = SpanStyle(color = defaultColor)) { // 设置第一部分颜色
+                append("农历 ")
+            }
+            withStyle(style = SpanStyle(color = if (nongliDateColor) Color.Red else defaultColor)) { // 设置第一部分颜色
+                append(" $lunarFestival")
+            }
+            withStyle(style = SpanStyle(color = defaultColor)) { // 设置第一部分颜色
+                append("  $sixDay  $leftDays")
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -82,60 +98,59 @@ fun ClockUI() {
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             onTextLayout = {
-                if (it.hasVisualOverflow && textSize > minTextSize) {
-                    textSize = (textSize.value - 1.0F).sp
+                if (it.hasVisualOverflow && timeTextSize > minTextSize) {
+                    timeTextSize = (timeTextSize.value - 1.0F).sp
                 } else {
-                    maxTextSizeTime = textSize
+                    maxTextSizeTime = timeTextSize
                     with(sharedPreferences.edit()) {
                         putFloat("SHARED_PREFS_TIME", maxTextSizeTime.value)
                         commit()
                     }
                 }
             },
-            fontSize = textSize,
-            color = textColor,
+            fontSize = timeTextSize,
+            color = defaultColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.weight(1.2f, true)
         )
         Text(
-            text = "$trunck_branch ($year_name)",
+            text = "$character  ($year_name)",
             maxLines = 1,
-            fontSize = textSize4,
+            fontSize = tbTextSize,
             onTextLayout = {
-                if (it.hasVisualOverflow && textSize4 > minTextSize) {
-                    textSize4 = (textSize4.value - 1.0F).sp
+                if (it.hasVisualOverflow && tbTextSize > minTextSize) {
+                    tbTextSize = (tbTextSize.value - 1.0F).sp
                 } else {
-                    maxTextSizeTB = textSize4
+                    maxTextSizeTB = tbTextSize
                     with(sharedPreferences.edit()) {
                         putFloat("SHARED_PREFS_TB", maxTextSizeTB.value)
                         commit()
                     }
                 }
             },
-            color = textColor,
+            color = defaultColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .weight(0.3f, true)
         )
         Text(
-            text = leftDate,
+            text = getNongliDate(),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             onTextLayout = {
-                if (it.hasVisualOverflow && textSize2 > minTextSize) {
-                    textSize2 = (textSize2.value - 1.0F).sp
+                if (it.hasVisualOverflow && leftTextSize > minTextSize) {
+                    leftTextSize = (leftTextSize.value - 1.0F).sp
                 } else {
-                    maxTextSizeLeftDate = textSize2
+                    maxTextSizeLeftDate = leftTextSize
                     with(sharedPreferences.edit()) {
                         putFloat("SHARED_PREFS_LEFT", maxTextSizeLeftDate.value)
                         commit()
                     }
                 }
             },
-            fontSize = textSize2,
-            color = if (nongliDateColor) Color.Red else textColor,
+            fontSize = leftTextSize,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.weight(0.3f, true)
@@ -145,17 +160,17 @@ fun ClockUI() {
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             onTextLayout = {
-                if (it.hasVisualOverflow && textSize3 > minTextSize) {
-                    textSize3 = (textSize3.value - 1.0F).sp
+                if (it.hasVisualOverflow && dateTextSize > minTextSize) {
+                    dateTextSize = (dateTextSize.value - 1.0F).sp
                 } else {
-                    maxTextSizeGongli = textSize3
+                    maxTextSizeGongli = dateTextSize
                     with(sharedPreferences.edit()) {
                         putFloat("SHARED_PREFS_WEEK", maxTextSizeGongli.value)
                         commit()
                     }
                 }
             },
-            fontSize = textSize3,
+            fontSize = dateTextSize,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.weight(0.5f, true)
@@ -166,10 +181,15 @@ fun ClockUI() {
 @Composable
 fun ClockUIV() {
 
-    var textSizeA by remember("") { mutableStateOf(maxTextSizeTimeA) }
-    var textSize1A by remember("") { mutableStateOf(maxTextSizeTime1A) }
-    var textSize2A by remember("") { mutableStateOf(maxTextSizeLeftDateA) }
-    var textSize3A by remember("") { mutableStateOf(maxTextSizeGongliA) }
+    var yearTextSize by remember("") { mutableStateOf(maxYearTextSize) }
+    var sixdayTextSize by remember("") { mutableStateOf(maxSixdayTextSize) }
+    var leftdaysTextSize by remember("") { mutableStateOf(maxLeftdaysTextSize) }
+    var timeTextSize by remember("") { mutableStateOf(maxTimeTextSize) }
+    var festivalTextSize by remember("") { mutableStateOf(maxFestivalDateTextSize) }
+    var weekdayTextSize by remember("") { mutableStateOf(maxWeekdayTextSize) }
+    var jieqiTextSize by remember("") { mutableStateOf(maxJieqiTextSize) }
+    var characterTextSize by remember("") { mutableStateOf(maxCharacterTextSize) }
+    var dateTextSize by remember("") { mutableStateOf(maxDateTextSize) }
     Column(
         modifier = Modifier
             .background(Color.Black)
@@ -178,157 +198,173 @@ fun ClockUIV() {
     ) {
         Spacer(modifier = Modifier.weight(0.2f, true))
         Text(
-            text = trunck_branch.substring(0, 4) + "  ($year_name)",
+            text = "$AnimalYear  ($year_name)",
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             onTextLayout = {
-                if (it.hasVisualOverflow && textSize1A > minTextSize) {
-                    textSize1A = (textSize1A.value - 1.0F).sp
+                if (it.hasVisualOverflow && yearTextSize > minTextSize) {
+                    yearTextSize = (yearTextSize.value - 1.0F).sp
                 } else {
-                    maxTextSizeTime1A = textSize1A
+                    maxYearTextSize = yearTextSize
                     with(sharedPreferences.edit()) {
-                        putFloat("SHARED_PREFS_TIME1A", maxTextSizeTime1A.value)
+                        putFloat("SHARED_PREFS_MAX_YEAR_TEXT_SIZE", maxYearTextSize.value)
                         commit()
                     }
                 }
             },
-            fontSize = textSize1A,
-            color = textColor,
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.weight(0.18f, true)
-        )
-        Text(
-            text = leftDate.substring(0, 11),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            onTextLayout = {
-                if (it.hasVisualOverflow && textSize2A > minTextSize) {
-                    textSize2A = (textSize2A.value - 1.0F).sp
-                } else {
-                    maxTextSizeLeftDateA = textSize2A
-                    with(sharedPreferences.edit()) {
-                        putFloat("SHARED_PREFS_LEFTA", maxTextSizeLeftDateA.value)
-                        commit()
-                    }
-                }
-            },
-            fontSize = textSize2A,
+            fontSize = yearTextSize,
             color = defaultColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.weight(0.2f, true)
+            modifier = Modifier.weight(0.21f, true)
         )
-        if (leftDate.length > 15) {
-            Text(
-                text = leftDate.substring(11),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                onTextLayout = {
-                    if (it.hasVisualOverflow && textSize2A > minTextSize) {
-                        textSize2A = (textSize2A.value - 1.0F).sp
-                    } else {
-                        maxTextSizeLeftDateA = textSize2A
-                        with(sharedPreferences.edit()) {
-                            putFloat("SHARED_PREFS_LEFTA", maxTextSizeLeftDateA.value)
-                            commit()
-                        }
+        Text(
+            text = "农历 $lunarFestival   $sixDay",
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            onTextLayout = {
+                if (it.hasVisualOverflow && sixdayTextSize > minTextSize) {
+                    sixdayTextSize = (sixdayTextSize.value - 1.0F).sp
+                } else {
+                    maxSixdayTextSize = sixdayTextSize
+                    with(sharedPreferences.edit()) {
+                        putFloat("SHARED_PREFS_SIX_DAY", maxSixdayTextSize.value)
+                        commit()
                     }
-                },
-                fontSize = textSize2A,
-                color = defaultColor,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(0.2f, true)
-            )
-        } else {
-            Spacer(modifier = Modifier.weight(0.3f, true))
-        }
+                }
+            },
+            fontSize = sixdayTextSize,
+            color = if (nongliDateColor) Color.Red else defaultColor,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.weight(0.22f, true)
+        )
+        Text(
+            text = leftDays,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            onTextLayout = {
+                if (it.hasVisualOverflow && leftdaysTextSize > minTextSize) {
+                    leftdaysTextSize = (leftdaysTextSize.value - 1.0F).sp
+                } else {
+                    maxLeftdaysTextSize = leftdaysTextSize
+                    with(sharedPreferences.edit()) {
+                        putFloat("SHARED_PREFS_LEFT_DAYS", maxLeftdaysTextSize.value)
+                        commit()
+                    }
+                }
+            },
+            fontSize = leftdaysTextSize,
+            color = defaultColor,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.weight(0.3f, true)
+        )
         Text(
             text = time,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             onTextLayout = {
-                if (it.hasVisualOverflow && textSizeA > minTextSize) {
-                    textSizeA = (textSizeA.value - 1.0F).sp
+                if (it.hasVisualOverflow && timeTextSize > minTextSize) {
+                    timeTextSize = (timeTextSize.value - 1.0F).sp
                 } else {
-                    maxTextSizeTimeA = textSizeA
+                    maxTimeTextSize = timeTextSize
                     with(sharedPreferences.edit()) {
-                        putFloat("SHARED_PREFS_TIMEA", maxTextSizeTimeA.value)
+                        putFloat("SHARED_PREFS_MAX_TEXT_SIZE_TIME", maxTimeTextSize.value)
                         commit()
                     }
                 }
             },
-            fontSize = textSizeA,
-            color = textColor,
+            fontSize = timeTextSize,
+            color = defaultColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .padding(25.dp)
                 .weight(1.1f, true)
         )
-        if (isRed) {
-            Spacer(modifier = Modifier.weight(0.1f, true))
-            Text(
-                text = date.substring(13, 16),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                onTextLayout = {
-                    if (it.hasVisualOverflow && textSize3A > minTextSize) {
-                        textSize3A = (textSize3A.value - 1.0F).sp
-                    } else {
-                        maxTextSizeGongliA = textSize3A
-                        with(sharedPreferences.edit()) {
-                            putFloat("SHARED_PREFS_WEEKA", maxTextSizeGongliA.value)
-                            commit()
-                        }
-                    }
-                },
-                fontSize = textSize3A,
-                color = Color(0xFFBB86FC),
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(0.7f, true)
-            )
-        }
-        Spacer(modifier = Modifier.weight(0.1f, true))
         Text(
-            text = date.substring(date.length - 4),
+            text = festival,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             onTextLayout = {
-                if (it.hasVisualOverflow && textSize3A > minTextSize) {
-                    textSize3A = (textSize3A.value - 1.0F).sp
+                if (it.hasVisualOverflow && festivalTextSize > minTextSize) {
+                    festivalTextSize = (festivalTextSize.value - 1.0F).sp
                 } else {
-                    maxTextSizeGongliA = textSize3A
+                    maxFestivalDateTextSize = festivalTextSize
                     with(sharedPreferences.edit()) {
-                        putFloat("SHARED_PREFS_WEEKA", maxTextSizeGongliA.value)
+                        putFloat("SHARED_PREFS_FESTIVAL", maxFestivalDateTextSize.value)
                         commit()
                     }
                 }
             },
-            fontSize = textSize3A,
+            fontSize = festivalTextSize,
+            color = Color(0xFFBB86FC),
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.weight(0.37f, true)
+        )
+        Spacer(modifier = Modifier.weight(0.1f, true))
+        Text(
+            text = weekDay,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            onTextLayout = {
+                if (it.hasVisualOverflow && weekdayTextSize > minTextSize) {
+                    weekdayTextSize = (weekdayTextSize.value - 1.0F).sp
+                } else {
+                    maxWeekdayTextSize = weekdayTextSize
+                    with(sharedPreferences.edit()) {
+                        putFloat("SHARED_PREFS_WEEK_DAY", maxWeekdayTextSize.value)
+                        commit()
+                    }
+                }
+            },
+            fontSize = weekdayTextSize,
             color = defaultColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.weight(0.7f, true)
+            modifier = Modifier.weight(0.37f, true)
         )
+        Spacer(modifier = Modifier.weight(0.05f, true))
         Text(
-            text = trunck_branch.substring(5),
+            text = termText,
             maxLines = 1,
-            fontSize = textSize2A,
+            overflow = TextOverflow.Ellipsis,
             onTextLayout = {
-                if (it.hasVisualOverflow && textSize2A > minTextSize) {
-                    textSize2A = (textSize2A.value - 1.0F).sp
+                if (it.hasVisualOverflow && jieqiTextSize > minTextSize) {
+                    jieqiTextSize = (jieqiTextSize.value - 1.0F).sp
                 } else {
-                    maxTextSizeLeftDateA = textSize2A
+                    maxJieqiTextSize = jieqiTextSize
                     with(sharedPreferences.edit()) {
-                        putFloat("SHARED_PREFS_LEFTA", maxTextSizeLeftDateA.value)
+                        putFloat("SHARED_PREFS_JIEQI", maxJieqiTextSize.value)
                         commit()
                     }
                 }
             },
-            color = textColor,
+            fontSize = jieqiTextSize,
+            color = jieqiColor,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.weight(0.37f, true)
+        )
+        Spacer(modifier = Modifier.weight(0.05f, true))
+        Text(
+            text = character,
+            maxLines = 1,
+            fontSize = characterTextSize,
+            onTextLayout = {
+                if (it.hasVisualOverflow && characterTextSize > minTextSize) {
+                    characterTextSize = (characterTextSize.value - 1.0F).sp
+                } else {
+                    maxCharacterTextSize = characterTextSize
+                    with(sharedPreferences.edit()) {
+                        putFloat("SHARED_PREFS_CHARACTER", maxCharacterTextSize.value)
+                        commit()
+                    }
+                }
+            },
+            color = defaultColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
@@ -336,27 +372,27 @@ fun ClockUIV() {
         )
         Spacer(modifier = Modifier.weight(0.1f, true))
         Text(
-            text = date.substring(0, 11),
+            text = date,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             onTextLayout = {
-                if (it.hasVisualOverflow && textSize3A > minTextSize) {
-                    textSize3A = (textSize3A.value - 1.0F).sp
+                if (it.hasVisualOverflow && dateTextSize > minTextSize) {
+                    dateTextSize = (dateTextSize.value - 1.0F).sp
                 } else {
-                    maxTextSizeGongliA = textSize3A
+                    maxDateTextSize = dateTextSize
                     with(sharedPreferences.edit()) {
-                        putFloat("SHARED_PREFS_WEEKA", maxTextSizeGongliA.value)
+                        putFloat("SHARED_PREFS_DATE", maxDateTextSize.value)
                         commit()
                     }
                 }
             },
-            fontSize = textSize3A,
+            fontSize = dateTextSize,
             color = defaultColor,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .padding(3.dp)
-                .weight(0.35f, true)
+                .weight(0.45f, true)
         )
         Spacer(modifier = Modifier.weight(0.1f, true))
     }
@@ -374,23 +410,41 @@ fun getNongLiDate(): String {
     return if (currentDateNum == newCurrentDate) {
         nongliDate
     } else {
-        nongliDate = "${nongli()}${leftDays()}"
+        nongliDate = "${nongli()}$leftDays"
         nongliDate
     }
 }
 
-fun getCurrentDate(): String {
-    return if (currentDateNum == newCurrentDate) {
-        gongliDate
-    } else {
-        val wk = nowWeek()
-        dayOfMonth = now.dayOfMonth
-        dateColor = wk.length > 5
-        gongliDate = "${nowDate()}  $wk"
-        currentDateNum = newCurrentDate
-        isRedraw = 1 - isRedraw
-        return gongliDate
+fun getCurrentDate() {
+
+    if (currentDateNum == newCurrentDate) {
+        return
     }
+    currentDateNum = newCurrentDate
+
+    //公立年月日
+    now = LocalDateTime.now()       //.plusMonths(monthOffset.toLong())
+    val formatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日")
+    date = now.format(formatter)
+    dayOfMonth = now.dayOfMonth
+    val day: Int = now.dayOfWeek.value
+    val weekString = "一二三四五六日"
+    weekDay = "星期${weekString.substring(day - 1, day)}"
+    termText = getSolarTerm(now.year, now.monthValue, now.dayOfMonth)       //节气
+    festival = LunarCalendar.gregorianFestival(
+        now.year,
+        now.monthValue,
+        now.dayOfMonth,
+        now.dayOfWeek.value,
+        termText
+    )
+    year_name = LunarCalendar.getYearName(now.year, now.monthValue, now.dayOfMonth)
+    val cNow = LocalDateTime.of(now.year, now.monthValue, now.dayOfMonth, 0, 0, 0, 0)
+    iLeftDays = ChronoUnit.DAYS.between(cNow, toDate)
+    leftDays = if (iLeftDays > 0) "  还剩 $iLeftDays 天" else ""
+    lunarFestival = LunarCalendar.getLunarText(now.year, now.monthValue, now.dayOfMonth)
+    sixDay = LunarCalendar.getSixDay(now.year, now.monthValue, now.dayOfMonth)
+    character = LunarCalendar.getMainBranch(now.year, now.monthValue, now.dayOfMonth, now.hour)
 }
 
 val nongli: () -> String = {
@@ -411,7 +465,7 @@ val jp_year_name: () -> String = {
     LunarCalendar.getYearName(now.year, now.monthValue, now.dayOfMonth)
 }
 
-val leftDays: () -> String = {
+val leftDays11: () -> String = {
     val cNow = LocalDateTime.of(now.year, now.monthValue, now.dayOfMonth, 0, 0, 0, 0)
     val leftDays = ChronoUnit.DAYS.between(cNow, toDate)
     if (leftDays > 0) "  还剩 $leftDays 天" else ""
@@ -424,13 +478,13 @@ val nowDate: () -> String = {
 }
 
 val nowWeek: () -> String = {
-    val termText: String = getSolarTerm(now.year, now.monthValue, now.dayOfMonth)       //节气
+    val termText0: String = getSolarTerm(now.year, now.monthValue, now.dayOfMonth)       //节气
     val solar = LunarCalendar.gregorianFestival(
         now.year,
         now.monthValue,
         now.dayOfMonth,
         now.dayOfWeek.value,
-        termText
+        termText0
     )
     val day: Int = now.dayOfWeek.value
     val weekString = "一二三四五六日"
