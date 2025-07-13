@@ -281,7 +281,8 @@ fun GreetingPreview() {
 fun startTimer(lifecycleScope: LifecycleCoroutineScope) {
     lifecycleScope.launch {
         timerRunning = true
-        dayOfMonth0 = -1
+        dayOfMonth0 = LocalDateTime.now().dayOfMonth
+        getCurrentDate()
         var tmp = 0
         while (timerRunning) {
             hourState =

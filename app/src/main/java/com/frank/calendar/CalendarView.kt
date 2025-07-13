@@ -1,15 +1,13 @@
 package com.frank.calendar
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -30,7 +28,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.frank.calendar.LunarCalendar.getSolarTerm
 import com.frank.calendar.ui.theme.CalendarTheme
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAdjusters
 
 fun getNongLi(dayNum: Int, weekDay: Int): String {
@@ -139,7 +140,6 @@ fun CalendarView(isToday: Boolean) {
                     for (j in 0..6) {
                         Box(
                             modifier = Modifier.weight(1f),
-//                                .fillMaxHeight(), // 或 fillMaxSize()
                             contentAlignment = Alignment.BottomCenter// .Center
                         ) {
                             Text(text = arr[j], color = defaultColor)
@@ -154,9 +154,6 @@ fun CalendarView(isToday: Boolean) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     for (j in 0..6) {
-                        if (!isPort) {
-                            Row(Modifier.width(7.dp)) {}
-                        }
                         Date(
                             isToday = isToday,
                             Modifier.weight(1.0f),
@@ -256,13 +253,14 @@ fun Date(
                 Box(
                     modifier = Modifier
                         .weight(if (isPort) 1.5f else 1.0f)
-                        .fillMaxHeight(),
+                        .padding(2.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     if (dateVal != -1) {
                         Text(
                             getBuildAnnotatedString(),
                             fontSize = if (isPort) sixTextSizePort else sixTextSize,
+                            maxLines = if (isPort) 3 else 2,
                             lineHeight = ((if (isPort) sixTextSizePort else sixTextSize).value + 2).sp,
                             textAlign = TextAlign.Center,
                             onTextLayout = {
@@ -301,62 +299,50 @@ fun Date(
 
             @Composable
             fun showNum() {
-                Box(
-                    modifier = (if (isPort) Modifier
-                        .weight(1.0f, true)
-                        .align(alignment = Alignment.Bottom)
-                    else Modifier.weight(1.0f, true)).align(alignment = Alignment.Bottom),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    val isHighlight = dayOfMonth == dateVal && isToday
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                if (isHighlight) defaultColor else Color.Transparent,
-                                shape = CircleShape
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "$dateVal",
-                            maxLines = 1,
-                            onTextLayout = {
-                                if (it.hasVisualOverflow && textSize1 > minTextSize) {
-                                    textSize1 = (textSize1.value - 1.0F).sp
-                                } else {
-                                    if (isPort) {
-                                        maxTextSizeCalendarDate_PORTRAIT = textSize1
-                                        with(sharedPreferences.edit()) {
-                                            putFloat(
-                                                "SHARED_PREFS_GONG_LI_P",
-                                                maxTextSizeCalendarDate_PORTRAIT.value
-                                            )
-                                            commit()
-                                        }
-                                    } else {
-                                        maxTextSizeCalendarDate_LANDSCAPE = textSize1
-                                        with(sharedPreferences.edit()) {
-                                            putFloat(
-                                                "SHARED_PREFS_GONG_LI_L",
-                                                maxTextSizeCalendarDate_LANDSCAPE.value
-                                            )
-                                            commit()
-                                        }
-                                    }
+                Text(
+                    text = "$dateVal",
+                    maxLines = 1,
+                    onTextLayout = {
+                        if (it.hasVisualOverflow && textSize1 > minTextSize) {
+                            textSize1 = (textSize1.value - 1.0F).sp
+                        } else {
+                            if (isPort) {
+                                maxTextSizeCalendarDate_PORTRAIT = textSize1
+                                with(sharedPreferences.edit()) {
+                                    putFloat(
+                                        "SHARED_PREFS_GONG_LI_P",
+                                        maxTextSizeCalendarDate_PORTRAIT.value
+                                    )
+                                    commit()
                                 }
-                            },
-                            fontSize = textSize1,
-                            color = if (dayOfMonth == dateVal && isToday) todayColor else defaultColor,
-                            textAlign = if (isPort) TextAlign.Center else TextAlign.Right,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-                }
+                            } else {
+                                maxTextSizeCalendarDate_LANDSCAPE = textSize1
+                                with(sharedPreferences.edit()) {
+                                    putFloat(
+                                        "SHARED_PREFS_GONG_LI_L",
+                                        maxTextSizeCalendarDate_LANDSCAPE.value
+                                    )
+                                    commit()
+                                }
+                            }
+                        }
+                    },
+                    fontSize = textSize1,
+                    color = if (dayOfMonth == dateVal && isToday) todayColor else defaultColor,
+                    textAlign = if (isPort) TextAlign.Center else TextAlign.Right,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .weight(1.0f, true)
+                        .padding(2.dp)//.align(alignment = Alignment.Center)// .Bottom)///Modifier.fillMaxSize()
+                )
             }
 
             if (isPort) {
-                Column(Modifier.weight(2.0f), horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    Modifier.weight(2.0f),
+                    verticalArrangement = Arrangement.Bottom,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     if (dateVal != -1) {
                         showNum()
                         showSix()
@@ -378,3 +364,25 @@ fun Date(
 fun mainBranchDay(day: Int): String {
     return LunarCalendar.getMainBranchDay(now.year, now.monthValue, day)
 }
+
+val nowDate: () -> String = {
+    now = LocalDateTime.now().plusMonths(monthOffset.toLong())
+    val formatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日")
+    now.format(formatter)
+}
+
+val nowWeek: () -> String = {
+    val termText0: String = getSolarTerm(now.year, now.monthValue, now.dayOfMonth)       //节气
+    val solar = LunarCalendar.gregorianFestival(
+        now.year,
+        now.monthValue,
+        now.dayOfMonth,
+        now.dayOfWeek.value,
+        termText0
+    )
+    val day: Int = now.dayOfWeek.value
+    val weekString = "一二三四五六日"
+    "$solar 星期${weekString.substring(day - 1, day)} $termText"
+}
+
+
