@@ -60,11 +60,7 @@ class MainActivity : ComponentActivity() {
                             PerpetualCalendar(navController)
                         }
                         composable("birthday") {
-                            if (isPort) {
-                                BirthdaySearch(navController)
-                            } else {
-                                BirthdaySearchL(navController)
-                            }
+                            BirthdayAll(navController)
                         }
                     }
                 }
