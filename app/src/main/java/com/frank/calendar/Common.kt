@@ -38,7 +38,6 @@ var maxTextSizeTitle_PORTRAIT = 112.sp
 var maxTextSizeCalendarDate_PORTRAIT = 132.sp
 var maxTextSizeCalendarSix_PORTRAIT = 132.sp
 var weeksMonth: Int = 5
-var textColor by mutableStateOf(Color(0xFF018786))
 var isPort by mutableStateOf(true)
 var time by mutableStateOf("09:35:23")
 var oldTime by mutableStateOf("子时")
@@ -73,6 +72,10 @@ val arr: Array<String> = arrayOf("S", "M", "T", "W", "T", "F", "S")
 var defaultColor = Color(0xFF018786)
 val jieqiColor = Color(0xFF88FF33)
 val todayColor = Color(0xFFFFA00C)
+var x10 = 0f
+var y10 = 0f
+var isFirstDraw0 = true
+var chooseTime by mutableIntStateOf(theTime.hour)
 
 fun readToDate() {
     maxTextSizeTime = sharedPreferences.getFloat("SHARED_PREFS_TIME", 312.0f).sp

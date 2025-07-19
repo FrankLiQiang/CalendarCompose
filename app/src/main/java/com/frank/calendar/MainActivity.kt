@@ -60,7 +60,7 @@ class MainActivity : ComponentActivity() {
                             PerpetualCalendar(navController)
                         }
                         composable("birthday") {
-                            BirthdayAll(navController)
+                            BirthdaySearch(navController)
                         }
                     }
                 }

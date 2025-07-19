@@ -70,21 +70,15 @@ fun OldTime(
     modifier: Modifier = Modifier,
     event0: (Int) -> Unit
 ) {
-    oldTime = "子时"
     val textMeasure = rememberTextMeasurer()
     val hourInterval = NOTCH_COUNT / 12
 
     // 用于存储触摸点的位置
     var touchPoint by remember { mutableStateOf<Offset?>(null) }
     var isFirstDraw = true
-    var isFirstDraw0 = true
-    event0(0)
-    var x10 = 0f
-    var y10 = 0f
     Canvas(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
             .pointerInput(Unit) {
                 // 监听触摸事件
                 awaitPointerEventScope {
@@ -111,7 +105,7 @@ fun OldTime(
 
         val centerX = size.width / 2f
         val centerY = size.height / 2f
-        var circleRadius = if (size.width > size.height) size.height / 2 else size.width / 2
+        val circleRadius = if (size.width > size.height) size.height / 2 else size.width / 2
         if (isFirstDraw0) {
             isFirstDraw0 = false
             x10 = centerX
