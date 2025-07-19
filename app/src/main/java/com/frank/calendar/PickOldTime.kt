@@ -3,7 +3,6 @@ package com.frank.calendar
 import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,7 +18,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frank.calendar.LunarCalendar.Branch
 import com.frank.calendar.extensions.degreesToRadians
@@ -76,36 +74,45 @@ fun OldTime(
     // 用于存储触摸点的位置
     var touchPoint by remember { mutableStateOf<Offset?>(null) }
     var isFirstDraw = true
+
+    fun getLastTouchPoint() {
+        x10 = centerX + 1.2f * circleRadius * cos((animalIndex - 3) * 30.toFloat().degreesToRadians())
+        y10 = centerY + 1.2f * circleRadius * sin((animalIndex - 3) * 30.toFloat().degreesToRadians())
+    }
+
     Canvas(
         modifier = modifier
             .fillMaxSize()
             .pointerInput(Unit) {
                 // 监听触摸事件
                 awaitPointerEventScope {
-                    while (true) {
-                        // 等待手势事件
-                        val event = awaitPointerEvent()
-                        when (event.type) {
-                            PointerEventType.Press -> {
-                                isFirstDraw = false
-                            }
-
-                            PointerEventType.Move -> {
-                                touchPoint = event.changes.first().position
-                            }
-
-                            PointerEventType.Release -> {
-                                touchPoint = null // 手指离开时清空
-                                isFirstDraw = true
-                            }
-                        }
-                    }
+//                    while (true) {
+//                        // 等待手势事件
+//                        val event = awaitPointerEvent()
+//                        when (event.type) {
+//                            PointerEventType.Press -> {
+//                                isFirstDraw = false
+//                                isFirstDraw1 = false
+//                            }
+//
+//                            PointerEventType.Move -> {
+//                                touchPoint = event.changes.first().position
+//                            }
+//
+//                            PointerEventType.Release -> {
+//                                touchPoint = null // 手指离开时清空
+//                                isFirstDraw = true
+//                                isFirstDraw1 = true
+//                            }
+//                        }
+//                    }
                 }
             }) {
 
-        val centerX = size.width / 2f
-        val centerY = size.height / 2f
-        val circleRadius = if (size.width > size.height) size.height / 2 else size.width / 2
+        centerX = size.width / 2f
+        centerY = size.height / 2f
+        circleRadius = if (size.width > size.height) size.height / 2 else size.width / 2
+        getLastTouchPoint()
         if (isFirstDraw0) {
             isFirstDraw0 = false
             x10 = centerX
@@ -155,6 +162,7 @@ fun OldTime(
             }
         }
         if (isFirstDraw) {
+            Log.i("aaa", "111")
             drawCircle(
                 color = defaultColor,
                 radius = 50f,
@@ -167,11 +175,26 @@ fun OldTime(
                 strokeWidth = 10f,
             )
         }
+        if (isFirstDraw1) {
+            Log.i("aaa", "222")
+            drawCircle(
+                color = defaultColor,
+                radius = 50f,
+                center = Offset(x10, y10)
+            )
+            drawLine(
+                color = defaultColor,
+                start = Offset(centerX, centerY),
+                end = Offset(x10, y10),
+                strokeWidth = 10f,
+            )
+        }
         // 在触摸点绘制一个圆
         touchPoint?.let {
             x10 = it.x
             y10 = it.y
             toPoint = findIntersectionWithCircle(centerX, centerY, 1.2f * circleRadius, it.x, it.y)
+            Log.i("aaa", "333")
             drawCircle(
                 color = defaultColor,
                 radius = 50f,
@@ -183,9 +206,9 @@ fun OldTime(
                 end = Offset(toPoint.x, toPoint.y),
                 strokeWidth = 10f,
             )
-            val tmp = calculateAngle(centerX, centerY, toPoint.x, toPoint.y).toInt() / 30
-            event0(tmp)
-            oldTime = Branch?.get((tmp + 1) % 12) ?: ""
+            animalIndex = calculateAngle(centerX, centerY, toPoint.x, toPoint.y).toInt() / 30
+            event0(animalIndex)
+            oldTime = Branch?.get((animalIndex + 1) % 12) ?: ""
             oldTime += "时"
         }
         //notches on boundary of circle
