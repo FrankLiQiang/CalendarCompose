@@ -3,6 +3,16 @@ package com.frank.calendar
 import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+//import androidx.compose.foundation.layout.height
+//import androidx.compose.foundation.layout.width
+//import androidx.compose.material3.AlertDialog
+//import androidx.compose.material3.Text
+//import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,6 +28,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frank.calendar.LunarCalendar.Branch
 import com.frank.calendar.extensions.degreesToRadians
@@ -28,6 +39,77 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 data class Point(val x: Float, val y: Float)
+
+@Composable
+fun CustomTimePickerDialog(event: (Int) -> Unit) {
+    var selectedHour by remember { mutableStateOf(0) }
+    if (showBranchDialog) {
+        selectedHour = 0
+        oldTime = "子时"
+        AlertDialog(
+            modifier = Modifier
+                .width(440.dp)
+                .height(440.dp),
+            onDismissRequest = { showBranchDialog = false },
+            title = {
+                Text(text = oldTime)
+            },
+            text = {
+                OldTime(modifier = Modifier, { index ->
+                    selectedHour = index
+                }
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    showBranchDialog = false
+                    event(selectedHour)
+                }) {
+                    Text(text = "确定")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showBranchDialog = false }) {
+                    Text(text = "取消")
+                }
+            }
+        )
+    }
+}
+
+@Composable
+fun DetailInfoDialog(event: (Int) -> Unit) {
+    var selectedHour by remember { mutableStateOf(0) }
+    if (showBranchDialog) {
+        selectedHour = 0
+        oldTime = "子时"
+        AlertDialog(
+            modifier = Modifier
+                .width(440.dp)
+                .height(440.dp),
+            onDismissRequest = { showBranchDialog = false },
+            title = {
+                Text(text = sYearName)
+            },
+            text = {
+                Text(text = dateInfo)
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    showBranchDialog = false
+                    event(selectedHour)
+                }) {
+                    Text(text = "确定")
+                }
+            },
+//            dismissButton = {
+//                TextButton(onClick = { showBranchDialog = false }) {
+//                    Text(text = "取消")
+//                }
+//            }
+        )
+    }
+}
 
 fun findIntersectionWithCircle(
     cx: Float, cy: Float, r: Float, // 圆心 (cx, cy) 和半径 r
@@ -76,8 +158,8 @@ fun OldTime(
     var isFirstDraw = true
 
     fun getLastTouchPoint() {
-        x10 = centerX + 1.2f * circleRadius * cos((animalIndex - 3) * 30.toFloat().degreesToRadians())
-        y10 = centerY + 1.2f * circleRadius * sin((animalIndex - 3) * 30.toFloat().degreesToRadians())
+        x10 = centerX + circleRadius * cos((animalIndex - 3) * 30.toFloat().degreesToRadians())
+        y10 = centerY + circleRadius * sin((animalIndex - 3) * 30.toFloat().degreesToRadians())
     }
 
     Canvas(
@@ -86,26 +168,24 @@ fun OldTime(
             .pointerInput(Unit) {
                 // 监听触摸事件
                 awaitPointerEventScope {
-//                    while (true) {
-//                        // 等待手势事件
-//                        val event = awaitPointerEvent()
-//                        when (event.type) {
-//                            PointerEventType.Press -> {
-//                                isFirstDraw = false
-//                                isFirstDraw1 = false
-//                            }
-//
-//                            PointerEventType.Move -> {
-//                                touchPoint = event.changes.first().position
-//                            }
-//
-//                            PointerEventType.Release -> {
-//                                touchPoint = null // 手指离开时清空
-//                                isFirstDraw = true
-//                                isFirstDraw1 = true
-//                            }
-//                        }
-//                    }
+                    while (true) {
+                        // 等待手势事件
+                        val event = awaitPointerEvent()
+                        when (event.type) {
+                            PointerEventType.Press -> {
+                                isFirstDraw = false
+                            }
+
+                            PointerEventType.Move -> {
+                                touchPoint = event.changes.first().position
+                            }
+
+                            PointerEventType.Release -> {
+                                touchPoint = null // 手指离开时清空
+                                isFirstDraw = true
+                            }
+                        }
+                    }
                 }
             }) {
 
@@ -122,7 +202,7 @@ fun OldTime(
         var toPoint = findIntersectionWithCircle(
             centerX,
             centerY,
-            1.2f * circleRadius,
+            circleRadius,
             x10,
             y10
         )
@@ -147,15 +227,15 @@ fun OldTime(
             rotate(
                 circlePerimeterAngle + 90f,
                 pivot = Offset(
-                    centerX + circleRadius * cos(circlePerimeterAngle.degreesToRadians()),
-                    centerY + circleRadius * sin(circlePerimeterAngle.degreesToRadians())
+                    centerX + circleRadius * 0.85f * cos(circlePerimeterAngle.degreesToRadians()),
+                    centerY + circleRadius * 0.85f  * sin(circlePerimeterAngle.degreesToRadians())
                 )
             ) {
                 drawRect(
                     color = rectColor,
                     topLeft = Offset(
-                        centerX + circleRadius * cos(circlePerimeterAngle.degreesToRadians()),
-                        centerY + circleRadius * sin(circlePerimeterAngle.degreesToRadians())
+                        centerX + circleRadius * 0.85f * cos(circlePerimeterAngle.degreesToRadians()),
+                        centerY + circleRadius * 0.85f * sin(circlePerimeterAngle.degreesToRadians())
                     ),
                     size = Size(ROTATING_HAND_WIDTH / 2f, rectLength),
                 )
@@ -175,25 +255,11 @@ fun OldTime(
                 strokeWidth = 10f,
             )
         }
-        if (isFirstDraw1) {
-            Log.i("aaa", "222")
-            drawCircle(
-                color = defaultColor,
-                radius = 50f,
-                center = Offset(x10, y10)
-            )
-            drawLine(
-                color = defaultColor,
-                start = Offset(centerX, centerY),
-                end = Offset(x10, y10),
-                strokeWidth = 10f,
-            )
-        }
         // 在触摸点绘制一个圆
         touchPoint?.let {
             x10 = it.x
             y10 = it.y
-            toPoint = findIntersectionWithCircle(centerX, centerY, 1.2f * circleRadius, it.x, it.y)
+            toPoint = findIntersectionWithCircle(centerX, centerY, circleRadius, it.x, it.y)
             Log.i("aaa", "333")
             drawCircle(
                 color = defaultColor,
@@ -217,9 +283,9 @@ fun OldTime(
 
             if ((notchNumber + 10).isDivisible(hourInterval)) {
                 val p1 =
-                    centerX + 0.7f * circleRadius * cos(circlePerimeterAngle.degreesToRadians())
+                    centerX + circleRadius * 0.6f * cos(circlePerimeterAngle.degreesToRadians())
                 val p2 =
-                    centerY + 0.7f * circleRadius * sin(circlePerimeterAngle.degreesToRadians())
+                    centerY + circleRadius * 0.6f * sin(circlePerimeterAngle.degreesToRadians())
 
                 val s = Branch?.get(((notchNumber + 10).div(hourInterval) + 1) % 12) ?: ""
                 val tr = textMeasure.measure(
@@ -243,9 +309,9 @@ fun OldTime(
             }
             if ((notchNumber + 10).isDivisible(hourInterval / 2)) {
                 val p1 =
-                    centerX + 1.2f * circleRadius * cos(circlePerimeterAngle.degreesToRadians())
+                    centerX + circleRadius * cos(circlePerimeterAngle.degreesToRadians())
                 val p2 =
-                    centerY + 1.2f * circleRadius * sin(circlePerimeterAngle.degreesToRadians())
+                    centerY + circleRadius * sin(circlePerimeterAngle.degreesToRadians())
 
                 val s = (notchNumber + 10).div(hourInterval / 2).toString()
                 val tr = textMeasure.measure(

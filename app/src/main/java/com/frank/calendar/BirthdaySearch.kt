@@ -23,12 +23,15 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -44,8 +47,6 @@ var isLeap by mutableStateOf(false)
 var sYearName by mutableStateOf("")
 var dateInfo by mutableStateOf("")
 var oldTimeStamp = 0L
-var oldChooseTime = 0
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,7 +58,9 @@ fun BirthdaySearch(navController: NavHostController) {
 
     Log.i("aaaa", "screenWidth = " + screenWidth)
     Log.i("aaaa", "screenHeight = " + screenHeight)
+    var datePickerHeight by remember { mutableStateOf(0) }
 
+    val density = LocalDensity.current
     val datePickerState =
         rememberDatePickerState(
             initialSelectedDateMillis = theTime.toLocalDate()
@@ -69,13 +72,40 @@ fun BirthdaySearch(navController: NavHostController) {
             .background(Color.Black)
     ) {
         getDateInfo(datePickerState.selectedDateMillis)
+        Box(
+            modifier = Modifier
+                .align(if (isPort) Alignment.BottomCenter else Alignment.CenterStart)
+                .height(screenHeight.dp)
+                .width(if (isPort) screenWidth.dp else screenWidth.dp / 2)
+                .padding(
+                    top = if (isPort) screenHeight.dp / 2 + 20.dp else 0.dp,
+                ),
+        ) {
+            DatePicker(
+                modifier = Modifier
+                    .align(if (isPort) Alignment.BottomCenter else Alignment.CenterStart)
+                    .onGloballyPositioned { layoutCoordinates ->
+                        // 获取像素高度
+                        datePickerHeight = layoutCoordinates.size.height
+                    },
+                title = null,
+                headline = null,
+                state = datePickerState,
+                showModeToggle = false,
+            )
+        }
+        val heightDp = with(density) { datePickerHeight.toDp() }
+        Log.i("aaaa", "heightDp = " + heightDp)
+        if (heightDp > 0.dp)
         Column(
             modifier = Modifier
-                .height(if (isPort) screenHeight.dp / 2 else screenHeight.dp)
+//                .height(if (isPort) screenHeight.dp / 2 else screenHeight.dp)
+//                .height(if (isPort) screenHeight.dp / 2 else heightDp)
+                .height(heightDp)
                 .width(screenWidth.dp)
-                .align(if (isPort) Alignment.TopCenter else Alignment.BottomEnd)
+                .align(if (isPort) Alignment.TopCenter else Alignment.CenterEnd)
                 .padding(
-                    top = if (isPort) 50.dp else 20.dp,
+                    top = if (isPort) 20.dp else 0.dp,
                     start = if (isPort) 0.dp else screenWidth.dp / 2,
                 ),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -83,7 +113,7 @@ fun BirthdaySearch(navController: NavHostController) {
             OldTime(
                 modifier = Modifier
                     .weight(1.0f)
-                    .padding(bottom = 50.dp),
+                    .padding(top = 10.dp, bottom = 20.dp),
                 { index ->
                     chooseTime = index * 2
                 }
@@ -100,22 +130,28 @@ fun BirthdaySearch(navController: NavHostController) {
                 )
             }
         }
-        Box(
-            modifier = Modifier
-                .height(screenHeight.dp)
-                .width(if (isPort) screenWidth.dp else screenWidth.dp / 2)
-                .padding(
-                    top = if (isPort) screenHeight.dp / 2 + 20.dp else 0.dp,
-                ),
-        ) {
-            DatePicker(
-                title = null,
-                headline = null,
-                state = datePickerState,
-                showModeToggle = false,
-            )
-        }
         // 左上角按钮
+//        IconButton(
+//            onClick = {
+//                showBranchDialog = true
+//            },
+//            modifier = Modifier
+//                .size(80.dp)
+//                .align(if (isPort) Alignment.TopStart else Alignment.TopCenter)
+//                .padding(10.dp)
+//                .background(
+//                    color = defaultColor.copy(alpha = 0.4f), // 半透明黑色背景
+//                    CircleShape
+//                )
+//                .shadow(4.dp, CircleShape)
+//        ) {
+//            Icon(
+//                imageVector = Icons.Default.Info,
+//                contentDescription = "详细",
+//                tint = Color.White
+//            )
+//        }
+        // 右上角按钮
         IconButton(
             onClick = {
                 navController.popBackStack()
@@ -136,21 +172,16 @@ fun BirthdaySearch(navController: NavHostController) {
                 tint = Color.White
             )
         }
+//        DetailInfoDialog({})
     }
 }
 
 
 fun getDateInfo(timeStamp: Long?) {
-//    if (oldTimeStamp == timeStamp && oldChooseTime == cTime) {
-//        return
-//    }
-//
     if (timeStamp != null) {
-//        oldTimeStamp = timeStamp
-//        oldChooseTime = cTime
         theTime = Instant.ofEpochMilli(timeStamp).atZone(ZoneOffset.ofHours(0)).toLocalDateTime()
     }
-//    if (isLunar) {
+//    if (!isLunar) {
 //        val s = LunarUtil.lunarToSolar(
 //            theTime.year,
 //            theTime.monthValue,

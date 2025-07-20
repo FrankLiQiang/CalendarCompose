@@ -75,7 +75,6 @@ val todayColor = Color(0xFFFFA00C)
 var x10 = 0f
 var y10 = 0f
 var isFirstDraw0 = true
-var isFirstDraw1 = false
 var chooseTime by mutableIntStateOf(theTime.hour)
 var animalIndex = 0
 var centerX = 0f
