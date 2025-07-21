@@ -1,6 +1,5 @@
 package com.frank.calendar
 
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -228,7 +227,7 @@ fun OldTime(
                 circlePerimeterAngle + 90f,
                 pivot = Offset(
                     centerX + circleRadius * 0.85f * cos(circlePerimeterAngle.degreesToRadians()),
-                    centerY + circleRadius * 0.85f  * sin(circlePerimeterAngle.degreesToRadians())
+                    centerY + circleRadius * 0.85f * sin(circlePerimeterAngle.degreesToRadians())
                 )
             ) {
                 drawRect(
@@ -242,7 +241,6 @@ fun OldTime(
             }
         }
         if (isFirstDraw) {
-            Log.i("aaa", "111")
             drawCircle(
                 color = defaultColor,
                 radius = 50f,
@@ -260,7 +258,6 @@ fun OldTime(
             x10 = it.x
             y10 = it.y
             toPoint = findIntersectionWithCircle(centerX, centerY, circleRadius, it.x, it.y)
-            Log.i("aaa", "333")
             drawCircle(
                 color = defaultColor,
                 radius = 50f,

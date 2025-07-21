@@ -1,6 +1,5 @@
 package com.frank.calendar
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -56,8 +55,6 @@ fun BirthdaySearch(navController: NavHostController) {
     val screenWidth = configuration.screenWidthDp    // 屏幕宽度（dp）
     val screenHeight = configuration.screenHeightDp  // 屏幕高度（dp）
 
-    Log.i("aaaa", "screenWidth = " + screenWidth)
-    Log.i("aaaa", "screenHeight = " + screenHeight)
     var datePickerHeight by remember { mutableStateOf(0) }
 
     val density = LocalDensity.current
@@ -72,20 +69,21 @@ fun BirthdaySearch(navController: NavHostController) {
             .background(Color.Black)
     ) {
         getDateInfo(datePickerState.selectedDateMillis)
+        val heightDp = with(density) { datePickerHeight.toDp() }
         Box(
             modifier = Modifier
                 .align(if (isPort) Alignment.BottomCenter else Alignment.CenterStart)
                 .height(screenHeight.dp)
-                .width(if (isPort) screenWidth.dp else screenWidth.dp / 2)
+                .width(if (isPort) screenWidth.dp else screenWidth.dp / 2 + if (isPort) 0.dp else ((screenWidth.dp / 2 - heightDp + 80.dp) / 3))
                 .padding(
-                    top = if (isPort) screenHeight.dp / 2 + 20.dp else 0.dp,
+                    start = if (isPort) 0.dp else ((screenWidth.dp / 2 - heightDp + 80.dp) / 3),
+                    bottom = if (isPort) ((screenHeight.dp - heightDp * 2) / 3) + 20.dp else 0.dp,
                 ),
         ) {
             DatePicker(
                 modifier = Modifier
                     .align(if (isPort) Alignment.BottomCenter else Alignment.CenterStart)
                     .onGloballyPositioned { layoutCoordinates ->
-                        // 获取像素高度
                         datePickerHeight = layoutCoordinates.size.height
                     },
                 title = null,
@@ -94,42 +92,38 @@ fun BirthdaySearch(navController: NavHostController) {
                 showModeToggle = false,
             )
         }
-        val heightDp = with(density) { datePickerHeight.toDp() }
-        Log.i("aaaa", "heightDp = " + heightDp)
         if (heightDp > 0.dp)
-        Column(
-            modifier = Modifier
-//                .height(if (isPort) screenHeight.dp / 2 else screenHeight.dp)
-//                .height(if (isPort) screenHeight.dp / 2 else heightDp)
-                .height(heightDp)
-                .width(screenWidth.dp)
-                .align(if (isPort) Alignment.TopCenter else Alignment.CenterEnd)
-                .padding(
-                    top = if (isPort) 20.dp else 0.dp,
-                    start = if (isPort) 0.dp else screenWidth.dp / 2,
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            OldTime(
+            Column(
                 modifier = Modifier
-                    .weight(1.0f)
-                    .padding(top = 10.dp, bottom = 20.dp),
-                { index ->
-                    chooseTime = index * 2
-                }
-            )
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.height(50.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .height(if (isPort) heightDp + ((screenHeight.dp - heightDp * 2) / 3) else heightDp)
+                    .width(screenWidth.dp)
+                    .align(if (isPort) Alignment.TopCenter else Alignment.CenterEnd)
+                    .padding(
+                        top = if (isPort) ((screenHeight.dp - heightDp * 2) / 3) else 0.dp,
+                        start = if (isPort) 0.dp else screenWidth.dp / 2,
+                    ),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = sTB,
-                    fontSize = 30.sp,
-                    color = Color.Yellow
+                OldTime(
+                    modifier = Modifier
+                        .weight(1.0f)
+                        .padding(top = 10.dp, bottom = 20.dp),
+                    { index ->
+                        chooseTime = index * 2
+                    }
                 )
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.height(50.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = sTB,
+                        fontSize = 30.sp,
+                        color = Color.Yellow
+                    )
+                }
             }
-        }
         // 左上角按钮
 //        IconButton(
 //            onClick = {
